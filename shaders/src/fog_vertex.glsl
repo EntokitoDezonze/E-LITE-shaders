@@ -1,6 +1,6 @@
-#if !defined THE_END && !defined NETHER
-    float invFogAdjust = 1.0 / FOG_ADJUST;
+float invFogAdjust = 1.0 / FOG_ADJUST;
 
+#if !defined THE_END && !defined NETHER
     float rainMod = mix(1.0, 1.5, rainStrength);
     float fog_density_coeff = day_blend_float_lgcy(
         FOG_SUNSET,
@@ -50,16 +50,25 @@
             #if defined DISTANT_HORIZONS
                 float sight = dhRenderDistance;
             #else
-                float sight = clamp(NETHER_SIGHT * (FOG_ADJUST * 0.5), 0.0, far * 0.5);
+                float sight = clamp(NETHER_SIGHT * FOG_ADJUST * 0.25, 0.0, far);
             #endif
         #endif
+        float density = 0.1;
     #else
         #if defined DISTANT_HORIZONS
             float sight = dhRenderDistance;
         #else
-            float sight = far  * 0.75;
+            float sight = far * 0.75;
         #endif
+        float density = 0.005;
     #endif
     
-    fog_adj = sqrt(clamp(gl_FogFragCoord / sight, 0.0, 1.0));
+    #ifdef NEAR_FOG
+        float dist_adj = max(0.0, gl_FogFragCoord - (sight * 0.3));
+        near_fog = clamp(1.0 - exp(-dist_adj * density * invFogAdjust), 0.0, 1.0);
+    #else
+        near_fog = 0.0;
+    #endif
+
+    fog_adj = max(near_fog, sqrt(clamp(gl_FogFragCoord / sight, 0.0, 1.0)));
 #endif

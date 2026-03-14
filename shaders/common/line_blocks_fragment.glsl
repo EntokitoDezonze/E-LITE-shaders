@@ -24,7 +24,7 @@ uniform float frameTimeCounter;
         float t = (frameTimeCounter * speed) + ((pos.x + pos.y + pos.z) * frequency);
         vec3 rgb = clamp(abs(mod(t * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
         
-        return rgb;
+        return rgb * rgb;
     }
 #endif
 

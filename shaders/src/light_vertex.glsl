@@ -36,7 +36,8 @@ float ix15 = ix8 * ix4 * ix2 * ix;
 #ifdef DYN_HAND_LIGHT
     if (heldItemId == 11001 || heldItemId2 == 11001 || heldItemId == 11002 || heldItemId2 == 11002) {
         float h_off = (heldItemId == 11001 || heldItemId2 == 11001) ? 0.0 : 0.333;
-        float h_dist = clamp(1.0 - (gl_FogFragCoord * 0.0666 + h_off), 0.0, 1.0);
+        float h_off2 = (heldItemId == 11002 || heldItemId2 == 11002) ? 0.0 : 0.166;
+        float h_dist = clamp(1.0 - (gl_FogFragCoord * 0.0666 + h_off + h_off2), 0.0, 1.0);
 
         float hd2 = h_dist * h_dist * l_pow;
         float hd4 = hd2 * hd2;
@@ -80,9 +81,9 @@ if (dot(normal, normal) > 0.0001) { // Workaround for undefined normals
     direct_light_color = texture2D(lightmap, vec2(0.0, lmcoord.y)).rgb * day_blend_lgcy(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR * 1.5);
 #else
     direct_light_color = day_blend_lgcy(
-        LIGHT_SUNSET_COLOR * day_blend_float(1.0, 1.4, 0.0),  
+        LIGHT_SUNSET_COLOR * day_blend_float(1.0, 1.4, 0.5),  
         LIGHT_DAY_COLOR * day_blend_float(1.25, 1.15, 1.0), 
-        LIGHT_NIGHT_COLOR * day_blend_float(0.5, 1.0, 1.0));
+        LIGHT_NIGHT_COLOR);
     
     #if COLOR_SCHEME == 4
         direct_light_color *= day_blend_float(2.0, 1.25, 2.0);
@@ -131,10 +132,11 @@ float vs4 = vs2 * vs2;
     vec3 omni_min = omni_color * l_ratio;
 
     #if COLOR_SCHEME != 5
-        omni_min *= mix(1.0, day_blend_float(7.5, 20.0, 3.75) * OMNI_MUL, visible_sky * (1.0 - rainStrength));
+        float mask = clamp((1.0 - visible_sky) + rainStrength + step(49.0, AVOID_DARK_LEVEL), 0.0, 1.0);
+        omni_min *= mix(day_blend_float(7.5, 15.0, 3.75) * OMNI_MUL, 1.0, mask); // Fullbright rework
     #endif
         
-    omni_min *= day_blend_float(1.0, 1.0, 0.25);
+    omni_min *= day_blend_float(1.0, 1.0, 0.25 + 0.75 * (step(49.0, AVOID_DARK_LEVEL))); // Fullbright rework
 
     #if COLOR_SCHEME != 5
         omni_color = clamp(omni_color, AVOID_DARK_LEVEL * 0.01, 10.0);

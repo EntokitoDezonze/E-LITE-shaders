@@ -105,8 +105,8 @@ varying vec3 omni_light;
 varying float exposure;
 varying vec3 hi_sky_color;
 varying vec3 low_sky_color;
-flat varying float block_type_f;
-flat varying float isSeasonable;
+varying float block_type_f;
+varying float isSeasonable;
 varying float isGrass;
 
 
@@ -114,15 +114,9 @@ varying float isGrass;
  //   varying float depth;
 //#endif
 
-#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
-    varying float visible_sky;
-    varying float roughness;
-    varying float reflex_index;
-#endif
-
 #if defined EMISSIVE_MATERIAL || defined EMISSIVE_ORE
-    flat varying float ore_type_f;
-    flat varying float emitter_type_f;
+    varying float ore_type_f;
+    varying float emitter_type_f;
 #endif
 
 #if defined SHADOW_CASTING && SHADOW_LOCK > 0 && !defined NETHER
@@ -137,14 +131,17 @@ varying float isGrass;
 #endif
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
+    varying float visible_sky;
     varying vec2 lmcoord_alt;
-    varying float gloss_factor;
-    varying float gloss_power;
-    varying float luma_factor;
-    varying float luma_power;
+    varying vec4 glossParms;
     varying vec3 sub_position3;
     varying vec3 sub_position3_norm;
     varying vec3 flat_normal;
+#endif
+
+#if MATERIAL_GLOSS > 1
+    varying float roughness;
+    varying float reflexIndex;
 #endif
 
 #ifdef FOG_ACTIVE
@@ -203,17 +200,17 @@ void main() {
     //if(fragment_cull()) discard;
     
     #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        float reflex_index2 = reflex_index;
+        float reflex_index2 = reflexIndex;
     #else
         float reflex_index2;
     #endif
 
 
-    #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (defined MATERIAL_GLOSS && !defined NETHER)
+    #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (MATERIAL_GLOSS > 0 && !defined NETHER)
         #if AA_TYPE > 0 
             float dither = shifted_dither13(gl_FragCoord.xy);
         #else
-            float dither = dither13(gl_FragCoord.xy);
+            float dither = r_dither(gl_FragCoord.xy);
         #endif
     #endif
 
@@ -298,15 +295,15 @@ void main() {
     #else
     
         #if (MATERIAL_GLOSS == 1 || MATERIAL_GLOSS == 3) && !defined NETHER
-            float final_gloss_power = gloss_power;
-            float luma_adj = (luma_power == 1.0) ? block_luma : fastpow(block_luma * luma_factor, luma_power);
+            float final_gloss_power = glossParms.g;
+            float luma_adj = (glossParms.a == 1.0) ? block_luma : fastpow(block_luma * glossParms.b, glossParms.a);
             
             vec3 material_gloss_factor = vec3(0.0);
 
-            float g_mask = step(0.1, gloss_factor);
+            float g_mask = step(0.1, glossParms.r);
             if(g_mask > 0.5){ 
                 vec3 refl_vec = reflect(sub_position3_norm, flat_normal);
-                material_gloss_factor = material_gloss(refl_vec, lmcoord_alt, final_gloss_power, flat_normal, mix(vec3(luma(direct_light_color)), direct_light_color, 0.5) * gloss_factor);
+                material_gloss_factor = material_gloss(refl_vec, lmcoord_alt, final_gloss_power, flat_normal, mix(vec3(luma(direct_light_color)), direct_light_color, 0.5) * glossParms.r);
             }
 
             vec3 real_light = computeRealLight(omni_light, direct_light_color, directLight2, shadow_c, material_gloss_factor * luma_adj, candle_color);
@@ -338,13 +335,13 @@ void main() {
             float fresnel = clamp(1.0 + n_dot_v, 0.0, 1.0);
             fresnel *= fresnel;
 
-            if (fresnel * reflex_index > 0.005) {
+            if (fresnel * reflexIndex > 0.005) {
                 float waterMask = float(isEyeInWater != 1);
                 float waterBrighness = (eyeBrightnessSmooth.y * 0.00333 + 0.2);
 
                 vec3 sky_refl = mix(
                     hi_sky_color * (0.5 * waterBrighness), 
-                    mix(low_sky_color * reflex_index, hi_sky_color, 0.75), 
+                    mix(low_sky_color * reflexIndex, hi_sky_color, 0.75), 
                     waterMask
                 );
 

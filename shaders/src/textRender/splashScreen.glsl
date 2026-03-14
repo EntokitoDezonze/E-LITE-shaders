@@ -15,7 +15,7 @@
         ivec2 fragPosSub = ivec2(gl_FragCoord.xy / subScale);
         int centerXSub = int((viewWidth / subScale) * 0.5);
         int posYSub = int((viewHeight * 0.825) / subScale);
-        int slideUp = int((1.0 - subEntry) * 10.0);
+        float slideUp = int(pow(1.0 - subEntry, 5.0) * 20.0);
 
         #if ACERCADE == 1
             int strW = 42; // Minimum (7*6)

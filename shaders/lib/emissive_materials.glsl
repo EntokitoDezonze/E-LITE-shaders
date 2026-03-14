@@ -233,7 +233,7 @@ vec3 emissive_color = vec3(1.0);
         float match_2_lba = step(dot(color - target_color_dark_2_lba, color - target_color_dark_2_lba), 0.6) * step(saturation, 0.67) * step(luminance, 0.6); 
         float match_3_lba = step(dot(color - target_color_light_lba, color - target_color_light_lba), 1.0);
 
-        emissive_color = mix(emissive_color, emissive_color * 1.75 * vec3(1.0, 0.4, 1.0), match_1_lba * factor_lba);
+        emissive_color = mix(emissive_color, emissive_color * 1.75 * vec3(1.0, 0.5, 1.0), match_1_lba * factor_lba);
         emissive_color -= mix(vec3(0.0), gray(candle_color * 0.8) * correct_light, match_2_lba * factor_lba);
         emissive_color -= mix(vec3(0.0), (candle_color * 0.5) - gray(candle_color * 0.5) * correct_light, match_3_lba * factor_lba);
         

@@ -17,6 +17,8 @@
                 float fogInfluence = day_blend_float(mix(1.0, 1.333, pow(sunInfluence, 0.333)), 1.3, 1.0); // works fine :)
             #elif VOL_LIGHT > 0 && V_CLOUDS < 1
                 float fogInfluence = 1.0;
+            #elif VOL_LIGHT > 0 && V_CLOUDS > 0
+                float fogInfluence = 1.0;
             #else
                 float fogInfluence = day_blend_float(mix(1.0, 1.11, fastpow(sunInfluence, 6.0)), 1.0, 1.0);
             #endif

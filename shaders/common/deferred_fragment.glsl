@@ -218,9 +218,9 @@ void main() {
 
         #ifdef DISTANT_HORIZONS
             if (d >= 1.0) {
-                float ao_attdh = pow(clamp(dh_d * 1.6, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
+                //float ao_attdh = pow(clamp(dh_d * 0.0, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
                 
-                float final_aodh = clamp(mix(dh_dbao(dither), 1.0, ao_attdh), 0.0, 1.0);
+                float final_aodh = clamp(dh_dbao(dither), 0.0, 1.0);
                 block_color.rgb *= final_aodh;
             }
         #endif

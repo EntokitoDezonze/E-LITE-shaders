@@ -26,9 +26,9 @@ Dynamic seasons. - Estações dinâmicas.
         float mix0 = (1.0 - smoothstep(0.0, 0.2, yearCycle)) + step(3.8, yearCycle);
 
         vec3 color = SUMMER_COLOR;
-        color = mix(color, AUTUMN_COLOR, smoothstep(0.9, 1.1, yearCycle));
-        color = mix(color, WINTER_COLOR, smoothstep(1.9, 2.1, yearCycle));
-        color = mix(color, SPRING_COLOR, smoothstep(2.9, 3.1, yearCycle));
+        color = mix(color, AUTUMN_COLOR, smoothstep(0.9, 1.0, yearCycle));
+        color = mix(color, WINTER_COLOR, smoothstep(1.9, 2.0, yearCycle));
+        color = mix(color, SPRING_COLOR, smoothstep(2.9, 3.0, yearCycle));
         color = mix(color, SUMMER_COLOR, smoothstep(3.9, 4.0, yearCycle));
 
         return color;

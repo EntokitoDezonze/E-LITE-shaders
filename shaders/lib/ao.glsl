@@ -41,7 +41,7 @@ float dbao(float dither) {
     }
     ao /= AOSTEPS;
 
-    return ((ao * clamp(AO_STRENGTH, 0.0, 1.3)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.3)));
+    return sqrt((ao * clamp(AO_STRENGTH, 0.0, 1.3)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.3)));
 }
 
 #ifdef DISTANT_HORIZONS
@@ -53,12 +53,12 @@ float dbao(float dither) {
         
         float d_lin = ld_dh(d_raw);
 
-        float inv_steps = 0.166666;
+        float inv_steps = 1 / AOSTEPS;
         
         vec2 scale = vec2(viewHeight / viewWidth, 1.0) * (1.0 / (d_lin * dhFarPlane * 0.5));
-        vec2 scale_factor = scale * inv_steps * AO_STRENGTH * 1.2;
+        vec2 scale_factor = scale * inv_steps * AO_STRENGTH * 2.0;
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < AOSTEPS; i++) {
             float dither_x = (float(i) + dither);
             float n = fract(dither_x * 1.6180339887) * 3.1415926535;
             vec2 offset = vec2(cos(n), sin(n)) * dither_x * scale_factor;
@@ -72,9 +72,9 @@ float dbao(float dither) {
             ao += clamp(0.5 - diff, 0.0, 1.0) + clamp(0.25 * diff - 1.0, 0.0, 1.0);
         }
         
-        ao /= 6.0;
+        ao /= AOSTEPS;
         ao = clamp(ao, 0.0, 1.0);
 
-        return (ao * clamp(AO_STRENGTH, 0.0, 1.3)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.3));
+        return sqrt(ao * clamp(AO_STRENGTH, 0.0, 1.3)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.3));
     }
 #endif

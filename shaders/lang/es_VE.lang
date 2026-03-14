@@ -452,11 +452,11 @@ screen.INFO_SCREEN=§lInfo ?
 screen.INFO_SCREEN.comment= Información potencialmente útil
 
 option.HOVER=Pase el ratón
-option.HOVER.comment=¡Hola! Aquí encontrarás información sobre LITE shaders
+option.HOVER.comment=¡Hola! Aquí encontrarás información sobre E-LITE shaders
 value.HOVER.0=
 
 option.VERSION=Info. de versión
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Código: §5§l§oELT5§r. Fecha de la versión: 28 de Febrero de 2026. Basado en MakeUp Ultrafast 9.4c
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Código: §5§l§oELT501§r. Fecha de la versión: 13 de Marzo de 2026. Basado en MakeUp Ultrafast 9.4c
 value.VERSION.0=
 
 option.PROFILES=Perfiles gráficos

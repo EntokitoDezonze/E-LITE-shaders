@@ -30,7 +30,7 @@ uniform int frameCounter;
     uniform float darknessFactor;
 #endif
 
-#if (VOL_LIGHT == 2 && defined FSR) || VOL_LIGHT == 1 && !defined NETHER
+#if VOL_LIGHT == 1 && !defined NETHER
     uniform sampler2D depthtex1;
     uniform vec3 sunPosition;
     uniform vec3 moonPosition;
@@ -41,7 +41,7 @@ uniform int frameCounter;
     uniform float vol_mixer;
 #endif
 
-#if VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER && !defined FSR
+#if VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER
     uniform float light_mix;
     uniform mat4 gbufferProjectionInverse;
     uniform mat4 gbufferModelViewInverse;
@@ -65,14 +65,10 @@ varying vec3 direct_light_color;
 varying vec3 direct_light_strength;
 varying float exposure;
 
-#if (VOL_LIGHT == 2 && defined FSR) || VOL_LIGHT == 1 && !defined NETHER
+#if (VOL_LIGHT == 2) || VOL_LIGHT == 1 && !defined NETHER
     varying vec3 vol_light_color;
     varying vec2 lightpos;
     varying vec3 astro_pos;
-#endif
-
-#if VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER && !defined FSR
-    varying vec3 vol_light_color;
 #endif
 
 #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
@@ -89,12 +85,7 @@ varying float exposure;
 #define FRAGMENT
 //#include "/lib/downscale.glsl"
 
-#if (VOL_LIGHT == 1 || (VOL_LIGHT == 2 && defined FSR)) && !defined NETHER
-    #include "/lib/dither.glsl"
-    #include "/lib/volumetric_light.glsl"
-#endif
-
-#if VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER && !defined FSR
+#if (VOL_LIGHT == 1 || (VOL_LIGHT == 2)) && !defined NETHER
     #include "/lib/dither.glsl"
     #include "/lib/volumetric_light.glsl"
 #endif

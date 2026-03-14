@@ -17,18 +17,18 @@ vec3 draw_sun() {
 
     #if ROUND_SUN == 1
         #if VOL_LIGHT > 0
-            float sunSize = 0.0006;
-            vec3 sunColor = day_blend(vec3(1.0, 0.5, 0.25) * 2.0, vec3(1.0), vec3(1.0, 0.0, 0.0)) * 2.0;
+            float sunSize = 0.001;
+            vec3 sunColor = day_blend(vec3(1.0, 0.5, 0.25) * 2.0, vec3(1.0), vec3(1.0, 0.5, 0.5));
 
             float sunMask = smoothstep(1.0 - sunSize, 1.001 - sunSize, cosTheta);
 
             float sunY = smoothstep(-0.1, -0.1, sunDir.y);
-            float glow = pow(max(0.0, cosTheta), 150.0) * 0.5 * sunY;
+            float glow = fastpow(max(0.0, cosTheta), 50.0) * 0.5 * sunY;
 
             return mix((sunColor * 100 * sunMask) + (sunColor * 0.5 * glow), sunColor * glow * 0.3, rainStrength);
         #else
-            float sunSize = 0.0005;
-            vec3 sunColor = day_blend(vec3(1.0, 0.5, 0.25) * 3.0, vec3(2.0), vec3(1.0, 0.0, 0.0)) * 2.0;
+            float sunSize = 0.001;
+            vec3 sunColor = day_blend(vec3(1.0, 0.5, 0.25) * 3.0, vec3(2.0), vec3(1.0, 0.5, 0.5));
 
             float sunMask = smoothstep(1.0 - sunSize, 1.0 - sunSize, cosTheta);
 

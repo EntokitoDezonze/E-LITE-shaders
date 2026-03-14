@@ -2,7 +2,7 @@
 Volumetric light - MakeUp implementation
 */
 
-#if VOL_LIGHT == 2
+#if VOL_LIGHT == 2 && defined SHADOW_CASTING
 
     #define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)
 

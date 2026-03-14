@@ -182,7 +182,6 @@ varying float exposure;
 
 #include "/lib/textRender/textRender.glsl"
 
-
 void main() {
     vec2 pixelUV = texcoord;
 
@@ -220,10 +219,10 @@ void main() {
         block_color = mix(saturate(block_color, 0.75) * shadow_tint, block_color, shadow_desaturation);
     } // Water overlay
 
-    #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 11
-        float exposure_final = day_blend_float(1.5, 0.85, 3.0);
+    #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 4
+        float exposure_final = day_blend_float(1.5, 0.85, 3.5);
     #elif COLOR_SCHEME == 4 && defined SIMPLE_AUTOEXP
-        float exposure_final = day_blend_float(0.75, 0.75, 2.0);
+        float exposure_final = day_blend_float(0.5, 0.5, 2.0);
     #elif COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
         float exposure_final = exposure * day_blend_float(0.8, 1.0, 1.0);
     #else
@@ -251,7 +250,7 @@ void main() {
     block_color = pow(block_color.rgb, vec3(1 / GAMMA)); // Gamma
 
     #ifdef TITLE
-        float lifeSpan = 5.5;
+        float lifeSpan = 4.5;
         float textOpacity = 1.0 - smoothstep(4.0, lifeSpan, frameTimeCounter);
 
         float mainScale = 6.0;
@@ -261,6 +260,11 @@ void main() {
         int centerX = int((viewWidth / mainScale) * 0.5);
         ivec2 textPosMain = ivec2(centerX - (mainTotalWidth / 2), int((viewHeight * 0.825 + 50) / mainScale));
         #include "/src/textRender/splashScreen.glsl"
+    #endif
+
+    #if !defined SHADOW_CASTING && VOL_LIGHT == 2
+        block_color *= 0.0;
+        #include "/src/textRender/godrayError.glsl"
     #endif
 
     #if TONEMAPPING == 0

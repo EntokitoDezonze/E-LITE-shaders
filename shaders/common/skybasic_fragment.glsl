@@ -73,7 +73,7 @@ varying vec4 position;
 void main() {
     //if(fragment_cull()) discard;
     #if (STAR_SLIDER == 2 || defined THE_END) && !defined NETHER
-        vec4 star_color = vec4(stars(), 1.0);
+        vec4 star_color = abs(vec4(stars(), 1.0));
     #endif
 
     float vanilla_mul;

@@ -324,7 +324,7 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
                 float altitude = 800.0 + (float(i) + dither) * 35.0;
                 float t = altitude / view_vector.y;
 
-                vec2 world_uv = (cameraPosition.xz + view_vector.xz * t) * 0.00015;
+                vec2 world_uv = mod(cameraPosition.xz + view_vector.xz * t, 2000) * 0.00015;
                 
                 float wind = frameTimeCounter * 0.2 * 35 * sqrt(CLOUD_HI_FACTOR);
 

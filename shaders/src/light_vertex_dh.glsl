@@ -104,13 +104,16 @@ float vs4 = vs2 * vs2;
         float l_ratio = clamp(AVOID_DARK_LEVEL / (luma(omni_color) * 100.0), 0.0, 10.0);
     #endif
     vec3 omni_min = omni_color * l_ratio;
-
-    omni_min *= mix(1.0, day_blend_float(7.5, 20.0, 3.75) * OMNI_MUL, vs2 * (1.0 - rainStrength));
-
+        
+    #if COLOR_SCHEME != 5
+        float mask = clamp((1.0 - visible_sky) + rainStrength + step(49.0, AVOID_DARK_LEVEL), 0.0, 1.0);
+        omni_min *= mix(day_blend_float(7.5, 15.0, 3.75) * OMNI_MUL, 1.0, mask); // Fullbright rework
+    #endif
+    
     #ifdef SIMPLE_AUTOEXP
-        omni_light = mix(omni_min, omni_color, vs4) * omni_strength;
+        omni_light = mix(omni_min, omni_color * 1.25, vs4) * omni_strength;
     #else
-        omni_light = mix(omni_min, omni_color, vs4) * omni_strength;
+        omni_light = mix(omni_min, omni_color * 1.25, vs4) * omni_strength;
     #endif
 
 #else

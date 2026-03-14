@@ -257,6 +257,8 @@ vec3 water_shader(
             reflection_calc(fragpos, normal, reflected, infinite, dither);
     #endif
 
+    if(isEyeInWater > 0) reflection.a *= 0.5;
+
     reflection.rgb = mix(
         sky_reflect * visible_sky,
         reflection.rgb,

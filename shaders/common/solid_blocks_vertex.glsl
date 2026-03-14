@@ -74,7 +74,7 @@ varying vec3 direct_light_color;
 varying vec3 candle_color;
 varying float direct_light_strength;
 varying vec3 omni_light;
-flat varying float block_type_f;
+varying float block_type_f;
 varying float exposure;
 varying float near_fog;
 varying vec3 hi_sky_color;
@@ -85,13 +85,13 @@ varying float visible_sky;
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
     varying float roughness;
-    varying float reflex_index;
+    varying float reflexIndex;
 #endif
 
 
 #if defined EMISSIVE_MATERIAL || defined EMISSIVE_ORE
-    flat varying float ore_type_f;
-    flat varying float emitter_type_f;
+    varying float ore_type_f;
+    varying float emitter_type_f;
 #endif
 
 #if defined SHADOW_CASTING && SHADOW_LOCK > 0 && !defined NETHER
@@ -101,8 +101,8 @@ varying float visible_sky;
 #endif
 
 #ifdef FOLIAGE_V
-    flat varying float isFoliage;
-    flat varying float isSeasonable;
+    varying float isFoliage;
+    varying float isSeasonable;
     varying float isGrass;
 #endif
 
@@ -116,10 +116,12 @@ varying float visible_sky;
     varying vec3 sub_position3;
     varying vec3 sub_position3_norm;
     varying vec2 lmcoord_alt;
-    varying float gloss_factor;
-    varying float gloss_power;
-    varying float luma_factor;
-    varying float luma_power;
+    varying vec4 glossParms; // AMD fix
+
+    float gloss_factor;
+    float gloss_power;
+    float luma_factor;
+    float luma_power;
 #endif
 
 varying float sunInfluence;
@@ -212,13 +214,13 @@ void main() {
         gloss_power = 2.0;
         gloss_factor = 0.0;
         roughness = 0.0;
-        reflex_index = 0.0;
+        reflexIndex = 0.0;
 
         if (mc_ex >= 10400) {
             if (mc_ex == 10400) { // Metals
                 luma_factor = 1.3; luma_power = 20.0; 
                 gloss_power = 50.0; gloss_factor = 1.5; 
-                roughness = 1.75; reflex_index = 0.65;
+                roughness = 1.75; reflexIndex = 0.65;
             } 
             else if (mc_ex <= 10411) { // Sand and Stone (10410, 10411)
                 bool is_sand = (mc_ex == 10410);
@@ -235,14 +237,14 @@ void main() {
                 luma_power  = (mc_ex == 10430) ? 10.0 : 6.0;
                 gloss_power = (mc_ex == 10421) ? 20.0 : 15.0;
                 gloss_factor = (mc_ex == 10420) ? 3.0 : (mc_ex == 10430 ? 0.3 : 0.2);
-                roughness = 3.0; reflex_index = 0.333;
+                roughness = 3.0; reflexIndex = 0.333;
             }
             else if (mc_ex == 10440) { // Fabric
                 luma_factor = 3.0; luma_power = 2.0; gloss_power = 3.0;
             }
             else if (mc_ex == 10450) { // Concrete
                 luma_factor = 6.5; luma_power = 0.5; gloss_power = 15.0;
-                gloss_factor = 1.0; roughness = 2.0; reflex_index = 0.25;
+                gloss_factor = 1.0; roughness = 2.0; reflexIndex = 0.25;
             }
         } 
         // Foliage
@@ -254,14 +256,19 @@ void main() {
         }
         // Portal
         else if (mc_ex == 9015 || blockEntityId == 10091) {
-            roughness = 0.5; reflex_index = 0.5;
-            if(blockEntityId == 10091) { roughness = 1.0; reflex_index = 1.0; }
+            roughness = 0.5; reflexIndex = 0.5;
+            if(blockEntityId == 10091) { roughness = 1.0; reflexIndex = 1.0; }
         }
 
         flat_normal = normal;
         sub_position3 = sub_position.xyz;
         sub_position3_norm = dirToView;
         lmcoord_alt = lmcoord;
+
+        glossParms.r = gloss_factor;
+        glossParms.g = gloss_power;
+        glossParms.b = luma_factor;
+        glossParms.a = luma_power;
     #endif
 
     #ifdef FOLIAGE_V

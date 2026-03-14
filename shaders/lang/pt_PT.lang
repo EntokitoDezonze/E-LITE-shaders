@@ -14,7 +14,7 @@ profile.comment=Os perfis “Sem sombras” são feitos para máquinas de baixo 
 #############################
 option.ACERCADE=§lE-LITE shaders
 option.ACERCADE.comment=Obrigado por utilizar este shader! :). Defina os controles de qualidade nativos do Iris ou OptiFine nos valores normais ou predefinidos para obter uma melhor qualidade. Tradução para Português e modificação por: @Entokito
-value.ACERCADE.0=§5§l§oELT5
+value.ACERCADE.0=§5§l§oELT501
 
 #Style
 option.STYLE=§lEstilo
@@ -527,11 +527,11 @@ screen.INFO_SCREEN=§lInfo ?
 screen.INFO_SCREEN.comment= Informações potencialmente úteis.
 
 option.HOVER=Passe o mouse
-option.HOVER.comment=Olá! Aqui você pode encontrar informações sobre os LITE shaders!
+option.HOVER.comment=Olá! Aqui você pode encontrar informações sobre os E-LITE shaders!
 value.HOVER.0=
 
 option.VERSION=Info. da Versão
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Código: §5§l§oELT5§r. Data: 28 de Fevereiro de 2026. Baseado no MakeUp Ultrafast 9.4c.
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Código: §5§l§oELT501§r. Data: 13 de Março 2026. Baseado no MakeUp Ultrafast 9.4c.
 value.VERSION.0=
 
 option.PROFILES=Perfis Gráficos
