@@ -134,6 +134,9 @@ const uint _clprn = 0x41084220u; // )
 const uint _block = 0xFFFFFFFCu; // █
 const uint _copyr = 0x03AB9AB8u; // ©️
 
+// By Entokito
+const uint _dash  = 0x0001f000u; // —
+
 const int charWidth   = 5;
 const int charHeight  = 6;
 const int charSpacing = 1;

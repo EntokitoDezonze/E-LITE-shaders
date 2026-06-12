@@ -46,7 +46,7 @@ void main() {
     #ifndef CUSTOM_SKYFIX
         float C = 70.0; // Moon brightness
 
-        sky_luma_correction = luma(day_blend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR));
+        sky_luma_correction = luma(dayBlend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR));
 
         float log_base = log(C + 1.0);
 
@@ -54,18 +54,18 @@ void main() {
             float day_blend_val = 3.0;
             sky_luma_correction = day_blend_val * log(sky_luma_correction * C + 1.0) / log_base;
         #else
-            float day_blend_val  = day_blend_float(2.0, 2.25, 1.7);
+            float day_blend_val  = dayBF(2.0, 2.25, 1.7);
             sky_luma_correction = day_blend_val * log(sky_luma_correction * C + 1.0) / log_base;
         #endif
 
         current_wetness = 1 - rainStrength;
 
         #if COLOR_SCHEME == 5
-            cursed_sky = day_blend(vec3(2.0), vec3(1.0), vec3(4.0, 0.5, 0.5));
-            sky_luma_correction *= day_blend_float(0.5, 0.0, 1.0);
+            cursed_sky = dayBlend(vec3(2.0), vec3(1.0), vec3(4.0, 0.5, 0.5));
+            sky_luma_correction *= dayBF(0.5, 0.0, 1.0);
         #endif
 
-        sky_luma_correction *= day_blend_float(SUN_MUL, SUN_MUL, MOON_MUL);
+        sky_luma_correction *= dayBF(SUN_MUL, SUN_MUL, MOON_MUL);
     #else
         sky_luma_correction = 1.0;
         cursed_sky = vec3(1.0);

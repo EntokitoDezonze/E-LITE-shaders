@@ -103,7 +103,7 @@ Volumetric light - MakeUp implementation
                 light_color += clamp(shadow_color.rgb * (1.0 - shadow_detector) + shadow_detector, vec3(0.0), vec3(1.0));
             }
 
-            light_color /= GODRAY_STEPS / day_blend_float(0.75, 1.0, 1.0);
+            light_color /= GODRAY_STEPS / dayBF(0.75, 1.0, 1.0);
 
             return light_color;
         }
@@ -128,7 +128,7 @@ Volumetric light - MakeUp implementation
         }
 
         #ifndef THE_END
-            return light / float(CHEAP_GODRAY_SAMPLES) / day_blend_float(0.75, 1.0, 1.0);
+            return light / float(CHEAP_GODRAY_SAMPLES) / dayBF(0.75, 1.0, 1.0);
         #else
             return light / float(CHEAP_GODRAY_SAMPLES);
         #endif

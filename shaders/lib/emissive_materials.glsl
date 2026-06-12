@@ -8,7 +8,7 @@ Emissive properties for ores, some materials, particles and entities. - Propried
 
 vec3 emissive_color = vec3(1.0);
 
-#if (defined EMISSIVE_ORE || defined EMISSIVE_MATERIAL) && defined GBUFFER_TERRAIN
+#if (defined EMISSIVE_ORE || defined EMISSIVE_MATERIAL)
     float correct_light = 1.0;
     float correct_light_ore = 1.0;  
     vec3 color = pure_block_color.rgb;
@@ -25,7 +25,7 @@ vec3 emissive_color = vec3(1.0);
         
         float saturation = 0.0;
         correct_light_ore = clamp(luma(1.0 - real_light), 0.5, 1.0);
-        correct_light = clamp(luma(2.0 - real_light), 0.5, 1.0);
+        correct_light = clamp(luma(2.0 - real_light), 0.5, 1.0) - luma(gloss);
         
         float min_color = min(min(color.r, color.g), color.b);
         float max_color = max(max(color.r, color.g), color.b);
@@ -111,7 +111,6 @@ vec3 emissive_color = vec3(1.0);
         float copper_total_match = clamp(match_dark_copper + match_light_copper, 0.0, 1.0);
         
         emissive_color = mix(emissive_color, emissive_color * final_copper_emissive, copper_total_match * factor_copper);
-
     #endif
 
     #if defined EMISSIVE_MATERIAL && defined GBUFFER_TERRAIN
@@ -142,13 +141,13 @@ vec3 emissive_color = vec3(1.0);
         vec3 final_emissive_redmat = vec3(1.0);
         float total_match_redmat = 0.0;
         
-        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * vec3(25.0 * correct_light), match_1_redmat);
+        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * vec3(30.0 * correct_light), match_1_redmat);
         total_match_redmat = max(total_match_redmat, match_1_redmat);
         final_emissive_redmat = mix(final_emissive_redmat, vec3(20.0 * correct_light) * vec3(1.0, 0.5, 0.5), match_2_redmat);
         total_match_redmat = max(total_match_redmat, match_2_redmat);
-        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * 5.0 * correct_light, match_3_redmat); 
+        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * 8.0 * correct_light, match_3_redmat); 
         total_match_redmat = max(total_match_redmat, match_3_redmat);
-        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * vec3(12.5 * correct_light), match_4_redmat);
+        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * vec3(10.0 * correct_light), match_4_redmat);
         total_match_redmat = max(total_match_redmat, match_4_redmat);
         
         emissive_color = mix(emissive_color, emissive_color * final_emissive_redmat, total_match_redmat * factor_redmat);
@@ -233,17 +232,16 @@ vec3 emissive_color = vec3(1.0);
         float match_2_lba = step(dot(color - target_color_dark_2_lba, color - target_color_dark_2_lba), 0.6) * step(saturation, 0.67) * step(luminance, 0.6); 
         float match_3_lba = step(dot(color - target_color_light_lba, color - target_color_light_lba), 1.0);
 
-        emissive_color = mix(emissive_color, emissive_color * 1.75 * vec3(1.0, 0.5, 1.0), match_1_lba * factor_lba);
-        emissive_color -= mix(vec3(0.0), gray(candle_color * 0.8) * correct_light, match_2_lba * factor_lba);
+        emissive_color = mix(emissive_color, emissive_color * 1.75 * vec3(1.0, 0.75, 1.0), match_1_lba * factor_lba);
+        emissive_color -= mix(vec3(0.0), gray(candle_color * 0.9) * correct_light, match_2_lba * factor_lba);
         emissive_color -= mix(vec3(0.0), (candle_color * 0.5) - gray(candle_color * 0.5) * correct_light, match_3_lba * factor_lba);
         
         // FROGLIGHT (emitter_type == 8)
-        emissive_color = mix(emissive_color, emissive_color * color * 1.4, factor_frog);
-        emissive_color -= mix(vec3(0.0), (candle_color * 0.25) * correct_light, factor_frog);
+        emissive_color = mix(emissive_color, emissive_color * 1.75 * sqrt(luma(color)) * sqrt(color), factor_frog);
         
         // FAKE EMISSORS (emitter_type == 9)
         vec3 target_color_fake = vec3(0.4353, 0.3373, 0.2745);
-        float match_fake = step(0.12, dot(color - target_color_fake, color - target_color_fake)) * step(-0.1, saturation); 
+        float match_fake = step(0.22, dot(color - target_color_fake, color - target_color_fake)); 
         emissive_color = (mix(emissive_color, emissive_color * 2.75 * color * correct_light, match_fake * factor_fake));
         
         // RAIL (emitter_type == 10)
@@ -252,16 +250,16 @@ vec3 emissive_color = vec3(1.0);
         emissive_color = mix(emissive_color, emissive_color * 1000.0 * vec3(1.0, 0.0, 0.0) * correct_light, rail_match * factor_rail);
 
         // END PORTAL FRAME (emitter_type == 11)
-        vec3 target_color_end = vec3(1.0, 1.0, 1.0);
+        vec3 target_color_end = vec3(1.0, 0.8, 1.0);
         vec3 target_color_end2 = vec3(0.0, 0.5333, 0.3725);
         
-        float end_match = step(dot(color - target_color_end, color - target_color_end), 0.0);
+        float end_match = step(dot(color - target_color_end, color - target_color_end), 0.4);
         float end_match2 = step(dot(color - target_color_end2, color - target_color_end2), 0.4) * step(0.2, saturation);
         
-        emissive_color = mix(emissive_color, emissive_color * 3.5 * color * correct_light, end_match2 * factor_end);
-        reflex_index2 = mix(0.0, 0.5,  end_match2 * factor_end);
+        reflex_index2 = mix(0.0, 0.5, end_match2 * factor_end);
 
-        emissive_color -= mix(vec3(0.0), gray(final_candle_color * 0.75) * correct_light, end_match * factor_end);
+        emissive_color = mix(emissive_color, emissive_color * 1.5 * correct_light, end_match * factor_end);
+        emissive_color = mix(emissive_color, emissive_color * 3.5 * color * correct_light, end_match2 * factor_end);
     #endif
     }
 #endif
@@ -286,6 +284,18 @@ vec3 emissive_color = vec3(1.0);
         emissive_color = mix(emissive_color, emissive_color * 5, drowned_match2);
         emissive_color = mix(emissive_color, emissive_color * 5, drowned_match3);
     }
+#endif
+
+#if defined GBUFFER_WEATHER
+    vec3 target_color_rain = vec3(0.0, 0.7098, 1.0);
+    float match_rain = step(dot(pure_block_color.rgb - target_color_rain, pure_block_color.rgb - target_color_rain), 0.3);
+    block_color = mix(block_color, saturate_v4(block_color * 3.0, 0.5), match_rain);
+    block_color.a *= mix(0.2, 0.15, match_rain);
+#endif
+
+#if defined EMISSIVE_MATERIAL
+    float factor_trim = step(12.0, float(emitter_type)) * step(float(emitter_type), 12.0); // Armor trims
+    emissive_color = mix(emissive_color, emissive_color * 5 * correct_light, factor_trim);
 #endif
 
 #ifdef GBUFFER_ENTITIES

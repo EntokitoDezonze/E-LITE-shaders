@@ -7,7 +7,6 @@ Javier Garduño - GNU Lesser General Public License v3.0
 uniform float day_moment;
 uniform float day_mixer;
 uniform float night_mixer;
-uniform vec3 skyColor;
 uniform vec3 fogColor;
 
 #define MID_SUNSET_COLOR HORIZON_SUNSET_COLOR

@@ -1,3 +1,9 @@
+
+/* ____    __   ______________
+  / ______/ /  /  _/_  __/ __/
+ / _//___/ /___/ /  / / / _/
+/___/   /____/___/ /_/ /___/
+
 /* E-LITE shaders 5 - downscale.glsl //#include "/lib/downscale.glsl"
 Downscale functions. - Funções de downscale.*/ 
 

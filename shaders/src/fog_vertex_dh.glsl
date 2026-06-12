@@ -16,11 +16,11 @@
         float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, dirToView));
         float sunInfluence = sunAngle * sunAngle * sunAngle; 
 
-        float sunDayFactor = day_blend_float(1.0, 0.1, 0.0);
-        float dynamic_density = 0.002 + (0.001 * sunInfluence * sunDayFactor);
+        float sunDayFactor = dayBF(1.0, 0.1, 0.0);
+        float dynamic_density = 0.003 + (0.001 * sunInfluence * sunDayFactor);
 
-        float dist_adj = (gl_FogFragCoord - (far / 2));
-        near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * invFogAdjust), 0.0, 1.0);
+        float dist_adj = (gl_FogFragCoord - (far / mix(3.5, 25.0, rainStrength)));
+        near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
         float horizon_exp = mix(fog_density_coeff * biome_fog, fog_density_coeff * biome_fog * 0.2, rainStrength);
         float horizon_fog = pow(clamp(dist_ratio * fog_intensity_coeff, 0.0, 1.0), horizon_exp);
 
@@ -30,5 +30,20 @@
         fog_adj = pow(clamp(dist_ratio * fog_intensity_coeff, 0.0, 1.0), horizon_exp);
     #endif
 #else
-    fog_adj = sqrt(clamp(gl_FogFragCoord / dhRenderDistance, 0.0, 1.0));
+    #ifdef NEAR_FOG
+        #ifdef THE_END
+            float dynamic_density = 0.003;
+        #else
+            float dynamic_density = 0.015;
+        #endif
+       
+        float dist_adj = (gl_FogFragCoord - (dhRenderDistance / 512));
+        float invFogAdjust = 1.0 / FOG_ADJUST;
+        near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * invFogAdjust), 0.0, 1.0);
+        float horizon_fog = sqrt(clamp(gl_FogFragCoord / dhRenderDistance, 0.0, 1.0));
+
+        fog_adj = max(near_fog, horizon_fog);
+    #else
+        fog_adj = sqrt(clamp(gl_FogFragCoord / dhRenderDistance, 0.0, 1.0));
+    #endif
 #endif

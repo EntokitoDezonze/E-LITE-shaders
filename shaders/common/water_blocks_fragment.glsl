@@ -40,6 +40,7 @@ uniform sampler2D gaux4;
 uniform vec4 lightningBoltPosition;
 uniform float frameTime;
 uniform mat4 gbufferModelViewInverse;
+uniform int frameCounter;
 
 #if defined DISTANT_HORIZONS
     uniform float dhNearPlane;
@@ -64,10 +65,7 @@ uniform mat4 gbufferModelViewInverse;
   // Don't remove
 #endif
 
-#if defined CLOUD_REFLECTION && (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NETHER
-    uniform vec3 cameraPosition;
-#endif
-
+uniform vec3 cameraPosition;
 uniform float blindness;
 
 #if MC_VERSION >= 11900
@@ -81,27 +79,21 @@ uniform float blindness;
     uniform vec3 shadowLightPosition;
 #endif
 
-#if defined THE_END || (SHADOW_LOCK > 0 && defined SHADOW_CASTING && !defined NETHER)
-    uniform mat4 gbufferModelView;
-#endif
-
+uniform mat4 gbufferModelView;
 
 /* Ins / Outs */
 
 varying vec2 texcoord;
 varying vec2 lmcoord;
 varying vec4 tint_color;
-varying float fog_adj;
-varying float near_fog;
 varying vec3 water_normal;
 varying float block_type;
 varying vec4 worldposition;
 varying vec3 fragposition;
 varying vec3 tangent;
 varying vec3 binormal;
-varying vec3 direct_light_color;
+varying vec4 dirLight;
 varying vec3 candle_color;
-varying float direct_light_strength;
 varying vec3 omni_light;
 varying float visible_sky;
 varying vec3 up_vec;
@@ -111,7 +103,6 @@ varying vec3 low_sky_color;
 varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
-uniform int frameCounter;
 
 vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
 vec3 nfragpos = normalize(fragpos.xyz);
@@ -134,11 +125,12 @@ vec3 nfragpos = normalize(fragpos.xyz);
 #endif
 
 #ifdef FOG_ACTIVE
+    varying float fog_adj;
+    varying float near_fog;
     varying float sunInfluence;
 #endif
 
 /* Utility functions */
-#include "/lib/fps_correction.glsl"
 #include "/lib/luma.glsl"
 
 #include "/lib/projection_utils.glsl"
@@ -197,7 +189,7 @@ void main() {
     surface_normal = get_normals(mix(vec3(0.0, 0.0, 1.0), water_normal_base, is_water), fragposition);
 
     float normal_dot_eye = dot(surface_normal, normalize(fragposition));
-    float fresnel = square_pow(1.0 + normal_dot_eye);
+    float fresnel = squarePow(1.0 + normal_dot_eye);
 
     vec3 reflect_water_vec = reflect(fragposition, surface_normal);
     vec3 norm_reflect_water_vec = normalize(reflect_water_vec);
@@ -209,10 +201,10 @@ void main() {
         sky_color_reflect = hi_sky_color * .5 * ((eye_bright_smooth.y * .8 + 48) * 0.004166666666666667);
     }
 
-    sky_color_reflect = xyz_to_rgb(sky_color_reflect);
+    sky_color_reflect = xyzToRgb(sky_color_reflect);
 
     #if defined CLOUD_REFLECTION && (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NETHER
-        sky_color_reflect = get_cloud(normalize((gbufferModelViewInverse * vec4(reflect_water_vec * far, 1.0)).xyz), sky_color_reflect, 0.0, dither, worldposition.xyz, int(CLOUD_STEPS_AVG * 0.5), umbral, cloud_color, dark_cloud_color, 1.0);
+        sky_color_reflect = get_cloud(normalize((gbufferModelViewInverse * vec4(reflect_water_vec * far, 1.0)).xyz), sky_color_reflect, 0.0, dither, worldposition.xyz, int(CLOUD_STEPS_AVG * 0.5), umbral, cloud_color, dark_cloud_color, 1.0, 1.0);
     #endif
     if(block_type > 2.9 && block_type < 3.1) {  // Water
         #ifdef VANILLA_WATER
@@ -243,14 +235,14 @@ void main() {
             #endif
 
             real_light = omni_light +
-                (direct_light_strength * shadow_c * direct_light_color) * (1.0 - rainStrength * 0.75) +
+                (dirLight.a * shadow_c * dirLight.rgb) * (1.0 - rainStrength * 0.75) +
                 candle_color;
 
             real_light *= 1.25;
 
             block_color.rgb *= mix(real_light, vec3(1.0), nightVision * .125) * tint_color.rgb;
 
-            block_color.rgb = water_shader(fragposition, surface_normal, block_color.rgb, sky_color_reflect, norm_reflect_water_vec, fresnel, visible_sky, dither, direct_light_color);
+            block_color.rgb = water_shader(fragposition, surface_normal, block_color.rgb, sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
 
             block_color.a = sqrt(block_color.a);
         #else
@@ -262,7 +254,7 @@ void main() {
             #endif
 
             real_light = omni_light +
-                (direct_light_strength * visible_sky * direct_light_color) * (1.0 - rainStrength * 0.75) +
+                (dirLight.a * visible_sky * dirLight.rgb) * (1.0 - rainStrength * 0.75) +
                 candle_color;
 
             #if WATER_COLOR_SOURCE == 0
@@ -274,12 +266,12 @@ void main() {
             block_color = vec4(refraction(fragposition, block_color.rgb, water_normal_base), 1.0);
 
             #if WATER_TEXTURE == 1
-                water_texture += 0.25;
-                water_texture *= water_texture;
-                fresnel = clamp(fresnel * (water_texture), 0.0, 1.0);
+                float water_texture2 = water_texture + 0.25;
+                water_texture2 *= water_texture2;
+                fresnel = clamp(fresnel * (water_texture2), 0.0, 1.0);
             #endif
 
-            block_color.rgb = water_shader(fragposition, surface_normal, block_color.rgb, sky_color_reflect, norm_reflect_water_vec, fresnel, visible_sky, dither, direct_light_color);
+            block_color.rgb = water_shader(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5), block_color.rgb, sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
         #endif
 
     } else {  // Otros translúcidos
@@ -288,7 +280,7 @@ void main() {
         block_color *= tint_color;
 
         if(block_type < 0.11 && block_type > 0.09) { // Enhanced Portal
-            block_color.rgb *= fifth_pow(block_luma) * 7500;
+            block_color.rgb *= cubePow(block_luma) * sqrt(block_luma) * 1000;
         } else if(block_type > 2.3 && block_type < 2.5) { // Ice
             block_color = saturate_v4(block_color, 0.5);
             block_color.a *= 0.75;
@@ -308,7 +300,7 @@ void main() {
         #endif
 
         real_light = omni_light +
-            (direct_light_strength * shadow_c * direct_light_color) * (1.0 - rainStrength * 0.75) +
+            (dirLight.a * shadow_c * dirLight.rgb) * (1.0 - rainStrength * 0.75) +
             candle_color;
 
         block_color.rgb *= mix(real_light, vec3(1.0), nightVision * .125);
@@ -320,7 +312,7 @@ void main() {
             } else {
                 sat = 3.0;
             }
-            block_color = cristal_shader(fragposition, water_normal, saturate_v4(block_color, sat), sky_color_reflect, fresnel, visible_sky, dither, direct_light_color);
+            block_color = cristal_shader(fragposition, water_normal, saturate_v4(block_color, sat), sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
         }
     }
 

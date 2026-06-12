@@ -6,6 +6,8 @@
 E-LITE shaders 5 - fps_correction.glsl #include "/lib/fps_correction.glsl"
 Reduce quality of some effects on low fps for stabilize performance. - Reduzir a qualidade de alguns efeitos em baixo fps para estabilizar performance */
 
+// UNUSED.
+
 float fps = 1 / frameTime;
 
 float fps_correction(float fps, float minc, float maxc) {

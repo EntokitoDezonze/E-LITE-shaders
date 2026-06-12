@@ -23,10 +23,11 @@ uniform float viewHeight;
 uniform int frameCounter;
 uniform float frameTime;
 uniform mat4 gbufferModelViewInverse;
+uniform vec2 eyeBrightnessSmooth;
+uniform vec3 cameraPosition;
 
 #if STAR_SLIDER == 2 || defined THE_END 
     uniform float frameTimeCounter;
-    uniform vec3 cameraPosition;
     uniform float sunAngle;
 #endif
 

@@ -25,6 +25,11 @@ uniform float frameTime;
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
+uniform vec3 cameraPosition;
+
+#ifdef VOXY
+    uniform sampler2D vxDepthTexTrans;
+#endif
 
 #if MC_VERSION >= 11900
     uniform float darknessFactor;
@@ -77,7 +82,6 @@ varying float exposure;
 
 /* Utility functions */
 
-#include "/lib/fps_correction.glsl"
 #include "/lib/basic_utils.glsl"
 #include "/lib/depth.glsl"
 #include "/lib/luma.glsl"
@@ -97,6 +101,10 @@ void main() {
     float d = texture2DLod(depthtex0, texcoord, 0).r;
     float linear_d = ld(d);
 
+    #ifdef VOXY
+        float d2 = texture2DLod(vxDepthTexTrans, texcoord * RENDER_SCALE, 0).r;
+    #endif
+
     vec2 eye_bright_smooth = vec2(eyeBrightnessSmooth);
 
     // Depth to distance
@@ -104,10 +112,10 @@ void main() {
     
     #if defined THE_END || defined NETHER
         #define NIGHT_CORRECTION 1.0
-        #define COLOR_CORRECTION day_blend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
+        #define COLOR_CORRECTION dayBlend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
     #else
-        #define NIGHT_CORRECTION day_blend_float(0.5, 0.75, 10.0)
-        #define COLOR_CORRECTION day_blend(vec3(1.0, 0.8, 1.0), vec3(2.0), vec3(1.0, 0.6, 1.0))
+        #define NIGHT_CORRECTION dayBF(0.5, 0.75, 5.0)
+        #define COLOR_CORRECTION dayBlend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
     #endif
 
     // Underwater fog
@@ -148,7 +156,14 @@ void main() {
         #endif
     #endif
 
-    #if (VOL_LIGHT == 1 || (VOL_LIGHT == 2 && defined FSR)) && !defined NETHER
+    float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0);
+    height_factor = pow(height_factor, 0.1);
+    float cave_influence = height_factor * clamp(1.0 - eyeBrightnessSmooth.y * 0.1, 0.0, 1.0);
+    cave_influence = smoothstep(1.0, 0.0, cave_influence);
+
+    vec3 block_colorvl;
+
+    #if VOL_LIGHT == 1 && !defined NETHER
         #if defined THE_END
             #if MC_VERSION < 11604
                 float vol_light = 0.0;
@@ -156,7 +171,7 @@ void main() {
                 float vol_light = ss_godrays(dither) * 0.4;
             #endif
         #else
-            float vol_light = ss_godrays(dither);
+            float vol_light = ss_godrays(dither) * cave_influence;
         #endif
 
         vec4 center_world_pos = modeli_times_projectioni * (vec4(0.5, 0.5, 1.0, 1.0) * 2.0 - 1.0);
@@ -176,22 +191,30 @@ void main() {
 
             vol_intensity *= 0.666;
 
-            block_color.rgb += (vol_light_color * vol_light * vol_intensity * 2.0);
+            block_colorvl = block_color.rgb + (vol_light_color * vol_light * vol_intensity * 2.0);
         #else
             // Light source position for depth based godrays intensity calculation
             vec3 intermediate_vector =
                 normalize((gbufferModelViewInverse * vec4(astro_pos, 0.0)).xyz);
-            float vol_intensity =
-                clamp(dot(center_view_vector, intermediate_vector), 0.0, 1.0);
+            
+            #if ROUND_SUN == 1
+                float vol_intensity =
+                    clamp(dot(center_view_vector, intermediate_vector) * dayBF(1.0, 2.0, 1.0), 0.0, 1.0);
+            #else
+                float vol_intensity =
+                    clamp(dot(center_view_vector, intermediate_vector), 0.0, 1.0);
+            #endif
             vol_intensity *= dot(view_vector, intermediate_vector);
             vol_intensity =
-                pow(clamp(vol_intensity, 0.0, 1.0), vol_mixer) * 0.5 * clamp(abs(light_mix * 3.0 - 1.0), 0.0, 1.0);
-            block_color.rgb =
-                mix(block_color.rgb, vol_light_color * vol_light, vol_intensity * vol_light * clamp(1.25 - rainStrength, 0.0, 1.0));
+                pow(clamp(vol_intensity, 0.0, 1.0), vol_mixer) * 0.5 * abs(light_mix * 2.0 - 1.0);
+            block_colorvl =
+                mix(block_color.rgb, vol_light_color * vol_light, vol_intensity * (vol_light  * 0.5 + 0.5) * (1.0 - rainStrength * 0.85));
         #endif
+    #else
+       block_colorvl = block_color.rgb;
     #endif
 
-    #if VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER && !defined FSR
+    #if VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER
         #if defined COLORED_SHADOW
             vec3 vol_light = get_volumetric_color_light(dither, screen_distance, modeli_times_projectioni);
         #else
@@ -212,17 +235,19 @@ void main() {
 
         #if defined THE_END
             vol_intensity =
-                ((square_pow(clamp((vol_intensity + .666667) * 0.6, 0.0, 1.0)) * 0.5));
-            block_color.rgb += (vol_light_color * vol_light * vol_intensity * 2.0);
+                ((squarePow(clamp((vol_intensity + .666667) * 0.6, 0.0, 1.0)) * 0.5));
+            block_colorvl = block_color.rgb + (vol_light_color * vol_light * vol_intensity * 2.0);
         #else
             vol_intensity =
                 pow(clamp((vol_intensity + 0.5) * 0.666666666666666, 0.0, 1.0), vol_mixer) * 0.6 * abs(light_mix * 2.0 - 1.0);
 
-            block_color.rgb =
+            block_colorvl =
                 mix(block_color.rgb, vol_light_color * vol_light, vol_intensity * (vol_light * 0.5 + 0.5) * (1.0 - rainStrength));
         #endif
+    #elif VOL_LIGHT != 1
+        block_colorvl = block_color.rgb;
     #endif
-    
+
     // Dentro de la nieve
     #ifdef BLOOM
         if(isEyeInWater == 3) {
@@ -237,22 +262,23 @@ void main() {
     #endif
 
     #ifdef BLOOM
-        float bloom_luma = smoothstep(0.85, 1.0, luma(block_color.rgb * exposure)) * 0.5;
+        float bloom_luma = smoothstep(0.85, 1.0, luma(block_colorvl * exposure)) * 0.5;
 
         block_color = clamp(block_color, vec4(0.0), vec4(50.0, 50.0, 50.0, 1.0));
         
         /* DRAWBUFFERS:1246 */
-        gl_FragData[0] = block_color;
+        gl_FragData[0] = vec4(block_colorvl, 1.0);
         gl_FragData[1] = block_color * bloom_luma;
         #if SSR_TYPE > -1 || MATERIAL_GLOSS > 1
             gl_FragData[2] = block_color;
         #endif
         gl_FragData[3] = vec4(exposure, 0.0, 0.0, 0.0);
     #else
+        block_colorvl = clamp(block_colorvl, vec3(0.0), vec3(50.0));
         block_color = clamp(block_color, vec4(0.0), vec4(50.0, 50.0, 50.0, 1.0));
         
         /* DRAWBUFFERS:146 */
-        gl_FragData[0] = block_color;
+        gl_FragData[0] = vec4(block_colorvl, 1.0);
         #if SSR_TYPE > -1 || MATERIAL_GLOSS > 1
             gl_FragData[1] = block_color;
         #endif

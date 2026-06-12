@@ -1,4 +1,6 @@
 #version 120
+#include "/lib/extensions.glsl"
+
 /* MakeUp - E-LITE shaders 5 - gbuffers_terrain.fsh
 Render: Almost everything
 

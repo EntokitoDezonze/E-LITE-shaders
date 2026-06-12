@@ -21,6 +21,9 @@ uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
 uniform float frameTime;
+varying vec2 texcoord;
+uniform vec3 skyColor;
+
 /* Ins / Outs */
 
 varying vec3 up_vec;
@@ -41,6 +44,7 @@ varying vec3 pure_low_sky_color;
 
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     //resize_vertex(gl_Position);
 
     #include "/src/hi_sky.glsl"

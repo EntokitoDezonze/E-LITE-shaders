@@ -74,15 +74,15 @@ void main() {
             #endif
             block_color.rgb *= sky_luma_correction * current_wetness;
             #if COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
-                block_color.rgb *= day_blend_float(1.0, 1.5, sqrt(luma(block_color.rgb) * 0.5));
+                block_color.rgb *= dayBF(1.0, 1.5, sqrt(luma(block_color.rgb) * 0.5));
             #elif COLOR_SCHEME == 4 && defined SIMPLE_AUTOEXP
-                block_color.rgb *= day_blend_float(1.0, 1.5, sqrt(luma(block_color.rgb) * 3));
+                block_color.rgb *= dayBF(1.0, 1.5, sqrt(luma(block_color.rgb) * 3));
             #else
-                block_color.rgb *= day_blend(block_color.rgb, saturate(block_color.rgb, 0.5), sqrt(block_color.rgb));
+                block_color.rgb *= dayBlend(block_color.rgb, saturate(block_color.rgb, 0.5), sqrt(block_color.rgb));
             #endif
 
             #if COLOR_SCHEME == 4 && defined SIMPLE_AUTOEXP
-                block_color.rgb = pow(block_color.rgb, vec3(ASTRO_POWER * day_blend_float(1.0, 1.0, 0.6)));
+                block_color.rgb = pow(block_color.rgb, vec3(ASTRO_POWER * dayBF(1.0, 1.0, 0.6)));
             #else
                 block_color.rgb = pow(block_color.rgb, vec3(ASTRO_POWER));
             #endif
@@ -91,7 +91,7 @@ void main() {
                 block_color.rgb *= cursed_sky;
             #endif
         #else
-            block_color.rgb = saturate(block_color.rgb, day_blend_float(0.75, 1.0, 0.5)) * day_blend_float(0.5, 1.0, 0.15);
+            block_color.rgb = saturate(block_color.rgb, dayBF(0.75, 1.0, 0.5)) * dayBF(0.5, 1.0, 0.15);
         #endif
     #endif
 

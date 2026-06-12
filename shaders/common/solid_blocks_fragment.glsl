@@ -1,6 +1,12 @@
-#include "/lib/config.glsl"
+/* ____    __   ______________
+  / ______/ /  /  _/_  __/ __/
+ / _//___/ /___/ /  / / / _/  
+/___/   /____/___/ /_/ /___/
+                                    
+E-LITE shaders - solid_blocks_fragment.glsl
+Render of almost all blocks & PBR. */
 
-// MAIN FUNCTION ------------------
+#include "/lib/config.glsl"
 
 #if defined THE_END
     #include "/lib/color_utils_end.glsl"
@@ -10,167 +16,86 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
+uniform sampler2D tex, specular, normals, gaux1, gaux3, gaux4, shadowcolor0, depthtex1;
+uniform sampler2DShadow shadowtex1, shadowtex0;
 
-uniform float viewWidth;
-uniform float inv_aspect_ratio;
-uniform float viewHeight;
-uniform int frameCounter;
-uniform float frameTime;
-uniform float far;
-uniform sampler2D tex;
-uniform int isEyeInWater;
-uniform float nightVision;
-uniform float rainStrength;
-uniform float wetness;
-uniform float light_mix;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
-uniform sampler2D gaux4;
-uniform vec3 sunPosition;
-uniform sampler2D depthtex0;
-uniform float near;
+uniform float viewWidth, viewHeight, far, near, light_mix, rainStrength, wetness, blindness, frameTime, frameTimeCounter, inv_aspect_ratio, nightVision, dhNearPlane;
+uniform float pixel_size_x, pixel_size_y; // pixel_size
+uniform int frameCounter, isEyeInWater, worldTime, entityId;
+uniform vec3 sunPosition, moonPosition, cameraPosition, previousCameraPosition;
+uniform vec4 entityColor;
 uniform ivec2 eyeBrightnessSmooth;
-uniform vec4 lightningBoltPosition;
-uniform mat4 gbufferProjectionInverse;
-uniform mat4 gbufferProjection;
-
-#if MATERIAL_GLOSS > 1
-    uniform sampler2D gaux1;
-    uniform mat4 gbufferPreviousProjection;
-    uniform mat4 gbufferPreviousModelView;
-    uniform mat4 gbufferProjectionMatrix;
-#endif
-
-#if defined GBUFFER_BLOCK || SHADOW_LOCK > 0 && defined SHADOW_CASTING
-    uniform float frameTimeCounter;
-#endif
-
-#if defined GBUFFER_BLOCK || SHADOW_LOCK > 0 && defined SHADOW_CASTING || (defined MATERIAL_GLOSS && !defined NETHER) || ((MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1)
-    uniform vec3 cameraPosition;
-    uniform vec3 previousCameraPosition;
-    uniform mat4 gbufferModelViewInverse;
-#endif
-
-#if defined DISTANT_HORIZONS
-    uniform float dhNearPlane;
-#endif
-
-#if defined GBUFFER_ENTITIES
-    uniform int entityId;
-    uniform vec4 entityColor;
-#endif
-
-#if defined SHADOW_CASTING
-    uniform sampler2DShadow shadowtex1;
-    #if defined COLORED_SHADOW
-        uniform sampler2DShadow shadowtex0;
-        uniform sampler2D shadowcolor0;
-    #endif
-#endif
-
-uniform float blindness;
+uniform mat4 gbufferProjection, gbufferProjectionInverse, gbufferModelView, gbufferPreviousModelView, gbufferModelViewInverse, gbufferPreviousProjection, shadowModelView, shadowProjection;
 
 #if MC_VERSION >= 11900
-    uniform float darknessFactor;
-    uniform float darknessLightFactor;
+    uniform float darknessFactor, darknessLightFactor;
 #endif
 
-#ifdef MATERIAL_GLOSS
-     // Don't remove
-#endif
-
-#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
-    uniform int worldTime;
-    uniform vec3 moonPosition;
-    uniform mat4 gbufferModelView;
-#endif
-
-#if SHADOW_LOCK > 0 && defined SHADOW_CASTING
-    uniform mat4 shadowModelView;
-    uniform mat4 shadowProjection;
-    uniform vec3 shadowLightPosition;
-#endif
-
-/* Ins / Outs */
+/* Packing */
+varying vec4 data_pack_a; // x: fog_adj, y: direct_light_strength, z: block_type_f, w: exposure
+varying vec4 data_pack_b; // x: near_fog, y: visible_sky, z: sunInfluence, w: roughness
+varying vec2 emissiveData; // x: ore_type_f, y: emitter_type_f
+varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 
 varying vec2 texcoord;
 varying vec4 tint_color;
-varying float fog_adj;
-varying float near_fog;
-varying vec3 direct_light_color;
-varying vec3 candle_color;
-varying float direct_light_strength;
-varying vec3 omni_light;
-varying float exposure;
-varying vec3 hi_sky_color;
-varying vec3 low_sky_color;
-varying float block_type_f;
-varying float isSeasonable;
-varying float isGrass;
+varying vec3 direct_light_color, candle_color, omni_light;
 
-
-//#if RENDER_SCALE_INT != 100 && defined FSR
- //   varying float depth;
-//#endif
-
-#if defined EMISSIVE_MATERIAL || defined EMISSIVE_ORE
-    varying float ore_type_f;
-    varying float emitter_type_f;
+#if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+    varying vec4 vDistTg;
+    float vdist = vDistTg.a;
+    vec3 view_tg = vDistTg.rgb;
+    varying vec4 atlas_uv;
+    varying vec2 local_uv;
+    varying mat3 tbn;
 #endif
 
-#if defined SHADOW_CASTING && SHADOW_LOCK > 0 && !defined NETHER
-    varying vec3 vWorldPos;
-    varying vec3 vNormal;
-    varying vec3 vBias;
-#endif
-
-#if defined SHADOW_CASTING && !defined NETHER
-    varying vec3 shadow_pos;
-    varying float shadow_diffuse;
-#endif
-
-#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
-    varying float visible_sky;
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR
+    varying vec3 sub_position3, sub_position3_norm;
     varying vec2 lmcoord_alt;
     varying vec4 glossParms;
-    varying vec3 sub_position3;
-    varying vec3 sub_position3_norm;
-    varying vec3 flat_normal;
-#endif
-
-#if MATERIAL_GLOSS > 1
-    varying float roughness;
     varying float reflexIndex;
 #endif
 
-#ifdef FOG_ACTIVE
-    varying float sunInfluence;
+varying vec3 flat_normal;
+
+#if defined SHADOW_CASTING && !defined NETHER
+    varying vec4 shadowParms;
+    vec3 shadow_pos = shadowParms.rgb;
+    float shadow_diffuse = shadowParms.a;
+    #if SHADOW_LOCK > 0
+        varying vec3 vNormal, vBias, vWorldPos;
+    #endif
 #endif
 
-/* Utility functions */
+float fog_adj, direct_light_strength, block_type_f, exposure;
+float near_fog, visible_sky, sunInfluence, roughness;
+float ore_type_f, emitter_type_f, isGrass;
+float reflex_index2;
+vec3 final_candle_color;
+vec4 pure_block_color; 
+vec2 pixel_size;
 
 #include "/lib/luma.glsl"
 #include "/lib/depth.glsl"
 #include "/lib/basic_utils.glsl"
+#include "/lib/projection_utils.glsl"
 
-#if MATERIAL_GLOSS > 1
-    #include "/lib/projection_utils.glsl"
+#if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+    #include "/lib/pbr.glsl"
 #endif
 
-#if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || ((MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1)
-    #include "/lib/dither.glsl"
-#endif
+#include "/lib/dither.glsl"
 
 #if defined SHADOW_CASTING && !defined NETHER
     #include "/lib/shadow_frag.glsl"
 #endif
 
 #if MATERIAL_GLOSS > 0 && !defined NETHER
-    #include "/lib/material_gloss_fragment.glsl"
+    #include "/lib/ggx.glsl"
 #endif
 
-#if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_HAND || defined GBUFFER_BLOCK)
+#if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
     #include "/lib/reflections_engine.glsl"
 #endif
 
@@ -178,35 +103,49 @@ varying float isGrass;
     #include "/lib/shadow_vertex.glsl"
 #endif
 
-#if defined GBUFFER_BLOCK
-    #include "/lib/end_portal.glsl"
-#endif
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-#if defined EMISSIVE_MATERIAL || defined EMISSIVE_ORE
-    int ore_type = int(round(ore_type_f));
-    int emitter_type = int(round(emitter_type_f));
-#endif
-
-int block_type = int(round(block_type_f));
-
+#include "/lib/end_portal.glsl"
 vec3 computeRealLight(vec3 omni, vec3 directColor, float directStrength, vec3 shadow, vec3 material, vec3 candle) {
-    return omni + shadow * directColor * (directStrength * (1.0 + material)) * (1.0 - (rainStrength * 0.75)) + candle;
+    return (omni + shadow * directColor * (directStrength * (1.0 + material)) * (1.0 - (rainStrength * 0.75))) + candle;
 }
-
+varying float vanilla_ao;
 void main() {
-    //if(fragment_cull()) discard;
-    
-    #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        float reflex_index2 = reflexIndex;
+    /* Unpack */
+    vec3 viewPos = mat3(gbufferProjectionInverse) * (vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z) * 2.0 - 1.0);
+    vec4 tmp = gbufferProjectionInverse * vec4(vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z) * 2.0 - 1.0, 1.0);
+    viewPos = tmp.xyz / tmp.w;
+    vec3 playerPos = (gbufferModelViewInverse * vec4(viewPos, 1.0)).xyz;
+
+    fog_adj = data_pack_a.x;
+    direct_light_strength = data_pack_a.y;
+    block_type_f = data_pack_a.z;
+    exposure = data_pack_a.w;
+    near_fog = data_pack_b.x;
+    visible_sky = data_pack_b.y;
+    sunInfluence = data_pack_b.z;
+    roughness = data_pack_b.w;
+    isGrass = foliageData.z;
+
+    // === Parallax
+    #if defined LabPBR && defined POM && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        #include "/src/pom.glsl"
     #else
-        float reflex_index2;
+        vec2 final_uv = texcoord;
     #endif
 
+    // === Auxiliary
+    pure_block_color = texture2D(tex, final_uv);
+    vec4 block_color = vec4(pure_block_color.rgb * tint_color.rgb, pure_block_color.a);
+    float block_luma = luma(block_color.rgb);
+    block_color.rgb *= vanilla_ao;
 
-    #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (MATERIAL_GLOSS > 0 && !defined NETHER)
+    pixel_size = vec2(pixel_size_x, pixel_size_y);
+    final_candle_color = candle_color;
+    
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
+        reflex_index2 = reflexIndex;
+    #endif
+    
+    #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (MATERIAL_GLOSS > 0 && !defined NETHER) || defined LabPBR
         #if AA_TYPE > 0 
             float dither = shifted_dither13(gl_FragCoord.xy);
         #else
@@ -220,29 +159,22 @@ void main() {
         if(umbral > dither) { discard; return; }
     #endif
 
-    #if defined GBUFFER_ENTITIES && BLACK_ENTITY_FIX == 1
-        vec4 block_color = texture2D(tex, texcoord);
-        if(block_color.a < 0.1 && entityId != 10101) { discard; return; }
-    #else
-        #if RENDER_SCALE_INT != 100 && defined FSR
-            vec4 block_color = texture2D(tex, texcoord);
-        #else
-            vec4 block_color = texture2D(tex, texcoord);
-        #endif
-    #endif
+    // === Block detection
+    int ore_type = int(round(emissiveData.x));
+    int emitter_type = int(round(emissiveData.y));
+    int block_type = int(round(block_type_f));
     
-    vec4 pure_block_color = block_color;
-    block_color *= tint_color;
-    float block_luma = luma(block_color.rgb);
-    
+    // === End portal render
     #ifdef END_PORTAL
-        #if defined GBUFFER_BLOCK
-            if (block_type == 1){
-                block_color.rgb = end_portal();
-            }
-        #endif
+        float endLuma = 1.0;
+        if (block_type == 1){ block_color.rgb = end_portal();
+        endLuma = 1.0 - luma(block_color.rgb);
+        reflex_index2 = 1.0 * endLuma; roughness = 5.0 * endLuma;}
     #endif
-    
+
+    if (block_type == 2){reflex_index2 = 0.5; roughness = 5.0;}
+
+    // === Shadows calc
     #if defined SHADOW_CASTING && !defined NETHER
         #if SHADOW_LOCK > 0
             vec3 offsetVector = vNormal * 0.002;
@@ -258,97 +190,109 @@ void main() {
         #endif
 
         #if defined COLORED_SHADOW
-            vec3 shadow_c = mix(get_colored_shadow(shadow_real_pos, dither), vec3(1.0), shadow_diffuse);
+            vec3 shadow_c = mix(get_colored_shadoww(shadow_real_pos, dither, flat_normal), vec3(1.0), shadow_diffuse);
         #else
-            vec3 shadow_c = mix(get_shadow(shadow_real_pos, dither), vec3(1.0), shadow_diffuse);
+            vec3 shadow_c = mix(get_shadoww(shadow_real_pos, dither, flat_normal), vec3(1.0), shadow_diffuse);
         #endif
     #else
         vec3 shadow_c = vec3(abs((light_mix * 2.0) - 1.0));
     #endif
 
-    vec3 final_candle_color = candle_color;
-
-    #ifdef FOLIAGE_V
-        float grass = step(0.5, isGrass);
-    #else
-        float grass = 0.0;
-    #endif
-
+    // === Grass correction
     #ifdef SHADOW_CASTING
         float directLight2;
         if(isEyeInWater == 0) {
-            directLight2 = mix(direct_light_strength, (sqrt(sqrt(direct_light_strength) * 0.85) * luma(shadow_c)), grass);
+            directLight2 = mix(direct_light_strength, (sqrt(sqrt(direct_light_strength) * 0.85) * luma(shadow_c)), float(isGrass > 0.5));
         } else {
-            directLight2 = mix(direct_light_strength, (direct_light_strength * 0.5 * luma(shadow_c)), grass);  
+            directLight2 = mix(direct_light_strength, (direct_light_strength * 0.5 * luma(shadow_c)), float(isGrass > 0.5));  
         }
     #else
         float directLight2 = direct_light_strength;
     #endif
 
-    vec3 shadow_fol = sqrt(shadow_c);
-    shadow_c = mix(shadow_c, shadow_fol, grass);
-
-    #if defined GBUFFER_BEACONBEAM
-        block_color.rgb *= block_color.rgb * 2.0 / exposure;
-    #elif defined GBUFFER_ENTITY_GLOW
-        block_color.rgb = clamp(gray(block_color.rgb) * vec3(0.75, 0.75, 1.5), vec3(0.3), vec3(1.0));
+    // === PBR auxiliary
+    #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        vec3 bumpedNormal;
+        if(block_type != 1.0) {
+            bumpedNormal = getBumpedNormal(texcoord, flat_normal, normals);
+        } else {
+            bumpedNormal = flat_normal;
+        }
     #else
-    
-        #if (MATERIAL_GLOSS == 1 || MATERIAL_GLOSS == 3) && !defined NETHER
-            float final_gloss_power = glossParms.g;
-            float luma_adj = (glossParms.a == 1.0) ? block_luma : fastpow(block_luma * glossParms.b, glossParms.a);
-            
-            vec3 material_gloss_factor = vec3(0.0);
-
-            float g_mask = step(0.1, glossParms.r);
-            if(g_mask > 0.5){ 
-                vec3 refl_vec = reflect(sub_position3_norm, flat_normal);
-                material_gloss_factor = material_gloss(refl_vec, lmcoord_alt, final_gloss_power, flat_normal, mix(vec3(luma(direct_light_color)), direct_light_color, 0.5) * glossParms.r);
-            }
-
-            vec3 real_light = computeRealLight(omni_light, direct_light_color, directLight2, shadow_c, material_gloss_factor * luma_adj, candle_color);
-        #else
-            vec3 real_light = computeRealLight(omni_light, direct_light_color, directLight2, shadow_c, vec3(0.0), candle_color);
-        #endif
-
-        block_color.rgb *= mix(real_light, vec3(1.0), nightVision * 0.125);
-        block_color.rgb *= mix(vec3(1.0), vec3(NV_COLOR_R, NV_COLOR_G, NV_COLOR_B), nightVision);
-
-        // Entity Damage / Thunderbolt
-        #if defined GBUFFER_ENTITIES
-            if(entityId == 10101) {
-                block_color = vec4(1.0, 1.0, 1.0, 0.5);
-            } else {
-                block_color.rgb = mix(block_color.rgb, entityColor.rgb, entityColor.a * luma(real_light) * 3.0);
-            }
-        #endif
-        
-        #if defined GBUFFER_TERRAIN || defined GBUFFER_TEXTURED || defined GBUFFER_ENTITIES
-            #include "/lib/emissive_materials.glsl"
-        #endif
+        vec3 bumpedNormal = flat_normal;
     #endif
 
-    #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        if (reflex_index2 > 0.03) { 
+    #if !defined NETHER && defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        vec3 shadowLightDir = mix(-sunPosition, sunPosition, light_mix) * 0.01;
+        float diffuseRelief = clamp(dot(bumpedNormal, shadowLightDir), 0.0, 1.0);
+        float shadow_c_relief = (isGrass < 0.5) ? sqrt(directLight2 * diffuseRelief) : directLight2;
+    #else
+        float shadow_c_relief = directLight2;
+    #endif
+    
+    #if defined LabPBR && defined POM && defined POM_SHADOW && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        float shadow_factor = 1.0;
+        if (pom_fade < 1.0) {
+            shadow_factor = get_pom_shadow(surface_depth, local_uv, light_tg, dither, shadow_c);
+        }
+        block_color.rgb *= shadow_factor;
+    #endif
+    
+    // === Block reflection
+    float currentRoughness = roughness;
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER)
+        #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+            vec4 specMap = texture2D(specular, final_uv);
+            float smoothness = specMap.r;
+            float f0_val = mix(specMap.g * (1.0 - specMap.a), specMap.g, step(1.0, specMap.a));
+            float isMetal = step(0.9, f0_val);
+            float final_gloss_power = pow(smoothness, 4.0) * 256.0 + 1.0;
+            float block_luma2 = block_luma + smoothness * mix(30.0, 100.0, isMetal);
+            block_luma2 *= pow(smoothness, 4.0);
+            currentRoughness = pow(1.0 - smoothness, 2.0);
+        #else
+            float final_gloss_power = glossParms.g;
+            float block_luma2 = pow(block_luma * glossParms.b, glossParms.a);
+            float isMetal = 0.0;
+        #endif
 
-            float n_dot_v = dot(flat_normal, sub_position3_norm);
-            float fresnel = clamp(1.0 + n_dot_v, 0.0, 1.0);
-            fresnel *= fresnel;
+        vec3 gloss = ggxSpecular(sub_position3, lmcoord_alt, final_gloss_power, bumpedNormal, direct_light_color * glossParms.r, isMetal);
+        gloss = clamp(gloss, 0.0, 1.0);
+        block_color.rgb = saturate(block_color.rgb, max(1.0 - luma(gloss * 2), 0.75));
+        vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, gloss * block_luma2, candle_color);
+    #else
+        vec3 gloss = vec3(0.0);
+        vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, vec3(0.0), candle_color);
+    #endif
 
-            if (fresnel * reflexIndex > 0.005) {
-                float waterMask = float(isEyeInWater != 1);
-                float waterBrighness = (eyeBrightnessSmooth.y * 0.00333 + 0.2);
+    block_color.rgb *= mix(real_light, vec3(1.0), nightVision * 0.125);
+    block_color.rgb *= mix(vec3(1.0), vec3(NV_COLOR_R, NV_COLOR_G, NV_COLOR_B), nightVision);
 
-                vec3 sky_refl = mix(
-                    hi_sky_color * (0.5 * waterBrighness), 
-                    mix(low_sky_color * reflexIndex, hi_sky_color, 0.75), 
-                    waterMask
-                );
-
-                block_color = solid_shader(sub_position3, flat_normal, block_color, xyz_to_rgb(sky_refl), fresnel, visible_sky, roughness, reflex_index2);
-            }
+    // === Entity Damage / Thunderbolt
+    #if defined GBUFFER_ENTITIES
+        if(entityId == 10101) {
+            block_color = vec4(1.0, 1.0, 1.0, 0.5);
+        } else {
+            block_color.rgb = mix(block_color.rgb, entityColor.rgb, entityColor.a * luma(real_light) * 3.0);
         }
     #endif
+    
+    #include "/lib/emissive_materials.glsl"
+
+    // === SSR
+    #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        if ((reflex_index2 + currentRoughness) > 0.001) {
+            vec3 R = reflect(sub_position3_norm, bumpedNormal);
+            vec2 sky_uv = vec2(atan(R.z, R.x) * 0.1591549 + 0.5, acos(-R.y) * 0.3183098 + 0.1);
+            vec3 sky_refl = texture2D(gaux4, clamp(sky_uv, 0.01, 0.99)).rgb;
+            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2);
+        }
+    #endif
+
+    #ifdef DISTANT_HORIZONS
+        block_color.rgb *= mix(1.0, 0.5, pow(fog_adj, 2.0));
+    #endif
+    block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
 
     #include "/src/finalcolor.glsl"
     #include "/src/writebuffers.glsl"

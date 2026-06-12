@@ -1,4 +1,5 @@
 #version 120
+#include "/lib/extensions.glsl"
 /* MakeUp - E-LITE shaders 5 - gbuffers_entities_glowing.fsh
 Render: Droped objects, mobs and things like that... glowing
 

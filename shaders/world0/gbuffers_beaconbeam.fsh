@@ -1,6 +1,7 @@
 #version 120
+#include "/lib/extensions.glsl"
 /* MakeUp - E-LITE shaders 5 - gbuffers_beaconbeam.fsh
-Render: BEacon beam
+Render: Beacon beam
 
 Javier Garduño - GNU Lesser General Public License v3.0
 */

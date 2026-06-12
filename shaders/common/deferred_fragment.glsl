@@ -50,6 +50,10 @@ uniform float viewHeight;
     uniform float dhFarPlane;
 #endif
 
+#ifdef VOXY
+    uniform sampler2D vxDepthTexTrans;
+#endif
+
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
 uniform float pixel_size_x;
@@ -86,7 +90,6 @@ varying vec3 direct_light_strength;
 
 #include "/lib/depth.glsl"
 #include "/lib/luma.glsl"
-#include "/lib/fps_correction.glsl"
 #include "/lib/basic_utils.glsl"
 
 #ifdef DISTANT_HORIZONS
@@ -135,10 +138,16 @@ void main() {
         float dh_d = ld_dh(d2);
     #endif
 
+    #ifdef VOXY
+        float d3 = texture2DLod(vxDepthTexTrans, texcoord * RENDER_SCALE, 0).r;
+    #endif
+
     #if !defined THE_END && !defined NETHER && ROUND_SUN < 2
         vec3 sun = draw_sun();
-        #ifdef DISTANT_HORIZONS
+        #if defined DISTANT_HORIZONS
             block_color.rgb += sun * step(0.9999, dh_d * d);
+        #elif defined VOXY
+            block_color.rgb += sun * step(0.9999, d3 * d);
         #else
             block_color.rgb += sun * step(0.9999, d);
         #endif
@@ -150,10 +159,21 @@ void main() {
 
     #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
         #if AA_TYPE > 0 && !defined PS1_LIKE
-            float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
+            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
         #else
             float dither = semiblue(gl_FragCoord.xy);
         #endif
+    #endif
+
+    float eye_brightness_scaled_val = (eye_bright_smooth.y * .8 + 48.0) * 0.004166666666666667;
+
+    #if V_CLOUDS > 0 && !defined UNKNOWN_DIM || AURORA > 0
+        float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0);
+        height_factor = pow(height_factor, 0.25);
+        float cave_influence = height_factor * clamp(1.0 - eye_brightness_scaled_val * 0.1, 0.0, 1.0);
+        cave_influence = smoothstep(1.0, 0.9, cave_influence);
+    #else
+        float cave_influence = 1.0;
     #endif
 
     #if ((V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY) || AURORA > 0
@@ -165,7 +185,7 @@ void main() {
             vec3 nfragpos = normalize(fragpos.xyz);
             float sun_influence = dot(nfragpos, sunPosition * 0.01);
             float normalized_sun_influence = smoothstep(-1.0, 1.0, sun_influence);
-            float final_sun_factor = pow(normalized_sun_influence, day_blend_float(1.0, 0.0, 1.5));
+            float final_sun_factor = pow(normalized_sun_influence, dayBF(1.0, 1.0, 1.5));
 
             #ifdef THE_END
                 float bright = dot(view_vector, vec3(0.0));
@@ -173,7 +193,7 @@ void main() {
                 bright *= bright * bright * bright;
             #else
                 float bright = final_sun_factor;
-                bright *= day_blend_float(1.0, 1.0, 0.0);
+                bright *= dayBF(1.0, 1.0, 0.0);
             #endif
 
             #ifdef THE_END
@@ -181,7 +201,7 @@ void main() {
                     block_color.rgb = get_end_cloud(view_vector, block_color.rgb, bright, dither, cameraPosition, CLOUD_STEPS_AVG);
                 #endif
             #else
-                block_color.rgb = get_cloud(view_vector, block_color.rgb, bright, dither, cameraPosition, CLOUD_STEPS_AVG, umbral, cloud_color, dark_cloud_color, dynamicValue);
+                block_color.rgb = get_cloud(view_vector, block_color.rgb, bright, dither, cameraPosition, CLOUD_STEPS_AVG, umbral, cloud_color, dark_cloud_color, dynamicValue, cave_influence);
             #endif
         }
 
@@ -217,12 +237,12 @@ void main() {
         float ao_att = pow(clamp(linear_d * 1.6, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
 
         #ifdef DISTANT_HORIZONS
-            if (d >= 1.0) {
-                //float ao_attdh = pow(clamp(dh_d * 0.0, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
+            if (d >= 1.0 && dh_d < 1) {
+                float ao_attdh = pow(clamp(dh_d * 1.6, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
                 
-                float final_aodh = clamp(dh_dbao(dither), 0.0, 1.0);
+                float final_aodh = clamp(mix(dh_dbao(dither), 1.0, ao_attdh), 0.0, 1.0);
                 block_color.rgb *= final_aodh;
-            }
+            }            
         #endif
 
         float final_ao = clamp(mix(dbao(dither), 1.0, ao_att), 0.0, 1.0);
@@ -231,13 +251,12 @@ void main() {
 
     #if defined THE_END || defined NETHER
         #define NIGHT_CORRECTION 1.0
-        #define COLOR_CORRECTION day_blend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
+        #define COLOR_CORRECTION dayBlend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
     #else
-        #define NIGHT_CORRECTION day_blend_float(0.5, 0.75, 3.0)
-        #define COLOR_CORRECTION day_blend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
+        #define NIGHT_CORRECTION dayBF(0.5, 0.75, 3.0)
+        #define COLOR_CORRECTION dayBlend(vec3(1.0, 0.8, 1.0), vec3(1.0), vec3(1.0, 0.6, 1.0))
     #endif
 
-    float eye_brightness_scaled_val = (eye_bright_smooth.y * .8 + 48.0) * 0.004166666666666667;
     vec3 water_light_color_base = NIGHT_CORRECTION * saturate(WATER_COLOR, mix(1.0, 0.25, rainStrength)) * COLOR_CORRECTION * direct_light_strength;
 
     // Underwater sky

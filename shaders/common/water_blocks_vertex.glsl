@@ -29,8 +29,13 @@ uniform float viewWidth;
 uniform float viewHeight; 
 uniform int frameCounter;
 uniform float frameTime;
+uniform vec3 skyColor;
+
 #ifdef DISTANT_HORIZONS
     uniform int dhRenderDistance;
+#endif
+#ifdef VOXY
+    uniform int vxRenderDistance;
 #endif
 
 #ifdef DYN_HAND_LIGHT
@@ -52,22 +57,22 @@ uniform float frameTime;
     uniform float endFlashIntensity;
 #endif
 
+float direct_light_strength;
+vec3 direct_light_color;
+
 /* Ins / Outs */
 
 varying vec2 texcoord;
 varying vec2 lmcoord;
 varying vec4 tint_color;
-varying float fog_adj;
-varying float near_fog;
 varying vec3 water_normal;
 varying float block_type;
 varying vec4 worldposition;
 varying vec3 fragposition;
 varying vec3 tangent;
 varying vec3 binormal;
-varying vec3 direct_light_color;
 varying vec3 candle_color;
-varying float direct_light_strength;
+varying vec4 dirLight;
 varying vec3 omni_light;
 varying float visible_sky;
 varying vec3 up_vec;
@@ -95,7 +100,11 @@ varying vec3 pure_low_sky_color;
     varying vec3 dark_cloud_color;
 #endif
 
-varying float sunInfluence;
+#ifdef FOG_ACTIVE
+    varying float fog_adj;
+    varying float near_fog;
+    varying float sunInfluence;
+#endif
 
 attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
@@ -138,6 +147,7 @@ void main() {
 
     #include "/src/light_vertex.glsl"
 
+    dirLight = vec4(direct_light_color, direct_light_strength);
     water_normal = normal;
 
     tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
@@ -159,7 +169,10 @@ void main() {
     up_vec = normalize(gbufferModelView[1].xyz);
 
     vec3 dirToView = normalize(sub_position.xyz);
-    #include "/src/fog_vertex.glsl"
+    
+    #ifdef FOG_ACTIVE
+        #include "/src/fog_vertex.glsl"
+    #endif
 
     #if defined SHADOW_CASTING && !defined NETHER
         #include "/src/shadow_src_vertex.glsl"

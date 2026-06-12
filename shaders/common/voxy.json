@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "unusedString":
+  "
+    #include "/lib/config.glsl"
+  ",
+  #if AA_TYPE > 1
+    "taaOffset": "{
+      return taa_offset;
+    }",
+  #endif
+  "uniforms": [
+    "endFlashIntensity",
+    "worldTime",
+    "sunPosition",
+    "moonPosition",
+    "dayNightMix",
+    "rainStrength",
+    "skyColor",
+    "isEyeInWater",
+    "eyeBrightnessSmooth",
+    "vxViewProjInv",
+    "vxProj",
+    "vxProjInv",
+    "vxModelViewInv",
+    "vxModelView",
+    "viewWidth",
+    "viewHeight",
+    "vxRenderDistance",
+    "nightVision",
+    "blindness",
+    "frameTimeCounter",
+    "cameraPosition",
+    "lightningBoltPosition",
+    "darknessLightFactor",
+    "darknessFactor",
+    "gbufferModelView",
+    #if AA_TYPE > 1
+      "taa_offset",
+    #endif
+    "pixelSizeX",
+    "pixelSizeY"
+  ],
+  "samplers": {
+    "gaux1": "sampler2D",
+    "gaux4": "sampler2D",
+    "noisetex": "sampler2D",
+    "vxDepthTexTrans": "sampler2D"
+  },
+  "opaqueDrawBuffers": [1, 4],
+  "translucentDrawBuffers": [1]
+}

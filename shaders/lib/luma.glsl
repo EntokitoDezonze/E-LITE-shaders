@@ -17,6 +17,9 @@ float color_average(vec3 color) {
     return (color.r + color.g + color.b) / 3;
 } // Color average between red, green, and blue channels.
 
+float colorAverage(vec3 color) {
+    return (color.r + color.g + color.b) * 0.3333333333;
+}
 vec3 saturate(vec3 color, float saturation) {
     vec3 luma = gray(color);
     return mix(luma, color, saturation);

@@ -24,6 +24,11 @@ uniform float rainStrength;
 uniform float wetness;
 uniform mat4 gbufferProjectionInverse;
 uniform int dhRenderDistance;
+uniform vec3 skyColor;
+uniform float viewWidth; 
+uniform float viewHeight; 
+uniform int frameCounter;
+uniform float frameTime;
 
 #ifdef UNKNOWN_DIM
     uniform sampler2D lightmap;
@@ -59,10 +64,6 @@ varying vec3 low_sky_color;
 varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
-uniform float viewWidth; 
-uniform float viewHeight; 
-uniform int frameCounter;
-uniform float frameTime;
 /* Utility functions */
 
 #if AA_TYPE > 1

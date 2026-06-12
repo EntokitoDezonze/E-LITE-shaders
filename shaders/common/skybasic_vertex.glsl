@@ -3,6 +3,7 @@
 /* Color utils */
 
 #if MC_VERSION < 11604
+    uniform vec3 skyColor;
     #ifdef THE_END
         #include "/lib/color_utils_end.glsl"
     #elif defined NETHER

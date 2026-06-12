@@ -41,7 +41,7 @@ float dbao(float dither) {
     }
     ao /= AOSTEPS;
 
-    return sqrt((ao * clamp(AO_STRENGTH, 0.0, 1.3)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.3)));
+    return sqrt((ao * clamp(AO_STRENGTH, 0.0, 1.5)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.5)));
 }
 
 #ifdef DISTANT_HORIZONS

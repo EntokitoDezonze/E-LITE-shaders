@@ -48,14 +48,14 @@ void main() {
     //resize_vertex(gl_Position);
     tint_color = gl_Color;
 
-    basic_light = day_blend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR);
+    basic_light = dayBlend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR);
     basic_light = mix(basic_light, ZENITH_SKY_RAIN_COLOR * luma(basic_light), rainStrength);
 
     vec2 illumination = clamp(abs(lmcoord), 0.0, 1.0);  // Fix lines without correct illumination data
     illumination.y = (max(illumination.y, 0.065) - 0.065) * 1.06951871657754;
 
     vec3 candle_color =
-        CANDLE_BASELIGHT * ((illumination.x * illumination.x) + sixth_pow(illumination.x * 1.165));
+        CANDLE_BASELIGHT * ((illumination.x * illumination.x) + sixthPow(illumination.x * 1.165));
 
     basic_light += candle_color;
 }

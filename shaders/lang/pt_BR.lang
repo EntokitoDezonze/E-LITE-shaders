@@ -6,22 +6,22 @@ profile.low=§b§lBaixo
 profile.medium=§a§lMédio (Padrão)
 profile.high=§e§lAlto
 profile.extreme=§4§lExtremo
-profile.max=§5§l§oMAX
+profile.max=§5§lMAX
 
 profile.comment=Os perfis “Sem sombras” são feitos para máquinas de baixo desempenho, não levando em conta as sombras. Os perfis tradicionais adicionam gradualmente sombras de maior qualidade e efeitos mais avançados. Experimente as opções disponíveis e encontre a melhor combinação para você.
 
 #About
 #############################
-option.ACERCADE=§lE-LITE shaders
+option.ACERCADE=§lE-LITE por Entokito
 option.ACERCADE.comment=Obrigado por utilizar este shader! :). Defina os controles de qualidade nativos do Iris ou OptiFine nos valores normais ou predefinidos para obter uma melhor qualidade. Tradução para Português e modificação por: @Entokito
-value.ACERCADE.0=§5§l§oELT501
+value.ACERCADE.0=§5§lELT51
 
 #Style
 option.STYLE=§lEstilo
-value.STYLE.1=§6§lAprimorado
+value.STYLE.1=§6§lNatural
 value.STYLE.2=§b§lVanilla
 
-option.STYLE.comment=Aprimorado: Foca no visual, aprimorando a estética. Vanilla: Preserva a estética original do Minecraft.
+option.STYLE.comment=Natural: Foca no visual, aprimorando a estética. Vanilla: Preserva a estética original do Minecraft.
 
 #Options
 #############################
@@ -79,7 +79,7 @@ value.SHADOW_DISTANCE_SLIDER.4=§a§lMédia §0§a(8 cks)
 value.SHADOW_DISTANCE_SLIDER.5=§a§lMédia §0§a(10 cks)
 value.SHADOW_DISTANCE_SLIDER.6=§e§lAlta §0§e(12 cks)
 value.SHADOW_DISTANCE_SLIDER.7=§4§lExtrema §0§4(14 cks)
-value.SHADOW_DISTANCE_SLIDER.8=§5§l§oMAX §0§5(16 cks)
+value.SHADOW_DISTANCE_SLIDER.8=§5§lMAX §0§5(16 cks)
 
 option.SHADOW_QTY_SLIDER=§c▶§r Qual. da Sombra
 option.SHADOW_QTY_SLIDER.comment=Escolha com sabedoria, pois essa opção tem um impacto de performance muito alto. Média é o equilíbrio entre qualidade e desempenho.
@@ -89,7 +89,7 @@ value.SHADOW_QTY_SLIDER.2=§b§lBaixa
 value.SHADOW_QTY_SLIDER.3=§a§lMédia
 value.SHADOW_QTY_SLIDER.4=§e§lAlta
 value.SHADOW_QTY_SLIDER.5=§4§lExtrema
-value.SHADOW_QTY_SLIDER.6=§5§l§oMAX
+value.SHADOW_QTY_SLIDER.6=§5§lMAX
 
 option.SHADOW_LOCK=Sombras pixeladas
 
@@ -126,13 +126,13 @@ value.GODRAY_STEPS.3=§b§lBaixo
 value.GODRAY_STEPS.4=§a§lMédio
 value.GODRAY_STEPS.5=§e§lAlto
 value.GODRAY_STEPS.6=§4§lExtremo
-value.GODRAY_STEPS.7=§5§l§oMAX
+value.GODRAY_STEPS.7=§5§lMAX
 
 option.DOF=§a▶§r Profundidade de Campo
 option.DOF.comment=Ativa o desfoque baseado em profundidade de campo. Impacto médio no desempenho.
 
 option.DOF_STRENGTH=Força da Prof. de Campo
-value.DOF_STRENGTH.1.0=§5§l§oMAX
+value.DOF_STRENGTH.1.0=§5§lMAX
 
 option.DOF_SAMPLES_FACTOR=Fator de amostras do DOF
 
@@ -153,7 +153,7 @@ value.AOSTEPS.5.0=§a§lMédia
 value.AOSTEPS.6.0=§e§lAlta
 value.AOSTEPS.7.0=§c§lMuito alta
 value.AOSTEPS.8.0=§4§lExtrema
-value.AOSTEPS.10.0=§5§l§oMAX
+value.AOSTEPS.10.0=§5§lMAX
 
 option.AO_STRENGTH=Força da OA
 
@@ -193,7 +193,7 @@ value.MOTION_BLUR_SAMPLES.4.0=§a§lMédia
 value.MOTION_BLUR_SAMPLES.5.0=§e§lAlta
 value.MOTION_BLUR_SAMPLES.6.0=§c§lMuito alta
 value.MOTION_BLUR_SAMPLES.7.0=§4§lExtrema
-value.MOTION_BLUR_SAMPLES.8.0=§5§l§oMAX
+value.MOTION_BLUR_SAMPLES.8.0=§5§lMAX
 
 option.VANILLA_WATER=Água Vanilla
 
@@ -249,7 +249,7 @@ value.USE_WATER_TURBULENCE.2=Média
 value.USE_WATER_TURBULENCE.3=Alta
 
 option.COLOR_SCHEME=§lEsquema de cores
-option.COLOR_SCHEME.comment=New Shoka: Reinterpretação de um clássico (MakeUp). Shoka: O clássico (MakeUp). §b§lRealístico+: Cores de céu realistas. LITE Legado: Cores do LITE 3.3. Vanilla: Cores originais. Sombrio: Cores assustadoras. Realístico (Simples): Cores simples. Customizado: Escolha suas cores em efeitos -> cores customizadas. Realístico (Poluição): Simula poluição no ar.
+option.COLOR_SCHEME.comment=New Shoka: Reinterpretação de um clássico (MakeUp). §b§lRealístico+: Cores de céu realistas. LITE Legado: Cores do LITE 3.3. Vanilla: Cores originais. Sombrio: Cores assustadoras. Realístico (Simples): Cores simples. Customizado: Escolha suas cores em efeitos -> cores customizadas. Realístico (Poluição): Simula poluição no ar.
 value.COLOR_SCHEME.1=New Shoka
 value.COLOR_SCHEME.2=§b§lRealístico+
 value.COLOR_SCHEME.3=§6§lLITE Legado
@@ -348,13 +348,13 @@ option.CLOUD_STEPS_AVG=§e▶§r Qualidade das nuvens
 value.CLOUD_STEPS_AVG.3=§b§lBaixa
 value.CLOUD_STEPS_AVG.4=§a§lMédia
 value.CLOUD_STEPS_AVG.5=§e§lAlta
-value.CLOUD_STEPS_AVG.10=§c▶§r §5§l§oMAX
+value.CLOUD_STEPS_AVG.10=§c▶§r §5§lMAX
 
 option.CIRRUS_STEPS_AVG=§e▶§r Qualidade das nuv. Cirrus
 value.CIRRUS_STEPS_AVG.3=§b§lBaixa
 value.CIRRUS_STEPS_AVG.4=§a§lMédia
 value.CIRRUS_STEPS_AVG.5=§e§lAlta
-value.CIRRUS_STEPS_AVG.10=§c▶§r §5§l§oMAX
+value.CIRRUS_STEPS_AVG.10=§c▶§r §5§lMAX
 
 option.SIMPLE_SKY=§b▶§r Tipo do céu
 option.SIMPLE_SKY.comment=Use apenas com o esquema Realístico+, se quiser o céu antigo do LITE.
@@ -382,10 +382,10 @@ value.BLOOM_SAMPLES.4.0=§b§lBaixa
 value.BLOOM_SAMPLES.5.0=§a§lMédia
 value.BLOOM_SAMPLES.6.0=§e§lAlta
 value.BLOOM_SAMPLES.7.0=§c§lMuito alta
-value.BLOOM_SAMPLES.8.0=§5§l§oMAX
+value.BLOOM_SAMPLES.8.0=§5§lMAX
 
 option.BLOOM_STRENGTH=Força do Bloom
-value.BLOOM_STRENGTH.2.0=§5§l§oMAX
+value.BLOOM_STRENGTH.2.0=§5§lMAX
 
 option.BLACK_ENTITY_FIX=Correção entidades pretas
 value.BLACK_ENTITY_FIX.0=Não
@@ -401,7 +401,7 @@ value.FOG_ADJUST.8.0=Muito baixa
 value.FOG_ADJUST.4.0=Baixa
 value.FOG_ADJUST.2.0=Média
 value.FOG_ADJUST.1.5=Alta
-value.FOG_ADJUST.1.0=§5§l§oMAX
+value.FOG_ADJUST.1.0=§5§lMAX
 
 option.NETHER_FOG_DISTANCE=Dist. neblina do Nether
 value.NETHER_FOG_DISTANCE.0=Renderização
@@ -426,7 +426,7 @@ option.MATERIAL_GLOSS=§a▶§r Brilho do Material
 value.MATERIAL_GLOSS.0=Off
 value.MATERIAL_GLOSS.1=Especular
 value.MATERIAL_GLOSS.2=SSR
-option.MATERIAL_GLOSS.comment=Permite refletir luz direta em metais e objetos luminosos.
+option.MATERIAL_GLOSS.comment=Permite refletir luz direta em metais e objetos luminosos, §5§lMAX§r junta Especular com SSR, além de usar §a§lRaymarching§r para maior precisão.
 
 option.SIMPLE_AUTOEXP=§1▶§r Exposição Simples
 option.SIMPLE_AUTOEXP.comment=Desativa a exposição automática.
@@ -462,7 +462,7 @@ option.STAR_SLIDER=§a▶§r Estrelas
 option.STAR_SLIDER.comment=Ajusta a qualidade das estrelas.
 value.STAR_SLIDER.0=Off
 value.STAR_SLIDER.1=§b§lVanilla
-value.STAR_SLIDER.2=§5§l§oMAX
+value.STAR_SLIDER.2=§5§lMAX
 
 option.END_STARS=§9▶§r Estrelas no The End
 option.END_STARS.comment=Ativa estrelas no The End.
@@ -484,7 +484,7 @@ option.NEAR_FOG.comment=Adiciona uma neblina próxima ao jogador para maior imer
 option.FOG_TINT=Cor da neblina
 option.FOG_TINT.comment=Ajusta a cor da neblina.
 value.FOG_TINT.0=Neutra
-value.FOG_TINT.1=Azulada
+value.FOG_TINT.1=Fria
 value.FOG_TINT.2=Quente
 
 option.AURORA=§b▶§r Aurora Boreal
@@ -518,10 +518,25 @@ option.TITLE.comment=Mostra o título e o perfil quando o shader inicia.
 option.END_PORTAL=§9▶§r Portal do End Customizado
 option.END_PORTAL.comment=Ativa o portal do End renderizado pelo shader.
 
+option.LabPBR=§6▶§r LabPBR
+option.LabPBR.comment=Ativa o suporte ao LabPBR e o aplica aos reflexos dos blocos e à iluminação geral. Ative esta opção para usar POM. (Requer um pacote de recursos compatível com LabPBR).
+option.POM=§e▶§r POM
+option.POM.comment=Também conhecido como Mapeamento de Oclusão por Paralaxe, esta opção ativa o relevo de superfície a partir do LabPBR.
+option.POM_DEPTH=Profundidade do POM
+option.POM_DEPTH.comment=Ajusta a profundidade do POM. Valores muito altos podem causar artefatos visuais.
+option.POM_SHADOW=§b▶§r Sombra do POM
+option.POM_SHADOW.comment=Ativa o sombreamento próprio (self-shadowing) a partir dos pixels do POM.
+option.LabEMISSIVE=§1▶§r Emissores LabPBR
+option.LabEMISSIVE.comment=Ativa as texturas emissivas do LabPBR. Esta opção pode causar conflitos ou superexposição se Minérios/Materiais Brilhantes estiverem ativados.
+option.POM_STEPS=§c▶§r Qualidade do POM
+option.SS_SAMPLES=§9▶§r Qualidade da Sombra POM
+
 #Screens
 screen.BASIC_SCREEN=§lBásico ●
-screen.EFFECTS_SCREEN=§lEfeitos ★
-screen.LIGHTING_SCREEN=§lLuz ⚡
+screen.EFFECTS_SCREEN=§lEfeitos ✦
+screen.LIGHTING_SCREEN=§lLuz ☀
+screen.MISC_SCREEN=§lMiscelâneas ✚
+screen.LabPBR=§lMateriais 💎
 
 screen.INFO_SCREEN=§lInfo ?
 screen.INFO_SCREEN.comment= Informações potencialmente úteis.
@@ -531,7 +546,7 @@ option.HOVER.comment=Olá! Aqui você pode encontrar informações sobre os E-LI
 value.HOVER.0=
 
 option.VERSION=Info. da Versão
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Código: §5§l§oELT501§r. Data: 13 de Março 2026. Baseado no MakeUp Ultrafast 9.4c.
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1§r. Build: RELEASE. Código: §5§lELT51§r. Data: 12 de Junho 2026. Baseado no MakeUp Ultrafast 9.5a.
 value.VERSION.0=
 
 option.PROFILES=Perfis Gráficos
@@ -539,7 +554,7 @@ option.PROFILES.comment=Sem efeitos: Shader puro. Shadowless: Perfis normais com
 value.PROFILES.0=
 
 option.STYLES=Estilos
-option.STYLES.comment=Alterne entre Aprimorado (realismo) e Vanilla (estética original).
+option.STYLES.comment=Alterne entre Natural (realismo) e Vanilla (estética original).
 value.STYLES.0=
 
 option.PERF_IMPACT=Impacto na Perf.

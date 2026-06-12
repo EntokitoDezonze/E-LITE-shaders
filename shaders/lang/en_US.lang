@@ -3,34 +3,33 @@
 profile.no_effects=§lMinimum
 profile.shadowless_low=§lShadowless §b§lLow
 profile.shadowless_medium=§lShadowless §a§lMedium
-profile.shadowless_high=§lShadowless §5§l§oMAX
+profile.shadowless_high=§lShadowless §5§lMAX
 profile.very_low=§9§lVery Low
 profile.low=§b§lLow
 profile.medium=§a§lMedium (Default)
 profile.high=§e§lHigh
 profile.extreme=§4§lExtreme
-profile.max=§5§l§oMAX
+profile.max=§5§lMAX
 
 profile.comment=The "Shadowless" profiles are designed for low-performance machines, disregarding shadows. Traditional profiles gradually add higher-quality shadows and advanced effects. Please experiment with the available options to find the best combination for you.
 
 #About
 #############################
-option.ACERCADE=§lE-LITE shaders
+option.ACERCADE=§lE-LITE§r by §lEntokito
 option.ACERCADE.comment=Thanks for using this shader! :). Set Iris or OptiFine native quality controls to normal or default values for better quality. Modified by: @Entokito, revision on this language by tasxatzial.
-value.ACERCADE.1=§f§lELT501
-value.ACERCADE.2=§9§lELT501
-value.ACERCADE.3=§b§lELT501
-value.ACERCADE.4=§a§lELT501
-value.ACERCADE.5=§e§lELT501
-value.ACERCADE.6=§4§lELT501
-value.ACERCADE.7=§5§l§oELT501
+value.ACERCADE.1=§f§lELT51
+value.ACERCADE.2=§9§lELT51
+value.ACERCADE.3=§b§lELT51
+value.ACERCADE.4=§a§lELT51
+value.ACERCADE.5=§e§lELT51
+value.ACERCADE.6=§5§lELT51
 
 #Style
 option.STYLE=§lStyle
-value.STYLE.1=§6§lEnhanced
+value.STYLE.1=§6§lNatural
 value.STYLE.2=§b§lVanilla
 
-option.STYLE.comment=Enhanced: Focuses on the visual, enhancing the aesthetic. Vanilla: Preserves the original Minecraft aesthetic.
+option.STYLE.comment=Natural: Focuses on the visual, enhancing the aesthetic. Vanilla: Preserves the original Minecraft aesthetic.
 
 #Options
 #############################
@@ -71,7 +70,7 @@ suffix.BLUE=x
 suffix.EXPOSURE=x
 
 option.RAYMARCH_STEPS=§a▶§r Raymarch ray amount
-value.RAYMARCH_STEPS.10=§5§l§oMAX
+value.RAYMARCH_STEPS.10=§5§lMAX
 option.RAYMARCH_STEPS.comment=Adjusts the amount of rays in §a§lRaymarching§r. More rays = higher quality. Lowering this setting can improve performance.
 
 option.TONEMAPPING=Tonemap operator
@@ -105,7 +104,7 @@ value.SHADOW_DISTANCE_SLIDER.4=§a§lMedium §0§a(8 cks)
 value.SHADOW_DISTANCE_SLIDER.5=§a§lMedium §0§a(10 cks)
 value.SHADOW_DISTANCE_SLIDER.6=§e§lHigh §0§e(12 cks)
 value.SHADOW_DISTANCE_SLIDER.7=§4§lExtreme §0§4(14 cks)
-value.SHADOW_DISTANCE_SLIDER.8=§5§l§oMAX §0§5(16 cks)
+value.SHADOW_DISTANCE_SLIDER.8=§5§lMAX §0§5(16 cks)
 
 option.SHADOW_QTY_SLIDER=§c▶§r Shadow qty.
 option.SHADOW_QTY_SLIDER.comment=Choose carefully, as this option has a high performance impact. Medium is the balance between quality and performance.
@@ -115,7 +114,7 @@ value.SHADOW_QTY_SLIDER.2=§b§lLow
 value.SHADOW_QTY_SLIDER.3=§a§lMedium
 value.SHADOW_QTY_SLIDER.4=§e§lHigh
 value.SHADOW_QTY_SLIDER.5=§4§lExtreme
-value.SHADOW_QTY_SLIDER.6=§5§l§oMAX
+value.SHADOW_QTY_SLIDER.6=§5§lMAX
 
 option.SHADOW_LOCK=Pixel-Locked shadows
 value.SHADOW_LOCK.0=Off
@@ -158,13 +157,13 @@ value.GODRAY_STEPS.3=§b§lLow
 value.GODRAY_STEPS.4=§a§lMedium
 value.GODRAY_STEPS.5=§e§lHigh
 value.GODRAY_STEPS.6=§4§lExtreme
-value.GODRAY_STEPS.7=§5§l§oMAX
+value.GODRAY_STEPS.7=§5§lMAX
 
 option.DOF=§a▶§r Depth of field
 option.DOF.comment=Enables Depth of Field based blur. Medium performance impact.
 
 option.DOF_STRENGTH=DoF strength
-value.DOF_STRENGTH.1.0=§5§l§oMAX
+value.DOF_STRENGTH.1.0=§5§lMAX
 
 option.DOF_SAMPLES_FACTOR=DoF samples factor
 
@@ -185,7 +184,7 @@ value.AOSTEPS.5.0=§a§lMedium
 value.AOSTEPS.6.0=§e§lHigh
 value.AOSTEPS.7.0=§c§lVery high
 value.AOSTEPS.8.0=§4§lExtreme
-value.AOSTEPS.10.0=§5§l§oMAX
+value.AOSTEPS.10.0=§5§lMAX
 
 option.AO_STRENGTH=AO strength
 suffix.AO_STRENGTH=x
@@ -227,7 +226,7 @@ value.MOTION_BLUR_SAMPLES.4.0=§a§lMedium
 value.MOTION_BLUR_SAMPLES.5.0=§e§lHigh
 value.MOTION_BLUR_SAMPLES.6.0=§c§lVery high
 value.MOTION_BLUR_SAMPLES.7.0=§4§lExtreme
-value.MOTION_BLUR_SAMPLES.8.0=§5§l§oMAX
+value.MOTION_BLUR_SAMPLES.8.0=§5§lMAX
 
 option.VANILLA_WATER=Vanilla-like water
 
@@ -392,13 +391,13 @@ option.CLOUD_STEPS_AVG=§e▶§r Cloud quality
 value.CLOUD_STEPS_AVG.3=§b§lLow
 value.CLOUD_STEPS_AVG.4=§a§lMedium
 value.CLOUD_STEPS_AVG.5=§e§lHigh
-value.CLOUD_STEPS_AVG.10=§c▶§r §5§l§oMAX
+value.CLOUD_STEPS_AVG.10=§c▶§r §5§lMAX
 
 option.CIRRUS_STEPS_AVG=§e▶§r Cirrus quality
 value.CIRRUS_STEPS_AVG.3=§b§lLow
 value.CIRRUS_STEPS_AVG.4=§a§lMedium
 value.CIRRUS_STEPS_AVG.5=§e§lHigh
-value.CIRRUS_STEPS_AVG.10=§c▶§r §5§l§oMAX
+value.CIRRUS_STEPS_AVG.10=§c▶§r §5§lMAX
 
 option.SIMPLE_SKY=§b▶§r Sky type
 option.SIMPLE_SKY.comment=Use only with Realistic+ color scheme, for the old LITE sky or to improve performance.
@@ -426,10 +425,10 @@ value.BLOOM_SAMPLES.4.0=§b§lLow
 value.BLOOM_SAMPLES.5.0=§a§lMedium
 value.BLOOM_SAMPLES.6.0=§e§lHigh
 value.BLOOM_SAMPLES.7.0=§4§lExtreme
-value.BLOOM_SAMPLES.8.0=§5§l§oMAX
+value.BLOOM_SAMPLES.8.0=§5§lMAX
 
 option.BLOOM_STRENGTH=Bloom strength
-value.BLOOM_STRENGTH.2.0=§5§l§oMAX
+value.BLOOM_STRENGTH.2.0=§5§lMAX
 
 option.BLACK_ENTITY_FIX=Black entity BUGFIX
 value.BLACK_ENTITY_FIX.0=Off
@@ -445,7 +444,7 @@ value.FOG_ADJUST.8.0=Very low
 value.FOG_ADJUST.4.0=Low
 value.FOG_ADJUST.2.0=Medium
 value.FOG_ADJUST.1.5=High
-value.FOG_ADJUST.1.0=§5§l§oMAX
+value.FOG_ADJUST.1.0=§5§lMAX
 
 option.NETHER_FOG_DISTANCE=Nether fog distance
 value.NETHER_FOG_DISTANCE.0=Render Distance
@@ -470,8 +469,8 @@ option.MATERIAL_GLOSS=§a▶§r Block reflection
 value.MATERIAL_GLOSS.0=Off
 value.MATERIAL_GLOSS.1=Specular
 value.MATERIAL_GLOSS.2=SSR
-value.MATERIAL_GLOSS.3=§5§l§oMAX
-option.MATERIAL_GLOSS.comment=Adds reflections on some blocks like metals. SSR mode uses a very fast but inaccurate method. §5§l§oMAX§r merges Specular and SSR.
+value.MATERIAL_GLOSS.3=§5§lMAX
+option.MATERIAL_GLOSS.comment=Adds reflections on some blocks like metals. SSR mode uses a very fast but inaccurate method. §5§lMAX§r merges Specular and SSR and uses §a§lRaymarching§r for more accurate results.
 
 option.SIMPLE_AUTOEXP=§1▶§r Simpler exposure
 option.SIMPLE_AUTOEXP.comment=Turns off automatic exposure.
@@ -505,10 +504,10 @@ option.BIOME_FOG=§b▶§r Biome Fog
 option.BIOME_FOG.comment=Makes fog denser in certain biomes.
 
 option.STAR_SLIDER=§a▶§r Stars
-option.STAR_SLIDER.comment=Adjusts star quality. §5§l§oMAX§r may affect performance based on resolution.
+option.STAR_SLIDER.comment=Adjusts star quality. §5§lMAX§r may affect performance based on resolution.
 value.STAR_SLIDER.0=Off
 value.STAR_SLIDER.1=§b§lVanilla
-value.STAR_SLIDER.2=§5§l§oMAX
+value.STAR_SLIDER.2=§5§lMAX
 
 option.END_STARS=§9▶§r End stars
 option.END_STARS.comment=Enables stars in The End.
@@ -518,7 +517,7 @@ option.STARS_BRIGHTNESS.comment=Brightness multiplier of stars.
 suffix.STARS_BRIGHTNESS=x
 
 option.STARS_COVERAGE=Stars coverage
-option.STARS_COVERAGE.comment=Coverage multiplier of stars. Only affects §5§l§oMAX§r stars.
+option.STARS_COVERAGE.comment=Coverage multiplier of stars. Only affects §5§lMAX§r stars.
 suffix.STARS_COVERAGE=x
 
 option.CUSTOM_SKYFIX=Custom skies fix
@@ -533,7 +532,7 @@ option.NEAR_FOG.comment=Adds fog near the player to increase depth and immersion
 option.FOG_TINT=Fog tint
 option.FOG_TINT.comment=Adjusts fog tint color.
 value.FOG_TINT.0=Neutral
-value.FOG_TINT.1=Blue
+value.FOG_TINT.1=Cool
 value.FOG_TINT.2=Warm
 
 option.AURORA=§b▶§r Aurora Borealis
@@ -548,7 +547,7 @@ value.ROUND_SUN.0=§b§lVanilla
 value.ROUND_SUN.1=§6§lRound
 value.ROUND_SUN.2=§lLegacy
 
-option.SELECTION_LINE=Selection line
+option.SELECTION_LINE=Selection outline
 value.SELECTION_LINE.0=Off
 value.SELECTION_LINE.1=Default
 value.SELECTION_LINE.2=White
@@ -569,11 +568,29 @@ option.TITLE.comment=Shows the title and profile when the shader starts.
 option.END_PORTAL=§9▶§r Custom end portal
 option.END_PORTAL.comment=Enables the shader's customized end portal.
 
+option.LabPBR=§6▶§r LabPBR
+option.LabPBR.comment=Enables LabPBR support and applies it to block reflections and general lighting. Enable this option to use POM. (Requires a resource pack that supports LabPBR).
+option.POM=§e▶§r POM
+option.POM.comment=Also known as Parallax Occlusion Mapping, this option enables surface relief from LabPBR.
+option.POM_DEPTH=POM Depth
+option.POM_DEPTH.comment=Adjusts POM depth. High values may cause visual artifacts.
+option.POM_SHADOW=§b▶§r POM Shadow
+option.POM_SHADOW.comment=Enables self-shadowing from POM pixels.
+option.LabEMISSIVE=§1▶§r LabPBR Emissives
+option.LabEMISSIVE.comment=Enables LabPBR emissive textures. This option may cause conflicts or overexposure if Glowing Ores/Materials are enabled.
+option.POM_STEPS=§c▶§r POM quality
+option.SS_SAMPLES=§9▶§r POM shadow qty.
+
+suffix.POM_DEPTH=x
+suffix.POM_STEPS=x
+suffix.SS_SAMPLES=x
+
 #Screens
 screen.BASIC_SCREEN=§lBasic ●
-screen.EFFECTS_SCREEN=§lEffects ★
-screen.LIGHTING_SCREEN=§lLighting ⚡
+screen.EFFECTS_SCREEN=§lEffects ✦
+screen.LIGHTING_SCREEN=§lLighting ☀
 screen.MISC_SCREEN=§lMisc ✚
+screen.LabPBR=§lMaterials 💎
 
 # Info
 screen.INFO_SCREEN=§lInfo ?
@@ -584,7 +601,7 @@ option.HOVER.comment=Hi! Here you can find information about E-LITE shaders!
 value.HOVER.0=
 
 option.VERSION=Version info
-option.VERSION.comment=Name: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Code: §5§l§oELT501§r. Date: March 13th, 2026. Based on MakeUp Ultrafast 9.4c.
+option.VERSION.comment=Name: §lE-LITE §rshaders §5§l5.1§r. Build: RELEASE. Code: §5§lELT51§r. Date: June 12th, 2026. Based on MakeUp Ultrafast 9.5a.
 value.VERSION.0=
 
 option.PROFILES=Graphic profiles
@@ -592,7 +609,7 @@ option.PROFILES.comment=No effects: Pure shader. Shadowless: Normal profiles wit
 value.PROFILES.0=
 
 option.STYLES=Styles
-option.STYLES.comment=Switch between Enhanced (realism) and Vanilla (original aesthetic).
+option.STYLES.comment=Switch between Natural (realism) and Vanilla (original aesthetic).
 value.STYLES.0=
 
 option.PERF_IMPACT=Performance impact

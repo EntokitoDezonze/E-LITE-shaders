@@ -9,8 +9,6 @@ uniform float day_mixer;
 uniform float night_mixer;
 uniform int moonPhase;
 uniform vec3 fogColor;
-uniform vec3 skyColor;
-
 
 #define NIGHT_BRIGHT_PHASE (NIGHT_BRIGHT + (NIGHT_BRIGHT_RANGE / 4.0) * abs(4.0 - moonPhase))
 
@@ -35,12 +33,12 @@ uniform vec3 skyColor;
     #define WATER_COLOR vec3(0.05, 0.1, 0.11)
 #elif COLOR_SCHEME == 2  // LITE Realistic Plus (3 color layers)
     #define OMNI_TINT 0.5
-    #define LIGHT_SUNSET_COLOR vec3(0.5, 0.225, 0.135)
-    #define LIGHT_DAY_COLOR vec3(1.0, 0.8, 0.7)
+    #define LIGHT_SUNSET_COLOR vec3(0.75, 0.375, 0.2025)
+    #define LIGHT_DAY_COLOR vec3(1.1, 0.925, 0.85) * 1.1
     #define LIGHT_NIGHT_COLOR vec3(0.015, 0.02, 0.035) * NIGHT_BRIGHT_PHASE
     
     #if SIMPLE_SKY == 0 // E-LITE 5
-        #define ZENITH_SUNSET_COLOR vec3(0.07, 0.0863, 0.1373)
+        #define ZENITH_SUNSET_COLOR vec3(0.105, 0.135, 0.21)
         #define ZENITH_DAY_COLOR vec3(0.13, 0.31, 0.65)
         #define ZENITH_NIGHT_COLOR vec3(0.0075, 0.015, 0.0225) * NIGHT_BRIGHT_PHASE
         
@@ -61,11 +59,11 @@ uniform vec3 skyColor;
     #undef  MID_DAY_COLOR
     #undef  MID_NIGHT_COLOR
 
-    #define MID_SUNSET_COLOR vec3(0.15, 0.2, 0.25)
+    #define MID_SUNSET_COLOR vec3(0.175, 0.225, 0.275)
     #define MID_DAY_COLOR vec3(0.25, 0.55, 0.9)
     #define MID_NIGHT_COLOR vec3(0.02, 0.025, 0.03) * NIGHT_BRIGHT_PHASE
 
-    #define WATER_COLOR vec3(0.0, 0.105, 0.1375)
+    #define WATER_COLOR vec3(0.0, 0.15, 0.21)
 #elif COLOR_SCHEME == 3  // LITE Realistic Legacy (3.3)
     #define OMNI_TINT 0.3
  
@@ -89,13 +87,13 @@ uniform vec3 skyColor;
     #define LIGHT_DAY_COLOR vec3(0.9, 0.9, 1.0)
     #define LIGHT_NIGHT_COLOR vec3(0.075, 0.075, 0.1) * 0.3
 
-    #define ZENITH_SUNSET_COLOR saturate(vec3(0.2, 0.4, 1.0), day_blend_float(0.6, 1.0, 0.2)) * 2.3 * day_blend_float(1.0, 1.0, 0.0) * day_blend(vec3(1.0), vec3(1.0), vec3(1.2, 1.1, 0.8))
+    #define ZENITH_SUNSET_COLOR saturate(vec3(0.2, 0.4, 1.0), dayBF(0.6, 1.0, 0.2)) * 2.3 * dayBF(1.0, 1.0, 0.0) * dayBlend(vec3(1.0), vec3(1.0), vec3(1.2, 1.1, 0.8))
     #define ZENITH_DAY_COLOR vec3(0.29, 0.42, 1.0) * 2.3
-    #define ZENITH_NIGHT_COLOR saturate(vec3(0.25, 0.4078, 1.0), 0.0) * skyColor * day_blend_float(1.0, 0.2, 1.0) * NIGHT_BRIGHT_PHASE * day_blend(vec3(2.2, 1.8, 0.0), vec3(1.0), vec3(1.0))
+    #define ZENITH_NIGHT_COLOR saturate(vec3(0.25, 0.4078, 1.0), 0.0) * skyColor * dayBF(1.0, 0.2, 1.0) * NIGHT_BRIGHT_PHASE * dayBlend(vec3(2.2, 1.8, 0.0), vec3(1.0), vec3(1.0))
 
-    #define HORIZON_SUNSET_COLOR saturate(fogColor, day_blend_float(1.0, 1.0, 5.0)) * 2 * vec3(1.0, 0.8, 0.7) * day_blend_float(1.0, 1.0, 0.4)
+    #define HORIZON_SUNSET_COLOR saturate(fogColor, dayBF(1.0, 1.0, 5.0)) * 2 * vec3(1.0, 0.8, 0.7) * dayBF(1.0, 1.0, 0.4)
     #define HORIZON_DAY_COLOR fogColor * 2.2 * vec3(0.75, 0.8, 1.0)
-    #define HORIZON_NIGHT_COLOR saturate(fogColor, day_blend_float(0.0, 0.0, 0.6)) * day_blend_float(1.5, 0.35, 0.2) * NIGHT_BRIGHT_PHASE
+    #define HORIZON_NIGHT_COLOR saturate(fogColor, dayBF(0.0, 0.0, 0.6)) * dayBF(1.5, 0.35, 0.2) * NIGHT_BRIGHT_PHASE
 
     #define WATER_COLOR vec3(0.0314, 0.1373, 0.4784)
 #elif COLOR_SCHEME == 5  // LITE Cursed

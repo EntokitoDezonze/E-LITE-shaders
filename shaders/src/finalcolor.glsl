@@ -14,13 +14,13 @@
     #ifdef FOG_ACTIVE  // Fog active
         #if COLOR_SCHEME != 5
             #if VOL_LIGHT < 1 && V_CLOUDS > 0
-                float fogInfluence = day_blend_float(mix(1.0, 1.333, pow(sunInfluence, 0.333)), 1.3, 1.0); // works fine :)
+                float fogInfluence = dayBF(mix(1.0, 1.333, pow(sunInfluence, 0.333)), mix(1.01, 1.333, pow(sunInfluence, 0.333)), 1.0); // works fine :)
             #elif VOL_LIGHT > 0 && V_CLOUDS < 1
                 float fogInfluence = 1.0;
             #elif VOL_LIGHT > 0 && V_CLOUDS > 0
-                float fogInfluence = 1.0;
+                float fogInfluence = dayBF(mix(1.0, 1.11, fastpow(sunInfluence, 6.0)), 1.0, 1.0);
             #else
-                float fogInfluence = day_blend_float(mix(1.0, 1.11, fastpow(sunInfluence, 6.0)), 1.0, 1.0);
+                float fogInfluence = dayBF(mix(1.0, 1.11, fastpow(sunInfluence, 6.0)), 1.0, 1.0);
             #endif
         #else
             float fogInfluence = 1.0;
@@ -30,10 +30,12 @@
         #if FOG_TINT == 0
             vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 0.5), vec3(1.0), fog_adj);
         #elif FOG_TINT == 1
-            vec3 fogColorMod = mix(vec3(0.592, 0.888, 1.233), vec3(1.0), fog_adj);
+            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 1.0), vec3(1.0), fog_adj);
         #elif FOG_TINT == 2
             vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), -0.5), vec3(1.0), fog_adj);
         #endif
+
+        fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));
 
         #if MC_VERSION >= 11900
             vec3 fog_texture;

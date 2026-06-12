@@ -12,6 +12,11 @@ Modified.
 */
 
 float NoisyStarField(in vec2 p_grid_coord, float fThreshhold) {
+    #ifndef THE_END
+        float discard_day = dayBF(0.1, 0.0, 1.0);
+        if(discard_day < 0.01) return 0.0; // <- Discard stars during daytime on overworld
+    #endif
+    
     float StarVal = noise2D_grid(p_grid_coord);
     
     if (StarVal >= fThreshhold) {
@@ -21,12 +26,6 @@ float NoisyStarField(in vec2 p_grid_coord, float fThreshhold) {
 
         return clamp(StarVal, 0.1, 1.0);
     }
-
-    #ifndef THE_END
-        float discard_day = day_blend_float(0.1, 0.0, 1.0);
-        if(discard_day < 0.01) return 0.0; // <- Discard stars during daytime on overworld
-    #endif
-
     return 0.0;
 }
 
@@ -49,7 +48,7 @@ vec3 stars() {
             dir.y = tilted_y;
             dir.z = tilted_z;
             
-            float angle = sunAngle * 6.4 - 0.12;
+            float angle = sunAngle * 6.4 - 0.14;
             float c = cos(angle);
             float s = sin(angle);
             float new_x = dir.x * s - dir.z * c;
@@ -74,15 +73,15 @@ vec3 stars() {
     // This calc makes the stars to follow the moon.
 
         vec2 p_spherical = cubic_uv(dir); 
-        float star_scale = 500.0;
+        float star_scale = 600.0;
         vec2 p_continuous = p_spherical * star_scale;
-        float star_density_threshold = 0.9925 - (0.015 * STARS_COVERAGE * STARS_COVERAGE);
+        float star_density_threshold = 0.99 - (0.015 * STARS_COVERAGE * STARS_COVERAGE);
         float star_brightness = STARS_BRIGHTNESS * 0.75;
         float star_intensity = NoisyStarField(p_continuous, star_density_threshold); // <- Draw stars
         vec3 final_color = vec3(star_intensity);
 
         #ifndef THE_END
-            final_color *= day_blend_float_lgcy(0.1, 0.0, 0.9) * (star_brightness * 0.5 + 0.5) * (1 -rainStrength);
+            final_color *= dayBFlgcy(0.1, 0.0, 0.9) * (star_brightness * 0.5 + 0.5) * (1 -rainStrength);
         #endif
 
         #ifdef THE_END

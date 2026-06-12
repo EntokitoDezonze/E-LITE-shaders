@@ -1,4 +1,5 @@
 #version 130
+#include "/lib/extensions.glsl"
 /* MakeUp - E-LITE shaders 5 - final.fsh
 Render: Final renderer
 

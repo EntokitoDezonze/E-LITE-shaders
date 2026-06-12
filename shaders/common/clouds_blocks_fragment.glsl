@@ -13,6 +13,7 @@ uniform float viewWidth;
 uniform float viewHeight;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 dhProjectionInverse;
+uniform float rainStrength;
 
 #if MC_VERSION >= 11900
     uniform float darknessFactor;
@@ -79,12 +80,14 @@ void main() {
         vec4 block_color = texture2D(tex, texcoord * RENDER_SCALE) * tint_color;
         
         #if COLOR_SCHEME == 4
-            block_color.rgb *= day_blend_float(1.0, 1.9, 0.25);
-            block_color.rgb = mix(gray(block_color.rgb), block_color.rgb, day_blend_float(1.0, 0.0, 0.5));
+            block_color.rgb *= dayBF(1.0, 1.9, 0.25);
+            block_color.rgb = mix(gray(block_color.rgb), block_color.rgb, dayBF(1.0, 0.0, 0.5));
         #elif COLOR_SCHEME == 2
-            block_color.rgb *= day_blend_float(0.333, 1.25, 0.333);
+            block_color.rgb *= dayBF(0.4, mix(1.25, 0.6, rainStrength), 0.333);
+            block_color.a *= mix(1.0, 0.333, rainStrength);
+            block_color.rgb *= mix(vec3(1.0), dayBlend(vec3(0.65, 0.8, 1.0), vec3(0.65, 0.8, 1.0), vec3(1.0)), rainStrength);
         #elif COLOR_SCHEME == 5
-            block_color.rgb *= day_blend_float(0.05, 0.1, 0.025);
+            block_color.rgb *= dayBF(0.05, 0.1, 0.025);
         #endif
 
         block_color.a *= occlusion;

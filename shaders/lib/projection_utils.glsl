@@ -13,3 +13,11 @@ vec3 camera_to_screen(vec3 fragpos) {
 
     return pos.xyz * 0.5 + 0.5;
 }
+
+vec3 screen_to_camera(vec3 screen_pos) {
+    vec3 ndc = screen_pos * 2.0 - 1.0;
+    vec4 clip = vec4(ndc, 1.0);
+    vec4 view = gbufferProjectionInverse * clip;
+
+    return view.xyz / view.w;
+}

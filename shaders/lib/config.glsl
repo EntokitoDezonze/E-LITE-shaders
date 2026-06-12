@@ -4,9 +4,6 @@ Config variables (DO NOT DELETE ANY #define)
 Javier Garduño - GNU Lesser General Public License v3.0
 */
 
-#extension GL_EXT_gpu_shader4 : enable
-#extension GL_ARB_gpu_shader5 : enable
-
 // Useful material properties.
 
 // Plants, Leaves
@@ -64,13 +61,14 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define ENTITY_SCULK 9013.0
 #define ENTITY_RAIL 9014.0
 #define ENTITY_END_FRAME 9015.0
+#define ENTITY_TRIM 9016.0
 
 // Season
 #define SEASONABLE 8000.0
 
 // Other constants
-#define ZENITH_SKY_RAIN_COLOR vec3(0.7, 0.85, 1.0)
-#define HORIZON_SKY_RAIN_COLOR vec3(0.35 , 0.425, 0.5)
+#define ZENITH_SKY_RAIN_COLOR vec3(0.52, 0.64, 0.745)
+#define HORIZON_SKY_RAIN_COLOR vec3(0.355, 0.43, 0.493)
 
 // Style (Default or Vanilla)
 #define STYLE 1 // [1 2]
@@ -81,20 +79,20 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #if REFLECTION_SLIDER == 0
   #define REFLECTION 0
   #define SSR_TYPE 0
-  #define REFLEX_INDEX 0.45
+  #define REFLEX_INDEX 0.6
 #elif REFLECTION_SLIDER == 1
   #define REFLECTION 1
   #define SSR_TYPE 0
-  #define REFLEX_INDEX 0.7
+  #define REFLEX_INDEX 0.8
 #elif REFLECTION_SLIDER == 2
   #define REFLECTION 1
   #define SSR_TYPE 1
-  #define REFLEX_INDEX 0.7
+  #define REFLEX_INDEX 0.8
 #endif
 
 #define FOG_ACTIVE // Toggle fog
 #define NEAR_FOG // Toggle near fog
-#define FOG_TINT 0 // [0 1 2]
+#define FOG_TINT 1 // [0 1 2]
 
 // MISC
 #define SELECTION_LINE 2 // [0 1 2 3]
@@ -109,19 +107,19 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define END_PORTAL // Enables custom end portal by shader.
 
 #define NETHER_FOG_DISTANCE 0 // [0 1] // Sets Nether fog distance to half of the render distance (maximum of 96 blocks)
-#define ACERCADE 4 // [1 2 3 4 5 6 7]
+#define ACERCADE 4 // [1 2 3 4 5 6]
 #define WAVING 1 // [0 1] Makes objects like leaves or grass move in the wind (Low perfomance cost)
 #define TINTED_WATER 1  // [0 1] Use the resource pack color for water.
 #define AO 0  // [0 1] Turn on for enhanced ambient occlusion (Medium performance cost).
 #define VANILLA_AO 1 // [0 1] Turn on for vanilla ambient occlusion (Faster than main AO).
 #define REFRACTION 1  // [0 1] Activate refractions.
 #define AOSTEPS 4.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0 10.0] How many samples are taken for AO (High performance cost, Vanilla AO does not use it).
-#define AO_STRENGTH 1.0 // [0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.66 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15 1.20 1.25 1.30] Ambient occlusion strength (strength does NOT affect performance).
+#define AO_STRENGTH 1.10 // [0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.66 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50] Ambient occlusion strength (strength does not affect performance).
 #define AA_TYPE 3 // [0 1 2 3]  No: Disable antialiasing (not recommended). Denoise only: Supersampling is only used to eliminate noise. TAA: Enable antialiasing (Recommended). Sharp TAA: A subtle sharpening effect is used on the TAA. (Low-Medium perfomance cost)
 #define FXAA // Enables FXAA, very helpful especially on low resolutions.
-#define MOTION_BLUR // Turn on motion blur (Low perfomance cost)
+//#define MOTION_BLUR // Turn on motion blur (Low perfomance cost)
 #define MOTION_BLUR_STRENGTH 0.75 // [0.5 0.75 1.0 1.5 2.0 2.5 3.0 3.5 4.0] Set Motion blur strength. Lower framerate -> Lower strength and vice versa is recommended.
-#define MOTION_BLUR_SAMPLES 4.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0] Motion blur samples 
+#define MOTION_BLUR_SAMPLES 3.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0] Motion blur samples 
 #define SUN_REFLECTION 2 // [0 1 2] Enable sun (or moon) reflection on water and glass (Very low perfomance cost)
 
 #define SHADOW_TYPE 1 // [0 1 2] Sets the shadow type
@@ -150,7 +148,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define NIGHT_BRIGHT 0.60 // [0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75] Adjusts the brightness of the night light in exteriors.
 #define NIGHT_BRIGHT_RANGE 0.60 // [0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20] Difference between min and max values.
 #define V_CLOUDS 1 // [-1 0 1 2] Volumetric static: The clouds move, but they keep their shape. Volumetric dynamic: Clouds change shape over time, a different cloud landscape every time (medium performance hit). Vanilla: Original vanilla clouds.
-#define CIRRUS // Adds a 2nd layer of cirrus clouds in the sky.
+// #define CIRRUS // Adds a 2nd layer of cirrus clouds in the sky.
 #define AURORA 0 // [0 1 2] Adds an aurora on night sky.
 #define USE_CLOUD_VOL_STYLE -1 // [-1 0 1] Set the volumetric cloud style.
 #define CLOUD_DENSITY 1.0 // [0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8]
@@ -167,15 +165,24 @@ Javier Garduño - GNU Lesser General Public License v3.0
   #define CLOUD_VOL_STYLE 1
 #endif
 
+//#define LabPBR // Enables LabPBR support.
+#define POM // Enables parallax for normals, only supports LabPBR.
+#define POM_SHADOW // Enables shadow casted by normals, requires POM enabled.
+#define LabEMISSIVE // Enables emissiveness from LabPBR RP.
+
+#define POM_DEPTH 1 // [0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2]
+#define POM_STEPS 64 // [8 16 32 64 128 256 512]
+#define SS_SAMPLES 8 // [4 8 16 32] Set quality of POM shadows.
+
 // #define CLOUD_REFLECTION  // Set off-screen volumetric clouds reflection (volumetric clouds must be active).
 #define END_CLOUDS // Activates drawing of clouds in the end (only works if volumetric clouds are active)
 #define BLACK_ENTITY_FIX 0 // [0 1] Removes black entity bug in old video drivers (activate ONLY if you have problems with black entities)
-#define BLOOM // Enable or disable bloom effect (Medium perfomance cost)
+//#define BLOOM // Enable or disable bloom effect (Medium perfomance cost)
 #define BLOOM_SAMPLES 2.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0] Bloom sample pairs.
 #define BLOOM_STRENGTH 1.0 // [0.0 0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.1 0.11 0.12 0.13 0.14 0.15 0.16 0.17 0.18 0.19 0.2 0.21 0.22 0.23 0.24 0.25 0.26 0.27 0.28 0.29 0.3 0.31 0.32 0.33 0.34 0.35 0.36 0.37 0.38 0.39 0.4 0.41 0.42 0.43 0.44 0.45 0.46 0.47 0.48 0.49 0.5 0.51 0.52 0.53 0.54 0.55 0.56 0.57 0.58 0.59 0.6 0.61 0.62 0.63 0.64 0.65 0.66 0.67 0.68 0.69 0.7 0.71 0.72 0.73 0.74 0.75 0.76 0.77 0.78 0.79 0.8 0.81 0.82 0.83 0.84 0.85 0.86 0.87 0.88 0.89 0.9 0.91 0.92 0.93 0.94 0.95 0.96 0.97 0.98 0.99 1.0 1.01 1.02 1.03 1.04 1.05 1.06 1.07 1.08 1.09 1.1 1.11 1.12 1.13 1.14 1.15 1.16 1.17 1.18 1.19 1.2 1.21 1.22 1.23 1.24 1.25 1.26 1.27 1.28 1.29 1.3 1.31 1.32 1.33 1.34 1.35 1.36 1.37 1.38 1.39 1.4 1.41 1.42 1.43 1.44 1.45 1.46 1.47 1.48 1.49 1.5 1.51 1.52 1.53 1.54 1.55 1.56 1.57 1.58 1.59 1.6 1.61 1.62 1.63 1.64 1.65 1.66 1.67 1.68 1.69 1.7 1.71 1.72 1.73 1.74 1.75 1.76 1.77 1.78 1.79 1.8 1.81 1.82 1.83 1.84 1.85 1.86 1.87 1.88 1.89 1.9 1.91 1.92 1.93 1.94 1.95 1.96 1.97 1.98 1.99 2.0]
 // #define CHROMA_ABER // Enable chroma aberration.
 #define CHROMA_ABER_STRENGTH 0.075 // [0.025 0.05 0.075 0.1 0.125]
-#define VOL_LIGHT 1 // [0 1 2] Depth based: Turn on depth based godrays, they are a bit slow, but can work better than volumetric light for very short shadow distances. Volumetric: It activates the volumetric light, more accurate and faster, but it needs the shadows enabled to work.
+#define VOL_LIGHT 0 // [0 1 2] Depth based: Turn on depth based godrays, they are a bit slow, but can work better than volumetric light for very short shadow distances. Volumetric: It activates the volumetric light, more accurate and faster, but it needs the shadows enabled to work.
 // #define VANILLA_WATER // Establishes the appearance of water as vanilla.
 #define WATER_COLOR_SOURCE 0 // [0 1] Select the water color source. It does not work properly in 1.12. In that case the default value is recommended.
 #define USE_WATER_TURBULENCE -1 // [-1 0 1 2 3] Set the water waves strength.
@@ -252,7 +259,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
   #define PIXEL_SIZE ((viewHeight + viewWidth) / 750) // <- ALWAYS WILL HAVE PRORPOTIONAL PIXEL SIZE
 #endif
 
-// Information Utils E-LITE shaders ELT501
+// Information Utils E-LITE shaders ELT51
 #define HOVER 0 // [0]
 #define VERSION 0 // [0]
 #define PROFILES 0 // [0]
@@ -310,67 +317,49 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define OMNI_TINT_CUSTOM 0.3 // [0.0 0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.1 0.11 0.12 0.13 0.14 0.15 0.16 0.17 0.18 0.19 0.2 0.21 0.22 0.23 0.24 0.25 0.26 0.27 0.28 0.29 0.3 0.31 0.32 0.33 0.34 0.35 0.36 0.37 0.38 0.39 0.4 0.41 0.42 0.43 0.44 0.45 0.46 0.47 0.48 0.49 0.5 0.51 0.52 0.53 0.54 0.55 0.56 0.57 0.58 0.59 0.6 0.61 0.62 0.63 0.64 0.65 0.66 0.67 0.68 0.69 0.7 0.71 0.72 0.73 0.74 0.75 0.76 0.77 0.78 0.79 0.8 0.81 0.82 0.83 0.84 0.85 0.86 0.87 0.88 0.89 0.9 0.91 0.92 0.93 0.94 0.95 0.96 0.97 0.98 0.99 1.0 1.01 1.02 1.03 1.04 1.05 1.06 1.07 1.08 1.09 1.1 1.11 1.12 1.13 1.14 1.15 1.16 1.17 1.18 1.19 1.2 1.21 1.22 1.23 1.24 1.25 1.26 1.27 1.28 1.29 1.3 1.31 1.32 1.33 1.34 1.35 1.36 1.37 1.38 1.39 1.4 1.41 1.42 1.43 1.44 1.45 1.46 1.47 1.48 1.49 1.5]
 
 #define SIMPLE_SKY 0 // [0 1] Use simple sky interpolation (faster)
-#define BIOME_SKY // Turns on Biome-based sky color
+// #define BIOME_SKY // Turns on Biome-based sky color
 #define BIOME_FOG // Turns on Biome-based fog intensity
 #define SANDSTORM // Turns on sandstorm
 
+/* -- DO NOT REMOVE -- */
 #ifdef CUSTOM_SKYFIX
-  // Don't remove
 #endif
-
 #ifdef STARS
-  // Don't remove
 #endif
-
 #ifdef END_STARS
-  // Don't remove
 #endif
-
 #ifdef BIOME_SKY
-  // Don't remove
 #endif
-
 #ifdef BIOME_FOG
-  // Don't remove
 #endif
-
 #ifdef SANDSTORM
-  // Don't remove
 #endif
-
 #ifdef FXAA
-  // Don't remove
 #endif
-
 #ifdef SIMPLE_AUTOEXP
-  // Don't remove
 #endif
-
 #ifdef FOG_ACTIVE
-  // Don't remove
 #endif
-
 #define SHADOW_ENTITIES
-
 #ifdef SHADOW_ENTITIES
-  // Don't remove
 #endif
-
 #ifdef EMISSIVE_MATERIAL
-  // Don't remove
 #endif
-
 #ifdef EMISSIVE_ORE
-  // Don't remove
 #endif
-
 #ifdef HDR
-  // Don't remove
 #endif
-
 #ifdef DOF_HDR
-  // Don't remove
 #endif
+#if defined LabPBR
+#endif
+#ifdef POM
+#endif
+#ifdef POM_SHADOW
+#endif
+#ifdef LabEMISSIVE
+#endif
+/* ------------ */
 
 #if NETHER_FOG_DISTANCE == 1
   #define NETHER_SIGHT min(far / 2, 96)
@@ -388,7 +377,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
     #define CLOUD_PLANE_CENTER 235.0
     #define CLOUD_PLANE 219.0
   #else
-    #define CLOUD_PLANE_SUP 330.0
+    #define CLOUD_PLANE_SUP 320.0
     #define CLOUD_PLANE 270.0
     #define CLOUD_PLANE_CENTER (CLOUD_PLANE_SUP + CLOUD_PLANE) / 2
     
@@ -399,8 +388,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
     #define CLOUD_PLANE_CENTER 305.0
     #define CLOUD_PLANE 219.0
   #else
-    #define CLOUD_PLANE_SUP 740.0
-    #define CLOUD_PLANE_CENTER 470.0
+    #define CLOUD_PLANE_SUP 780.0
+    #define CLOUD_PLANE_CENTER 510.0
     #define CLOUD_PLANE 420.0
   #endif
 #endif
@@ -445,11 +434,11 @@ Javier Garduño - GNU Lesser General Public License v3.0
 // Sun rotation angle
 const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50.0 -45.0 -40.0 -35.0 -30.0 -25.0 -22.5 -20.0 -15.0 -10.0 -5.0 0.0 5.0 10.0 15.0 20.0 22.5 25.0 30.0 35.0 40.0 45.0 50.0 55.0 60.0 65.0 70.0 75.0 80.0]
 
-#define SHADOW_DISTANCE_SLIDER 4 // [1 2 3 4 5 6 7 8]
+#define SHADOW_DISTANCE_SLIDER 3 // [1 2 3 4 5 6 7 8]
 #define SHADOW_QTY_SLIDER 3 // [1 2 3 4 5 6]
 
 #define SHADOW_CASTING // Enable or disable shadows. Configure quality in advanced options. (Very low - Very High perfomance cost)
-#define OMNI_MUL 0.3 // [0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95]
+#define OMNI_MUL 0.35  // [0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95]
 
 #define SUN_MUL 1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define MOON_MUL 1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
@@ -583,7 +572,6 @@ const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50
 #endif
 
 const float eyeBrightnessHalflife = 6.0;
-const float wetnessHalflife = 00.0;
 const float centerDepthHalflife = 0.66;
 
 // Blocklight color.
@@ -592,7 +580,7 @@ const float centerDepthHalflife = 0.66;
 #elif BLOCKLIGHT_TEMP == 0
     #define CANDLE_BASELIGHT vec3(0.29975, 0.15392353, 0.0799)
 #elif BLOCKLIGHT_TEMP == 1
-    #define CANDLE_BASELIGHT vec3(0.3431, 0.20, 0.175)
+    #define CANDLE_BASELIGHT vec3(0.33, 0.215, 0.175)
 #elif BLOCKLIGHT_TEMP == 2
     #define CANDLE_BASELIGHT vec3(0.24975, 0.19392353, 0.0999)
 #elif BLOCKLIGHT_TEMP == 3

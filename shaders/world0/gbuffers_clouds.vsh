@@ -1,4 +1,5 @@
 #version 120
+#include "/lib/extensions.glsl"
 /* MakeUp - E-LITE shaders 5 - gbuffers_clouds.vsh
 Render: sky, clouds
 

@@ -56,7 +56,6 @@ varying vec2 texcoord;
     #include "/lib/dither.glsl"
 #endif
 
-#include "/lib/fps_correction.glsl"
 #include "/lib/luma.glsl"
 #include "/lib/bloom.glsl"
 

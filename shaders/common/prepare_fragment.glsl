@@ -26,13 +26,18 @@ uniform float eyeAltitude;
 uniform float light_mix;
 uniform vec4 lightningBoltPosition;
 uniform float frameTime;
-
+uniform float near;
+uniform float far;
+uniform float dhNearPlane;
+uniform float dhFarPlane;
 uniform float frameTimeCounter;
 uniform vec3 cameraPosition;
 uniform mat4 gbufferModelViewInverse;
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
+uniform ivec2 eyeBrightnessSmooth;
+uniform sampler2D dhDepthTex0;
 
 /* Ins / Outs */
 
@@ -55,6 +60,7 @@ varying vec4 position;
 #ifdef THE_END
     #include "/lib/render_aux.glsl"
     #include "/lib/stars.glsl"
+    #include "/lib/depth_dh.glsl"
 #endif
 
 #define FRAGMENT
@@ -65,7 +71,20 @@ varying vec4 position;
 void main() {
     //if(fragment_cull()) discard;
     #if defined THE_END 
-        vec4 star_color = vec4(stars(), 1.0);
+        #ifdef DISTANT_HORIZONS
+            float d = texture2DLod(dhDepthTex0, texcoord, 0.0).r;
+            float ld = ld_dh(d);
+        #else
+            float d = 1.0;
+            float ld = d;
+        #endif
+
+        vec4 star_color;
+        if(ld > 0.99){
+            star_color = vec4(stars(), 1.0);
+        } else {
+            star_color = vec4(0.0);
+        }
         vec3 block_color = ZENITH_DAY_COLOR + star_color.rgb;
     #elif defined NETHER
         vec3 block_color = ZENITH_DAY_COLOR;

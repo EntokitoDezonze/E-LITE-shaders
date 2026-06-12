@@ -1,18 +1,18 @@
-float subScale = 6.0;
-ivec2 fragPosSub = ivec2(gl_FragCoord.xy / subScale);
-int centerXSub = int((viewWidth / subScale) * 0.5);
-int posYSub = int((viewHeight * 0.57) / subScale);
+#define ERROR1
+subScale = 6 * (viewHeight / 1080);
+fragPosSub = ivec2(gl_FragCoord.xy / subScale);
+centerXSub = int((viewWidth / subScale) * 0.5);
+posYSub = int((viewHeight * 0.57) / subScale);
 
-// PRIMEIRA LINHA: Error
-int strWErr = 30; // 5 * 6
+strWErr = 42; // 7 * 6
 beginText(fragPosSub, ivec2(centerXSub - (strWErr / 2), posYSub));
     text.fgCol = vec4(1.0, 0.0, 0.0, 1.0);
     text.bgCol = vec4(0.0);
-    printString((_E, _r, _r, _o, _r));
+    printString((_E, _r, _r, _o, _r, _space, _1));
     printLine();
 endText(block_color.rgb);
 
-subScale = 4.0;
+subScale = 4 * (viewHeight / 1080);
 fragPosSub = ivec2(gl_FragCoord.xy / subScale);
 centerXSub = int((viewWidth / subScale) * 0.5);
 posYSub = int((viewHeight * 0.47) / subScale);

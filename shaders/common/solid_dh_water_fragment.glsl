@@ -149,7 +149,7 @@ void main() {
     }
 
     float normal_dot_eye = dot(surface_normal, normalize(fragposition));
-    float fresnel = square_pow(1.0 + normal_dot_eye);
+    float fresnel = squarePow(1.0 + normal_dot_eye);
 
     vec3 reflect_water_vec = reflect(fragposition, surface_normal);
     vec3 norm_reflect_water_vec = normalize(reflect_water_vec);
@@ -161,7 +161,7 @@ void main() {
         sky_color_reflect = hi_sky_color * .5 * ((eye_bright_smooth.y * .8 + 48) * 0.004166666666666667);
     }
 
-    sky_color_reflect = xyz_to_rgb(sky_color_reflect);
+    sky_color_reflect = xyzToRgb(sky_color_reflect);
 
     #if !defined VANILLA_WATER && WATER_TEXTURE == 1
         vec4 block_color = vec4(0.1);
@@ -223,7 +223,7 @@ void main() {
             fresnel = clamp(fresnel * (water_texture * water_texture + 0.5), 0.0, 1.0);
         #endif
 
-        block_color.rgb = water_shader_dh(fragposition, surface_normal, block_color.rgb, sky_color_reflect * day_blend_float(1.15, 1.0, 1.0), norm_reflect_water_vec, fresnel, visible_sky, dither, direct_light_color);
+        block_color.rgb = water_shader_dh(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5), block_color.rgb, sky_color_reflect * dayBF(1.15, 1.0, 1.0), norm_reflect_water_vec * water_texture, fresnel, visible_sky, dither, direct_light_color);
     #endif
 
     } else {  // Otros translúcidos

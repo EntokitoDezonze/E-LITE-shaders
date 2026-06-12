@@ -2,10 +2,6 @@
 Water reflection and refraction related functions.
 */
 
-const float MIN_CORRECTION = 1.0; 
-const float MAX_CORRECTION = 3.0; 
-float adaptFPS = fps_correction(fps, MIN_CORRECTION, MAX_CORRECTION);
-
 vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float dither) {
     vec3 dir_increment;
     vec3 current_march = hit_coord;
@@ -26,7 +22,7 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
     bool hiddens = false;
 
     // Ray marching
-    for (int i = 0; i < RAYMARCH_STEPS + 1; i += int(adaptFPS)) {
+    for (int i = 0; i < RAYMARCH_STEPS + 1; i++) {
         if (search_flag) {
             dir_increment *= 0.5;
             current_march += dir_increment * sign(depth_diff);
@@ -107,31 +103,34 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
             float reflection = 0.0;
 
             #if  SUN_REFLECTION == 2
-                vec3 forward = normalize(mat3(gbufferModelViewInverse) * nastroPos);
+                vec3 sunDir = normalize(mat3(gbufferModelViewInverse) * sunPosition);
                 vec3 nFragWorld = normalize(mat3(gbufferModelViewInverse) * nfragPos);
-
-                vec3 worldRef = vec3(0.0, 1.0, 0.0);
-                if (abs(dot(forward, worldRef)) > 0.99) worldRef = vec3(0.0, 0.0, 1.0);
-
-                vec3 rightBase = normalize(cross(worldRef, forward));
-                vec3 upBase = cross(forward, rightBase);
+                vec3 worldUp = vec3(0.00, 1.0, 0.0);
+                vec3 rightBase = normalize(cross(worldUp, sunDir));
+                vec3 upBase = cross(sunDir, rightBase);
 
                 float rawX = dot(nFragWorld, rightBase);
                 float rawY = dot(nFragWorld, upBase);
 
-                float angle = sunPathRotation * 0.01745329; 
-                float s = sin(angle);
-                float c = cos(angle);
-                
-                // Rotation
+                float angleRad = sunPathRotation * 0.01745329;
+                float maxSunHeight = cos(abs(angleRad));
+                float currentHeight = clamp(sunDir.y, 0.0, maxSunHeight);
+                float progressToZenith = currentHeight / maxSunHeight;
+                progressToZenith = fastpow(progressToZenith, 2.5);
+                float dynamicAngle = angleRad * (1.0 - progressToZenith);
+
+                float s = sin(dynamicAngle);
+                float c = cos(dynamicAngle);
+
                 float dotX = rawX * c - rawY * s;
                 float dotY = rawX * s + rawY * c;
-                
-                float square_shape = max(abs(dotX), abs(dotY));
-                float size = 1.08 - smoothstep1;
-                float frontal_mask = step(0.0, dot(nFragWorld, forward));
-                
-                reflection = smoothstep(size + 0.01, size, square_shape) * frontal_mask;
+
+                float square = max(abs(dotX), abs(dotY));
+
+                float size = 1.071 - smoothstep1;
+                float frontal_mask = step(0.0, dot(nFragWorld, sunDir));
+
+                reflection = smoothstep(size + 0.01, size, square) * frontal_mask;
             #else
                 float astro_vector = max(dot(nfragPos, nastroPos), 0.0);
                 reflection = smoothstep(smoothstep1, 1.0, astro_vector);
@@ -140,7 +139,7 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
             return clamp(
                 (reflection - 0.165) *
                 clamp(lmcoord.y, 0.0, 1.0) *
-                (1.0 - rainStrength) * day_blend_float(10.0, 10.0, 5.0), 0.0, 100.0);
+                (1.0 - rainStrength) * dayBF(10.0, 10.0, 5.0), 0.0, 100.0);
         }
     #endif
 #endif
@@ -160,7 +159,7 @@ vec3 normal_waves(vec3 pos) {
     wave_3 *= 1.2;
 
     vec2 partial_wave = wave_1 + wave_2 + wave_3;
-    vec3 final_wave = vec3(partial_wave, WATER_TURBULENCE - (rainStrength * 0.5 * WATER_TURBULENCE * visible_sky));
+    vec3 final_wave = vec3(partial_wave, WATER_TURBULENCE - (rainStrength * 0.333 * WATER_TURBULENCE * visible_sky));
 
     return normalize(final_wave);
 }
@@ -195,7 +194,7 @@ vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
         water_absortion = 0.0;
     }
 
-    return mix(texture2D(gaux1, pos.xy).rgb, color, water_absortion);
+    return mix(texture2D(gaux1, pos.xy).rgb * mix(vec3(0.9, 1.0, 1.0), vec3(0.8, 1.3, 1.6) * 0.9, water_absortion), color, water_absortion);
 }
 
 vec3 get_normals(vec3 bump, vec3 fragpos) {
@@ -212,9 +211,10 @@ vec3 get_normals(vec3 bump, vec3 fragpos) {
     return normalize(bump * tbn_matrix);
 }
 
-vec4 reflection_calc(vec3 fragpos, vec3 normal, vec3 reflected, inout float infinite, float dither) {
+vec4 reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, float dither) {
+    vec3 reflected = reflect(normalize(fragpos), normal);
     #if SSR_TYPE == 0  // Flipped image
-        #if defined DISTANT_HORIZONS
+        #if defined DISTANT_HORIZONS || defined VOXY
             vec3 pos = camera_to_screen(fragpos + reflected * 768.0);
         #else
             vec3 pos = camera_to_screen(fragpos + reflected * 76.0);
@@ -243,7 +243,6 @@ vec3 water_shader(
     vec3 normal,
     vec3 color,
     vec3 sky_reflect,
-    vec3 reflected,
     float fresnel,
     float visible_sky,
     float dither,
@@ -254,7 +253,7 @@ vec3 water_shader(
 
     #if REFLECTION == 1
         reflection =
-            reflection_calc(fragpos, normal, reflected, infinite, dither);
+            reflection_calc(fragpos, normal, infinite, dither);
     #endif
 
     if(isEyeInWater > 0) reflection.a *= 0.5;
@@ -273,7 +272,7 @@ vec3 water_shader(
         #ifndef NETHER
             #ifndef THE_END
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX) +
-                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999)) * light_color * infinite * visible_sky * day_blend(vec3(1.0, 1.0, 0.35), vec3(1.0, 1.0, 0.35), vec3(1.0));          
+                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999)) * light_color * infinite * visible_sky * dayBlend(vec3(1.0, 1.0, 0.55), vec3(1.0, 1.0, 0.8), vec3(1.0));          
             #else
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX);
             #endif
@@ -289,7 +288,7 @@ vec3 water_shader(
 
 vec4 cristal_reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, float dither) {
     #if SSR_TYPE == 0
-        #if defined DISTANT_HORIZONS
+        #if defined DISTANT_HORIZONS || defined VOXY
             vec3 reflected_vector = reflect(normalize(fragpos), normal) * 768.0;
         #else
             vec3 reflected_vector = reflect(normalize(fragpos), normal) * 76.0;
@@ -308,8 +307,8 @@ vec4 cristal_reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, fl
         }
     #endif
     
-    float border_x = max(-fourth_pow(abs(2.0 * pos.x - 1.0)) + 1.0, 0.0);
-    float border_y = max(-fourth_pow(abs(2.0 * pos.y - 1.0)) + 1.0, 0.0);
+    float border_x = max(-fourthPow(abs(2.0 * pos.x - 1.0)) + 1.0, 0.0);
+    float border_y = max(-fourthPow(abs(2.0 * pos.y - 1.0)) + 1.0, 0.0);
     float border = min(border_x, border_y);
     
     return vec4(texture2D(gaux1, pos.xy).rgb, border);
@@ -350,7 +349,7 @@ vec4 cristal_shader(
             #ifndef THE_END
                 return color + vec4(
                     mix(
-                            vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.99) * 0.1 * light_color * infinite * day_blend(vec3(1.0, 1.0, 0.15), vec3(1.0, 1.0, 0.15), vec3(1.0))),
+                            vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.99) * 0.1 * light_color * infinite * dayBlend(vec3(0.9, 0.85, 0.15), vec3(1.0, 1.0, 0.15), vec3(1.0))),
                         vec3(0.0),
                         reflection.a
                     ),

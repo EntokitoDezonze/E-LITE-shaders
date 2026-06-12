@@ -4,10 +4,6 @@ Bloom functions.
 Javier Garduño - GNU Lesser General Public License v3.0
 */
 
-const float MIN_CORRECTION = 1.0; 
-const float MAX_CORRECTION = 3.0; 
-float adaptFPS = fps_correction(fps, MIN_CORRECTION, MAX_CORRECTION);
-
 vec3 mipmap_bloom(sampler2D image, vec2 coords, float dither) {
     //if(fragment_cull()) return vec3 (0.0);
     vec3 blur_sample = vec3(0.0);
@@ -20,7 +16,7 @@ vec3 mipmap_bloom(sampler2D image, vec2 coords, float dither) {
     vec2 offset;
     float dither_x;
 
-    for(int i = 0; i < sample_c; i+= int(adaptFPS)) {
+    for(int i = 0; i < sample_c; i++) {
         dither_x = i + dither;
         n = fract(dither_x * 1.6180339887) * 3.141592653589793;
         offset = vec2(cos(n), sin(n)) * dither_x * blur_radios_factor;

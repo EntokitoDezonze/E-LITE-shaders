@@ -6,21 +6,21 @@ profile.low=§b§lBajo
 profile.medium=§a§lMedio (Estándar)
 profile.high=§e§lAlto
 profile.extreme=§4§lExtremo
-profile.max=§5§l§oMAX
+profile.max=§5§lMAX
 
 profile.comment=Los perfiles "Sin sombras" están diseñados para equipos de bajo rendimiento. Los perfiles tradicionales añaden gradualmente sombras de alta calidad y efectos avanzados. Por favor, experimente con las opciones para encontrar su mejor configuración.
 
 #Acerca de
 #############################
-option.ACERCADE=§lE-LITE shaders
+option.ACERCADE=§lE-LITE por Entokito
 option.ACERCADE.comment=¡Gracias por usar este shader! :). Configura los controles de calidad nativos de Iris u OptiFine en valores normales o predeterminados para una mejor calidad. Modificado por: @Entokito, traducción al español por ediortiz y tasxatzial.
 
 #Estilo
 option.STYLE=§lEstilo
-value.STYLE.1=§6§lMejorado
+value.STYLE.1=§6§lNatural
 value.STYLE.2=§b§lVanilla
 
-option.STYLE.comment=Mejorado: Se enfoca en lo visual, realzando la estética. Vanilla: Preserva la estética original de Minecraft.
+option.STYLE.comment=Natural: Se enfoca en lo visual, realzando la estética. Vanilla: Preserva la estética original de Minecraft.
 
 #Opciones
 #############################
@@ -78,7 +78,7 @@ value.SHADOW_DISTANCE_SLIDER.4=§a§lMedia §0§a(8 cks)
 value.SHADOW_DISTANCE_SLIDER.5=§a§lMedia §0§a(10 cks)
 value.SHADOW_DISTANCE_SLIDER.6=§e§lAlta §0§e(12 cks)
 value.SHADOW_DISTANCE_SLIDER.7=§4§lExtrema §0§4(14 cks)
-value.SHADOW_DISTANCE_SLIDER.8=§5§l§oMAX §0§5(16 cks)
+value.SHADOW_DISTANCE_SLIDER.8=§5§lMAX §0§5(16 cks)
 
 option.SHADOW_QTY_SLIDER=§c▶§r Calidad de sombras
 option.SHADOW_QTY_SLIDER.comment=Esta opción tiene un alto impacto en el rendimiento. "Medio" es el punto de equilibrio.
@@ -368,7 +368,7 @@ option.USE_BASIC_SH.comment=Permite que el shader funcione en dimensiones de mod
 option.MATERIAL_GLOSS=§a▶§r Reflejo de bloques
 value.MATERIAL_GLOSS.1=Especular
 value.MATERIAL_GLOSS.2=SSR
-option.MATERIAL_GLOSS.comment=Añade reflejos en metales y objetos luminosos. SSR es rápido pero poco preciso. MAX combina ambos.
+option.MATERIAL_GLOSS.comment=Añade reflejos en metales y objetos luminosos. SSR es rápido pero poco preciso. MAX combina ambos y utiliza §a§lRaymarching§r para obtener una mejor calidad.
 
 option.SIMPLE_AUTOEXP=§1▶§r Exposición simple
 option.SIMPLE_AUTOEXP.comment=Desactiva la exposición automática.
@@ -415,7 +415,7 @@ option.NEAR_FOG.comment=Añade niebla cerca del jugador para mayor inmersión y 
 option.FOG_TINT=Color de la niebla
 option.FOG_TINT.comment=Ajusta el color de la niebla.
 value.FOG_TINT.0=Neutra
-value.FOG_TINT.1=Azulada
+value.FOG_TINT.1=Fría
 value.FOG_TINT.2=Cálida
 
 option.AURORA=§b▶§r Aurora Boreal
@@ -441,10 +441,23 @@ option.SEASON_LENGTH=Duración de estaciones
 option.TITLE=Título
 option.END_PORTAL=§9▶§r Portal del End pers.
 
+option.LabPBR=§6▶§r LabPBR
+option.LabPBR.comment=Activa el soporte de LabPBR y lo aplica a los reflejos de los bloques y a la iluminación general. Activa esta opción para usar POM. (Requiere un paquete de recursos compatible con LabPBR).
+option.POM=§e▶§r POM
+option.POM.comment=También conocido como Mapeo de Oclusión por Paralaje, esta opción activa el relieve de superficie desde LabPBR.
+option.POM_DEPTH=Profundidad de POM
+option.POM_DEPTH.comment=Ajusta la profundidad de POM. Valores muy altos pueden causar artefactos visuales.
+option.POM_SHADOW=§b▶§r Sombra de POM
+option.POM_SHADOW.comment=Activa el sombreado propio (self-shadowing) desde los píxeles de POM.
+option.LabEMISSIVE=§1▶§r Emisivos LabPBR
+option.LabEMISSIVE.comment=Activa las texturas emisivas de LabPBR. Esta opción puede causar conflictos o sobreexposición si los Minerales/Materiales Brillantes están activados.
+option.POM_STEPS=§c▶§r Calidad de POM
+option.SS_SAMPLES=§9▶§r Calidad de Sombra POM
+
 #Screens
 screen.BASIC_SCREEN=§lBásico ●
-screen.EFFECTS_SCREEN=§lEfectos ★
-screen.LIGHTING_SCREEN=§lIluminación ⚡
+screen.EFFECTS_SCREEN=§lEfectos ✦
+screen.LIGHTING_SCREEN=§lIluminación ☀
 screen.MISC_SCREEN=§lVarios ✚
 
 # Info
@@ -456,15 +469,15 @@ option.HOVER.comment=¡Hola! Aquí encontrarás información sobre E-LITE shader
 value.HOVER.0=
 
 option.VERSION=Info. de versión
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5§r. Build: RELEASE. Código: §5§l§oELT501§r. Fecha de la versión: 13 de Marzo de 2026. Basado en MakeUp Ultrafast 9.4c
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1§r. Build: RELEASE. Código: §5§lELT51§r. Fecha de la versión: 12 de Junio 2026. Basado en MakeUp Ultrafast 9.5a
 value.VERSION.0=
 
 option.PROFILES=Perfiles gráficos
-option.PROFILES.comment=§lMínimo§r: Sombreado puro.§9§lMuy bajo§r a §5§l§oMAX§r: Aumenta progresivamente la calidad y la cantidad de efectos, pero a costa del rendimiento. ¡Elige lo que mejor se adapte a ti!
+option.PROFILES.comment=§lMínimo§r: Sombreado puro.§9§lMuy bajo§r a §5§lMAX§r: Aumenta progresivamente la calidad y la cantidad de efectos, pero a costa del rendimiento. ¡Elige lo que mejor se adapte a ti!
 value.PROFILES.0=
 
 option.STYLES=Estilos
-option.STYLES.comment=Al hacer clic en el botón de estilo, puedes cambiar entre §6§lMejorado§r y §b§lVanilla§r. El modo Mejorado busca el realismo y el modo Vanilla preserva la estética de Minecraft
+option.STYLES.comment=Al hacer clic en el botón de estilo, puedes cambiar entre §6§lNatural§r y §b§lVanilla§r. El modo Natural busca el realismo y el modo Vanilla preserva la estética de Minecraft
 value.STYLES.0=
 
 option.PERF_IMPACT=Impacto en FPS

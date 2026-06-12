@@ -13,26 +13,32 @@ umbral *= CLOUD_DENSITY;
 bool check = (lightningBoltPosition.w > 0.001);
 float lightning = float(check);
 
-vec3 antiRed = day_blend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red color in transition during tick 0 to ~3000
+vec3 antiRed = dayBlend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red color in transition during tick 0 to ~3000
 
 #if CLOUD_VOL_STYLE == 0
-    dark_cloud_color = day_blend(
+    dark_cloud_color = dayBlend(
         ZENITH_SUNSET_COLOR,
-        saturate(ZENITH_DAY_COLOR, 3.0) * 0.666,
+        saturate(ZENITH_DAY_COLOR, 1.25),
         ZENITH_NIGHT_COLOR
     );
     
     vec3 cloud_color_aux = mix(
-        day_blend(
-            saturate(LIGHT_SUNSET_COLOR, day_blend_float(0.5, 0.0, 0.5)) * day_blend_float(0.66, 0.0, 0.25),
-            saturate(LIGHT_DAY_COLOR, 0.0),
+        dayBlend(
+            saturate(LIGHT_SUNSET_COLOR, dayBF(0.9, 0.0, 0.5)) * dayBF(0.55, 0.0, 0.25),
+            saturate(LIGHT_DAY_COLOR * dayBF(0.5, 1.0, 0.0), 0.0),
             LIGHT_NIGHT_COLOR * 1.333
         ),
-        ZENITH_SKY_RAIN_COLOR * day_blend_float(0.75, 0.75, 1.0) * saturate(dark_cloud_color, 0.2),
+        ZENITH_SKY_RAIN_COLOR * dayBF(1.0, 0.6, 1.0) * gray(dark_cloud_color),
+        rainStrength
+    );
+
+    dark_cloud_color = mix(
+        dark_cloud_color,
+        ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * dayBF(1.15, 0.65, 1.25)),
         rainStrength
     );
 #else
-    dark_cloud_color = day_blend(
+    dark_cloud_color = dayBlend(
         ZENITH_SUNSET_COLOR * 0.75,
         #if COLOR_SCHEME == 4
             ZENITH_DAY_COLOR * 0.5,
@@ -43,26 +49,28 @@ vec3 antiRed = day_blend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid re
     );
     
     vec3 cloud_color_aux = mix(
-        day_blend(
-            saturate(LIGHT_SUNSET_COLOR, 0.5) * day_blend_float(0.6, 0.5, 0.15),
+        dayBlend(
+            saturate(LIGHT_SUNSET_COLOR, 0.75) * dayBF(0.6, 0.5, 0.15),
             LIGHT_DAY_COLOR * 0.9,
             saturate(LIGHT_NIGHT_COLOR, 0.5) * 1.5
         ),
-        ZENITH_SKY_RAIN_COLOR * saturate(dark_cloud_color, 0.2) * day_blend_float(1.0, 0.5, 3.0),
+        ZENITH_SKY_RAIN_COLOR * saturate(dark_cloud_color, 0.2) * dayBF(1.0, 0.3, dayBF(-1.0, 1.0, 3.0)),
+        rainStrength
+    );
+
+    dark_cloud_color = mix(
+        dark_cloud_color,
+        ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * dayBFlgcy(1.5, 0.4, 1.25)),
         rainStrength
     );
 #endif
 
-dark_cloud_color = mix(
-    dark_cloud_color,
-    ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * day_blend_float(1.1, 0.5, 1.25)),
-    rainStrength
-);
+
 
 cloud_color = mix(
     clamp(mix(gray(cloud_color_aux), cloud_color_aux, 0.5) * vec3(1.5), 0.0, 1.4),
-    day_blend(
-        MID_SUNSET_COLOR * day_blend_float(0.5, 0.5, 0.1) * antiRed,
+    dayBlend(
+        MID_SUNSET_COLOR * dayBF(0.5, 0.5, 0.1) * antiRed,
         HORIZON_DAY_COLOR,
         HORIZON_NIGHT_COLOR
     ),
@@ -79,7 +87,7 @@ cloud_color = mix(cloud_color, (HORIZON_SKY_RAIN_COLOR + (HORIZON_SKY_RAIN_COLOR
 
 dark_cloud_color = mix(
     dark_cloud_color,
-    day_blend(
+    dayBlend(
         cloud_color_aux,
         dark_cloud_color,
         dark_cloud_color

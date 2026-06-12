@@ -58,12 +58,12 @@ void main() {
 
     up_vec = normalize(gbufferModelView[1].xyz);
 
-    direct_light_color = day_blend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR);
+    direct_light_color = dayBlend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR);
     direct_light_color = mix(direct_light_color, ZENITH_SKY_RAIN_COLOR * luma(direct_light_color), rainStrength);
     direct_light_strength = gray(direct_light_color * 2);
 
     #if AO == 1
-        fog_density_coeff = day_blend_float_lgcy(FOG_SUNSET, FOG_DAY, FOG_NIGHT) * FOG_ADJUST * 0.1;
+        fog_density_coeff = dayBFlgcy(FOG_SUNSET, FOG_DAY, FOG_NIGHT) * FOG_ADJUST * 0.1;
     #endif
 
     #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY

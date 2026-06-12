@@ -40,7 +40,7 @@
             return clamp(
                 (reflection - 0.165) *
                 clamp(lmcoord.y, 0.0, 1.0) *
-                (1.0 - rainStrength) * day_blend_float(10.0, 10.0, 5.0), 0.0, 100.0);
+                (1.0 - rainStrength) * dayBF(10.0, 10.0, 5.0), 0.0, 100.0);
         }
     #endif
 #endif
@@ -69,7 +69,7 @@ vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
     vec2 pos = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y);
 
     #if REFRACTION == 1
-        pos = pos + refraction.xy * (0.075 / (1.0 + length(fragpos) * 1.2));
+        pos = pos + refraction.xy * (0.075 / (1.0 + length(fragpos) * 1.4));
     #endif
 
     float water_absortion;
@@ -88,7 +88,7 @@ vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
         water_absortion = 0.0;
     }
 
-    return mix(texture2D(gaux1, pos.xy).rgb, color, water_absortion);
+    return mix(texture2D(gaux1, pos.xy).rgb * mix(vec3(0.9, 1.0, 1.0), vec3(0.8, 1.3, 1.6) * 0.9, water_absortion), color, water_absortion);
 }
 
 vec3 get_normals(vec3 bump, vec3 fragpos) {
@@ -162,7 +162,7 @@ vec3 water_shader_dh(
         #ifndef NETHER
             #ifndef THE_END
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX) +
-                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999)) * light_color * infinite * visible_sky * day_blend(vec3(1.0, 1.0, 0.15), vec3(1.0, 1.0, 0.15), vec3(1.0));       
+                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999)) * light_color * infinite * visible_sky * dayBlend(vec3(1.0, 1.0, 0.15), vec3(1.0, 1.0, 0.15), vec3(1.0));       
             #else
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX);
             #endif

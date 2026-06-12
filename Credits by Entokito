@@ -1,34 +1,64 @@
-# E-LITE shaders version 5.0.1
+# E-LITE shaders version 5.1
+
 MakeUp - Ultrafast original creator: Javier Garduño
 Links:
 https://www.planetminecraft.com/mod/makeup-ultra-fast-shader
 https://www.curseforge.com/minecraft/customization/makeup-ultra-fast-shader
 https://github.com/javiergcim/MakeUpUltraFast
 
-Modfied and translated by @Entokito
+Modified and translated by @Entokito
 
 Changelog:
 
+# SPECIAL THANKS TO BETA TESTERS:
+- tasxatzial
+- avc1657
+
 # OVERVIEW
-- Small patch to fix bugs and make minor adjustments.
+- This update improves the overall look and feel, refining what arrived in 5.0 and adding new features such as LabPBR and Voxy support.
 
 # General changes:
-- Vines now wave.
-- Round sun now has antialiasing and is bigger.
-- Small changes to ambient occlusion.
-- Fullbright mode was reworked to work better during night.
+- Remade fog adjustment in the Nether; now it works better.
+- Small color changes.
+- Small adjustments to the round sun.
+- Sharpness effect intensity was reduced in dark and bright places.
+- Blocklight dispersion and color were slightly changed.
+- Sky reflection was upgraded and now reflects with higher fidelity.
+- Some code was rewritten.
+- "Extreme" profile is discontinued due to its similarity to "High".
+- "Medium" profile no longer has AO, Motion Blur, Bloom, and Godrays, improving performance by up to 10%.
+- Automatic quality adjustment while on low FPS (introduced in version 4.6) has been removed.
+- (INHERITED) Added support for some mods (Create, Botania, etc.).
+- Indirect lighting was improved, becoming more realistic.
+- "Enhanced" style is now "Natural".
+- "Vanilla" style water now has small relief details on reflections.
+- Armor trims now glow.
+- Rainy weather now looks and feels better.
+- End portal now has parallax.
+- Water now has a blue tint when viewed from outside.
+- Title now disappears when GUI is hidden.
+
+# New feature: LabPBR support!
+- Supports reflections, normal mapping on lighting, and POM.
+
+# Lighting changes:
+- Material gloss now uses a more advanced and sophisticated model, looking better in all scenarios (GGX).
+- Indirect light was reworked; now it looks less flat.
 
 # Bugfixes:
-- Fixed "Reflection info" compilation failure on AMD hardware.
-- Fixed "dither13" failure on AMD hardware.
-- Fixed a bug that caused aurora borealis to be distorted at far world positions, e.g., 30K+.
-- Fixed blown image on Vanilla color scheme when using simpler exposure.
-- Fixed a bug that caused soul lights to be too strong in hands.
-- Fixed weird look on trees when using fullbright mode.
-- Fixed fog intensity adjust not working on Nether.
+- Fixed Aurora Borealis texture cutting off in the sky.
+- Fixed some flickering issues on specular block reflections.
+- Fixed big caves having weird lighting in distant places.
+- Fixed caves changing brightness during day/night cycle.
+- Fixed big caves showing too bright fog and clouds on the horizon when using low render distances.
+- Fixed square sun reflection not having the correct angle.
+- Fixed failure on AMD/Intel GPU hardware when using pixel-locked shadows.
+- Fixed a bug that made Title/Profile splash too small on 4K resolution and too big on low resolutions.
+- A tentative attempt was made to fix light leaking in caves.
+- Fixed a bug that made boxy clouds reflection on water stretched.
 
-Version code: ELT501
+Version code: ELT51
 
-Based in MakeUp Ultrafast 9.4c
+Based on MakeUp Ultrafast 9.5a
 
-Olá de Entokito :) 
+Olá de Entokito :)

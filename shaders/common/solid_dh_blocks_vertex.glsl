@@ -28,6 +28,7 @@ uniform float viewWidth;
 uniform float viewHeight; 
 uniform int frameCounter;
 uniform float frameTime;
+uniform vec3 skyColor;
 
 #ifdef UNKNOWN_DIM
     uniform sampler2D lightmap;

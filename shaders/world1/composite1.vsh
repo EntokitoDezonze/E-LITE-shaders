@@ -1,4 +1,5 @@
 #version 120
+#include "/lib/extensions.glsl"
 /* MakeUp - E-LITE shaders 5 - composite1.fsh
 Render: Bloom and DoF
 

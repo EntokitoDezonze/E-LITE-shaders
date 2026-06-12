@@ -1,12 +1,3 @@
-layout(location = 0) out vec4 out_translucent_color;
+#define VOXY_WATER
 
-void voxy_emitFragment(VoxyFragmentParameters parameters) {
-
-    if (parameters.sampledColour.a < 0.05) {
-        discard;
-    }
-    
-    out_translucent_color = vec4(1.0);
-}
-
-// EXPERIMENTAL, THE SHADER HAS NO VOXY SUPPORT.
+#include "/common/water_voxy_blocks_fragment.glsl"

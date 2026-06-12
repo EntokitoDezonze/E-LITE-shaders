@@ -62,7 +62,7 @@ void main() {
                 // Pixelated caustics
                 vec3 wave_normal = normal_waves(finalWorldPos + cameraPosition.xyz);
                 vec3 amplified_normal = wave_normal * 8.0 * CAUSTICS_INTENSITY;
-                block_color.rgb = gray(amplified_normal); 
+                block_color.rgb = gray(amplified_normal) * vec3(1.0, 1.1, 1.1); 
 
                 block_color.a = texture2D(tex, texcoord).a * 0.05 * amplified_normal.z * (CAUSTICS_INTENSITY * 0.5 + 0.5);
             #else
@@ -71,7 +71,8 @@ void main() {
                 if (block_color.r < 0.325) {
                     block_color.a *= 0.6;
                 }
-                block_color.a *= 0.66;
+                block_color.rgb *= vec3(0.95, 1.1, 1.1);
+                block_color.a *= 0.45;
             #endif
             
         } else {

@@ -1,6 +1,6 @@
 #if MC_VERSION >= 11300
     uniform vec2 taa_offset;
-#else
+#elif !defined VOXY_BLOCK || !defined VOXY_WATER
     uniform int frame_mod;
     uniform float pixel_size_x;
     uniform float pixel_size_y;

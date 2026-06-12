@@ -7,7 +7,7 @@
 
 noisetex - Water normals
 colortex0 - Unused
-colortex1 - Antialiasing auxiliar
+colortex1 - Main frame
 colortex2 - Bloom auxiliar
 colortex3 - TAA Averages history
 gaux1 - Screen-Space-Reflection
@@ -145,6 +145,7 @@ uniform float pixel_size_x;
 uniform float pixel_size_y;
 uniform sampler2D depthtex1;
 uniform float frameTime;
+uniform bool hideGUI;
 
 /* Ins / Outs */
 
@@ -220,11 +221,11 @@ void main() {
     } // Water overlay
 
     #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 4
-        float exposure_final = day_blend_float(1.5, 0.85, 3.5);
+        float exposure_final = dayBF(1.5, 0.85, 3.5);
     #elif COLOR_SCHEME == 4 && defined SIMPLE_AUTOEXP
-        float exposure_final = day_blend_float(0.5, 0.5, 2.0);
+        float exposure_final = dayBF(0.5, 0.5, 2.0);
     #elif COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
-        float exposure_final = exposure * day_blend_float(0.8, 1.0, 1.0);
+        float exposure_final = exposure * dayBF(0.8, 1.0, 1.0);
     #else
         // Dynamic exposure curve.
         float start = 1.0;
@@ -249,16 +250,29 @@ void main() {
     block_color = vibrance(block_color.rgb, VIBRANCE); // Vibrance
     block_color = pow(block_color.rgb, vec3(1 / GAMMA)); // Gamma
 
-    #ifdef TITLE
-        float lifeSpan = 4.5;
-        float textOpacity = 1.0 - smoothstep(4.0, lifeSpan, frameTimeCounter);
+    float subScale;
+    float subEntry;
+    ivec2 fragPosSub;
+    int centerXSub;
+    int posYSub;
+    float slideUp;
+    int targetY;
+    int strWErr;
 
-        float mainScale = 6.0;
-        int mainTotalWidth = 96; // 16 chars * 6px
+    #ifdef TITLE
+        #if defined VOXY || defined DISTANT_HORIZONS
+            float lifeSpan = 4.0;
+        #else
+            float lifeSpan = 3.5;
+        #endif
+        float textOpacity = 1.0 - smoothstep(3.0, lifeSpan, frameTimeCounter);
+
+        float mainScale = 4.5 * (viewHeight / 1080);
+        int mainTotalWidth = 80; // 16 chars * 6px
 
         ivec2 fragPosMain = ivec2(gl_FragCoord.xy / mainScale);
         int centerX = int((viewWidth / mainScale) * 0.5);
-        ivec2 textPosMain = ivec2(centerX - (mainTotalWidth / 2), int((viewHeight * 0.825 + 50) / mainScale));
+        ivec2 textPosMain = ivec2(centerX - (mainTotalWidth / 2), int((viewHeight * 0.825 + 50 * viewHeight / 1080)  / mainScale));
         #include "/src/textRender/splashScreen.glsl"
     #endif
 
@@ -267,6 +281,18 @@ void main() {
         #include "/src/textRender/godrayError.glsl"
     #endif
 
+    #if defined VOXY && defined DISTANT_HORIZONS
+        block_color *= 0.0;
+        #include "/src/textRender/VoxyDHError.glsl"
+    #endif
+    
+    
+
+    #if defined ERROR1 && defined ERROR2
+        block_color *= 0.0;
+        #include "/src/textRender/multipleErrors.glsl"
+    #endif
+    
     #if TONEMAPPING == 0
         block_color = custom_sigmoid_alt(block_color);
     #elif TONEMAPPING == 1
