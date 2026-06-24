@@ -3,7 +3,7 @@
 
 E-LITE shaders (formerly known as LITE) is a modification of [MakeUp - Ultra Fast](https://modrinth.com/shader/makeup-ultra-fast-shaders) that aims to make it fancier while maintaining great performance. It adds a lot of customisation as well as a Portuguese translation, and is ideal for use on most PCs, with highly adaptable graphics profiles.
 
-**_Please do not report E-LITE bugs on the MakeUp – Ultra Fast page._**
+**_Please do not report E-LITE bugs on the MakeUp – Ultra Fast page._**  
 **_Do not use OptiFine preview versions, they are very buggy._**
 
 # TESTED ON:
