@@ -17,17 +17,18 @@ vec3 sky_color;
 dither = (dither - 0.5) * 0.03125;
 
 #if ((COLOR_SCHEME == 2 && SIMPLE_SKY == 0) || COLOR_SCHEME == 5) && !defined UNKNOWN_DIM 
-    vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) * 2.0 - 1.0;
+vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);
     vec3 nfragpos = normalize(fragpos.xyz);
-    float n_u = clamp(dot(nfragpos, up_vec) + 0.1 + dither, 0.0, 1.0);
+    
+    float n_u = clamp(dot(nfragpos, up_vec) + (0.1 + dither), 0.0, 1.0);
     float blend_initial = sqrt(n_u);
 
-    float eye_brightness_scaled_val = (eyeBrightnessSmooth.y * .8 + 48.0) * 0.004166666666666667;
-    float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0);
-    height_factor = pow(height_factor, 0.1);
+    float height_factor = clamp(1.0 - (cameraPosition.y * 0.01587301587), 0.0, 1.0); // 1.0 / 63.0
+    height_factor = fastpow(height_factor, 0.1);
     float cave_influence = height_factor * clamp(1.0 - eyeBrightnessSmooth.y * 0.005, 0.0, 1.0);
     cave_influence = smoothstep(0.0, 1.0, cave_influence);
+    cave_influence = dayBF(cave_influence, cave_influence, 0.0);
 
     const float t_mid = 0.6;
     const float t_end = 1.0;
@@ -45,13 +46,14 @@ dither = (dither - 0.5) * 0.03125;
     float sun_factor_sub = dayBF(0.05, 0.1, 0.05) + (final_sun_factor * dayBF(0.05, 0.05, 0.0));
     float t2 = smoothstep(0.0, t_mid, blend_initial - sun_factor_sub);
 
-    current_mid_sky_color = mix(current_mid_sky_color, saturate(current_mid_sky_color * 0.1, 0.0), cave_influence);
-    current_low_sky_color = mix(current_low_sky_color, saturate(current_low_sky_color * 0.1, 0.0), cave_influence);
-    current_hi_sky_color = mix(current_hi_sky_color, saturate(current_hi_sky_color * 0.25, 0.5), pow(cave_influence, 5.0));
+    current_mid_sky_color = mix(current_mid_sky_color, saturate(current_mid_sky_color * 0.1, 0.0), cave_influence) * biome_sky;
+    current_low_sky_color = mix(current_low_sky_color, saturate(current_low_sky_color * 0.1, 0.0), cave_influence) * biome_sky_low;
+    current_hi_sky_color  = mix(current_hi_sky_color,  saturate(current_hi_sky_color * 0.25, 0.5), fastpow(cave_influence, 5.0)) * biome_sky;
 
-    vec3 temp_sky_color = mix(current_mid_sky_color * biome_sky, current_hi_sky_color * biome_sky, t1);
-    sky_color = mix(current_low_sky_color * biome_sky_low, temp_sky_color, t2);
-    sky_color += dither * 3.0 * luma(sky_color);
+    vec3 temp_sky_color = mix(current_mid_sky_color, current_hi_sky_color, t1);
+    sky_color = mix(current_low_sky_color, temp_sky_color, t2);
+    
+    sky_color += dither * (3.0 * luma(sky_color));
 #elif COLOR_SCHEME == 4 // Vanilla
     vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) / RENDER_SCALE * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);

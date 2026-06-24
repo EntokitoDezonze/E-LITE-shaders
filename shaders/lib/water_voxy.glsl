@@ -85,16 +85,12 @@ vec3 refraction_voxy(vec3 fragpos, vec3 color, vec3 refraction) {
 
     float water_absortion;
     if (isEyeInWater == 0) {
-        float water_distance =
-        2.0 * vxNear * vxFar / (vxFar + vxNear - (2.0 * gl_FragCoord.z - 1.0) * (vxFar - vxNear));
-
-        float earth_distance = texture(vxDepthTexTrans, pos.xy).r;
-        earth_distance =
-            2.0 * vxNear * vxFar / (vxFar + vxNear - (2.0 * earth_distance - 1.0) * (vxFar - vxNear));
-
-        water_absortion = earth_distance - water_distance;
-        water_absortion *= water_absortion;
+        float water_distance = 2.0 * vxNear * vxFar / (vxFar + vxNear - (2.0 * gl_FragCoord.z - 1.0) * (vxFar - vxNear));
+        float earth_distance = texture2D(vxDepthTexTrans, pos.xy).x;
+        earth_distance = 2.0 * vxNear * vxFar / (vxFar + vxNear - (2.0 * earth_distance - 1.0) * (vxFar - vxNear)); 
+        water_absortion = max(earth_distance - water_distance, 0.0);
         water_absortion = (1.0 / -((water_absortion * WATER_ABSORPTION) + 1.33)) + 1.0;
+        water_absortion = clamp(water_absortion, 0.0, 1.0);
     } else {
         water_absortion = 0.0;
     }
@@ -116,7 +112,8 @@ vec3 get_normals_voxy(vec3 bump, vec3 fragpos, vec3 tangent, vec3 binormal, vec3
     return normalize(bump * tbn_matrix);
 }
 
-vec4 reflection_calc_voxy(vec3 fragpos, vec3 normal, vec3 reflected) {
+vec4 reflection_calc_voxy(vec3 fragpos, vec3 normal) {
+    vec3 reflected = reflect(normalize(fragpos), normal);
     vec3 pos = camera_to_screen_voxy(fragpos + reflected * 768.0);
 
     float border =
@@ -137,7 +134,6 @@ vec3 water_shader_voxy(
     vec3 normal,
     vec3 color,
     vec3 sky_reflect,
-    vec3 reflected,
     float fresnel,
     float visibleSky,
     vec3 lightColor,
@@ -148,11 +144,11 @@ vec3 water_shader_voxy(
 
     #if REFLECTION == 1
         reflection =
-            reflection_calc_voxy(fragpos, normal, reflected);
+            reflection_calc_voxy(fragpos, normal);
     #endif
 
     reflection.rgb = mix(
-        sky_reflect * visibleSky * 1.15,
+        sky_reflect * visibleSky,
         reflection.rgb,
         reflection.a
     );
@@ -165,7 +161,7 @@ vec3 water_shader_voxy(
         #ifndef NETHER
             #ifndef THE_END
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX) +
-                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.99, lmcoord)) * lightColor * infinite * visibleSky;
+                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999, lmcoord)) * lightColor * infinite * visibleSky;
             #else
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX);
             #endif

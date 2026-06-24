@@ -7,13 +7,17 @@ Javier Garduño - GNU Lesser General Public License v3.0
 uniform float day_moment;
 uniform float day_mixer;
 uniform float night_mixer;
+#if !defined VOXY_BLOCK && !defined VOXY_WATER
+    uniform int worldTime;
+    uniform vec3 fogColor;
+#endif
 
 #define MID_SUNSET_COLOR HORIZON_SUNSET_COLOR
 #define MID_DAY_COLOR HORIZON_DAY_COLOR
 #define MID_NIGHT_COLOR HORIZON_NIGHT_COLOR
 
 #define OMNI_TINT 1.0
-#define LIGHT_SUNSET_COLOR vec3(0.2, 0.12, 0.2)
+#define LIGHT_SUNSET_COLOR vec3(0.2, 0.12, 0.2) * 0.5
 #define LIGHT_DAY_COLOR LIGHT_SUNSET_COLOR
 #define LIGHT_NIGHT_COLOR LIGHT_SUNSET_COLOR
 

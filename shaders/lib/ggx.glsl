@@ -36,7 +36,7 @@ GGX specular gloss. - Brilho especular GGX. */
         spec = spec / (1.0 + spec);
 
         return clamp(
-            spec * vec3(0.75, 0.75, 1.0) * 10.0, 
+            spec * vec3(0.75, 0.75, 1.0) * 0.2, 
             0.0, 1.0
         );
     }
@@ -64,15 +64,15 @@ GGX specular gloss. - Brilho especular GGX. */
         float G_Over_Denom = 0.5 / max(visInv, 1e-5);
 
         float f0 = mix(0.04, 0.57, isMetal);
-        float F = f0 + (1.0 - f0) * sqrt(1.0 - VoH);
+        float F = f0 + (1.0 - f0) * fastpow(1.0 - VoH, 5.0);
         float spec = D * F * G_Over_Denom;
         
         spec = spec / (1.0 + spec);
 
         #ifndef LabPBR
-            float antiblown = dayBF(dayBF(1.0, 0.0, 1.0), dayBF(0.0, 0.6, 1.0), 1.0);
+            float antiblown = dayBF(dayBF(1.0, -1.0, 1.0), dayBF(0.0, 0.6, 1.0), 1.0);
         #else
-            float antiblown = dayBF(dayBF(1.0, 0.0, 1.0), dayBF(0.0, 1.0, 1.0), 1.0);
+            float antiblown = dayBF(dayBF(1.0, -1.0, 1.0), dayBF(0.0, 1.0, 1.0), 1.0);
         #endif
         return clamp(
             spec * saturate(lightColor, dayBF(-0.25, 0.0, 1.0)) * dayBF(1.0, 0.1, 2.5) * antiblown * lmcoord_alt.y * (1.1 - rainStrength), 

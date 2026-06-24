@@ -4,7 +4,7 @@
 #else
     #if COLOR_SCHEME == 2
         vec3 horizonSkyColorRGB = dayBlendVoxyN(
-            HORIZON_SUNSET_COLOR * dayBlendVoxyN(vec3(1.0), vec3(1.0, 1.5, 1.0), vec3(2.0, 1.5, 1.0), dayMixerV, nightMixerV, dayMomentV),
+            HORIZON_SUNSET_COLOR * dayBlendVoxyN(vec3(1.0), vec3(1.0, 1.5, 1.0), vec3(2.0, 1.5, 0.8), dayMixerV, nightMixerV, dayMomentV),
             HORIZON_DAY_COLOR,
             HORIZON_NIGHT_COLOR,
             dayMixerV,

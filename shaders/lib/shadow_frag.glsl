@@ -1,4 +1,4 @@
-vec3 get_shadow(vec3 the_shadow_pos, float dither) {
+vec3 getShadow(vec3 the_shadow_pos, float dither) {
     float shadow_sample = 1.0;
 
     #if SHADOW_TYPE == 0 || SHADOW_LOCK != 0 // Pixelated
@@ -23,12 +23,12 @@ vec3 get_shadow(vec3 the_shadow_pos, float dither) {
     return vec3(shadow_sample);
 }
 
-vec3 get_shadoww(vec3 the_shadow_pos, float dither, vec3 flat_normal) {
+vec3 getShadowAL(vec3 the_shadow_pos, float dither, vec3 flat_normal) {
     float shadow_sample = 1.0;
 
     #if SHADOW_TYPE == 0 || SHADOW_LOCK != 0 // Pixelated
         shadow_sample = shadow2D(shadowtex1, vec3(the_shadow_pos.xy, the_shadow_pos.z)).r;
-    #elif SHADOW_TYPE > 0 && SHADOW_LOCK == 0 // Soft
+    #elif SHADOW_TYPE > 0 && SHADOW_LOCK == 0 // Soft       
         float current_radius = dither;
         float dither_angle = dither * 6.283185307179586;
         
@@ -51,7 +51,7 @@ vec3 get_shadoww(vec3 the_shadow_pos, float dither, vec3 flat_normal) {
 }
 #if defined COLORED_SHADOW
 
-vec3 get_colored_shadow(vec3 the_shadow_pos, float dither) {
+vec3 getColoredShadow(vec3 the_shadow_pos, float dither) {
     #if SHADOW_TYPE == 0 || SHADOW_LOCK != 0 // Pixelated
         float shadow_detector = shadow2D(shadowtex0, the_shadow_pos).r;
         float shadow_black = shadow2D(shadowtex1, the_shadow_pos).r;
@@ -121,7 +121,7 @@ vec3 get_colored_shadow(vec3 the_shadow_pos, float dither) {
     #endif
     }
 
-vec3 get_colored_shadoww(vec3 the_shadow_pos, float dither, vec3 flat_normal) {
+vec3 getColoredShadowAL(vec3 the_shadow_pos, float dither, vec3 flat_normal) {
     #if SHADOW_TYPE == 0 || SHADOW_LOCK != 0 // Pixelated
         float shadow_detector = shadow2D(shadowtex0, the_shadow_pos).r;
         float shadow_black = shadow2D(shadowtex1, the_shadow_pos).r;
@@ -139,7 +139,7 @@ vec3 get_colored_shadoww(vec3 the_shadow_pos, float dither, vec3 flat_normal) {
         
         return clamp(final_color * (1.0 - shadow_detector) + shadow_detector, vec3(0.0), vec3(1.0));
 
-    #elif SHADOW_TYPE > 0 && SHADOW_LOCK == 0 // Soft / Upscaled
+    #elif SHADOW_TYPE > 0 && SHADOW_LOCK == 0 // Soft / Upscaled        
         float current_radius = dither;
         float dither_angle = dither * 6.283185307179586;
         

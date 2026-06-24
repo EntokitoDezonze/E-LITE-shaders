@@ -106,8 +106,8 @@ void main() {
             vol_light_color = saturate(LIGHT_SUNSET_COLOR * 0.75, 2.0) * vol_attenuation,
         #else
             vol_light_color = dayBlend(
-                saturate(LIGHT_SUNSET_COLOR * dayBF(0.9, 1.0, 0.0), mix(dayBFlgcy(0.75, 1.0, 0.0), 0.0, rainStrength)) * vol_attenuation,
-                saturate(LIGHT_DAY_COLOR, 0.1) * vol_attenuation * 0.75,
+                saturate(LIGHT_SUNSET_COLOR * dayBF(1.0, 1.0, 0.0), mix(dayBFlgcy(0.75, 1.0, 0.0), 0.0, rainStrength)) * vol_attenuation,
+                saturate(LIGHT_DAY_COLOR, 0.1) * vol_attenuation * 0.75 * dayBF(0.0, 1.0, 1.0),
                 LIGHT_NIGHT_COLOR * 0.85);
         #endif
     #endif

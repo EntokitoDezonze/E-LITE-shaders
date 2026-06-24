@@ -11,7 +11,7 @@
 /* Uniforms */
 uniform sampler2D gaux3, lightmap;
 uniform float viewWidth, viewHeight, light_mix, far, rainStrength, wetness, frameTime, endFlashIntensity;
-uniform int isEyeInWater, frameCounter, worldTime;
+uniform int isEyeInWater, frameCounter;
 uniform ivec2 eyeBrightnessSmooth;
 uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 uniform vec3 moonPosition, sunPosition, skyColor;
@@ -155,7 +155,7 @@ void main() {
     #include "/src/light_vertex.glsl"
     #include "/src/fog_vertex.glsl"
     
-    #if defined LabPBR && defined POM && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+    #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
         vec2 mid_uv = (gl_TextureMatrix[0] * vec4(mc_midTexCoord.st, 0.0, 1.0)).st;
         vec2 diff = texcoord - mid_uv;
         atlas_uv.xy = min(texcoord, mid_uv - diff);
@@ -198,36 +198,37 @@ void main() {
     #if defined EMISSIVE_MATERIAL
         float temp_emitter = 0.0;
         if (mc_ex >= 9008 && mc_ex <= 9013) temp_emitter = float(mc_ex - 9007);
-        else if (mc_ex == 9014) temp_emitter = 10.0;
-        else if (mc_ex == 9015) temp_emitter = 11.0;
         else if (mc_ex == 10090) temp_emitter = 7.0;
         else if (mc_ex == 10089) temp_emitter = 8.0;
         else if (mc_ex >= 10213 && mc_ex <= 10214) temp_emitter = 9.0;
-        
-            else if(currentRenderedItemId == 9016) temp_emitter = 12.0;
+        else if (mc_ex == 9014) temp_emitter = 10.0;
+        else if (mc_ex == 9015) temp_emitter = 11.0;  
+        else if(currentRenderedItemId == 9016) temp_emitter = 12.0;
+        else if (mc_ex == 9017) temp_emitter = 13.0;
+        else if (mc_ex == 9018) temp_emitter = 14.0;
 
         emitter_v = temp_emitter;
     #endif
 
     float roughness_v = 0.0;
     float reflex_v = 0.0;
-    float g_fact = 1.0; float g_pow = 1.5; float l_fact = 5.0; float lpow = 3.0;
+    float g_fact = 2.0; float g_pow = 3.5; float l_fact = 10.0; float lpow = 3.0;
 
     #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
         if (mc_ex >= 10400) {
             if (mc_ex == 10400) { // Metals
-                l_fact = 1.3; l_pow = 20.0; g_pow = 50.0; g_fact = 1.5; roughness_v = 1.75; reflex_v = 0.65;
+                l_fact = 1.2; l_pow = 40.0; g_pow = 50.0; g_fact = 1.5; roughness_v = 1.75; reflex_v = 0.65;
             } else if (mc_ex <= 10411) { // Sand and Stone
                 bool is_sand = (mc_ex == 10410);
-                l_fact = is_sand ? 1.35 : 1.75; l_pow = 8.0; g_pow = 4.0; g_fact = is_sand ? 2.5 : 1.0;
+                l_fact = is_sand ? 1.4 : 2.0; l_pow = 10.0; g_pow = 4.0; g_fact = is_sand ? 2.5 : 2.0;
             } else if (mc_ex <= 10430 && mc_ex >= 10420) { // Polished/Rough
-                l_fact = 8.0; l_pow = (mc_ex == 10430) ? 1.5 : 2.25; g_pow = (mc_ex == 10421) ? 10.0 : 4.0;
-                g_fact = (mc_ex == 10420) ? 3.0 : (mc_ex == 10430 ? 0.3 : 0.2); roughness_v = 3.0; reflex_v = 0.333;
+                l_fact = 8.0; l_pow = (mc_ex == 10430) ? 4.0 : 2.25; g_pow = (mc_ex == 10421) ? 10.0 : 1.0;
+                g_fact = (mc_ex == 10420) ? 3.0 : (mc_ex == 10430 ? 0.05 : 0.2); roughness_v = 3.0; reflex_v = 0.333;
             } else if (mc_ex == 10450) { // Concrete
                 l_fact = 7.5; l_pow = 1.0; g_pow = 1.0; g_fact = 5.0; roughness_v = 2.0; reflex_v = 0.25;
             }
         } else if (mc_ex >= 10018 && mc_ex <= 10019) { // Foliage
-            l_fact = (mc_ex == 10018) ? 4.5 : 2.5; l_pow = 1.5; g_pow = 1.0; g_fact = 1.0;
+            l_fact = (mc_ex == 10018) ? 20.0 : 2.5; l_pow = 1.5; g_pow = 0.5; g_fact = 1.0;
         }
         lmcoord_alt = lmcoord;
         glossParms = vec4(g_fact, g_pow, l_fact, l_pow);

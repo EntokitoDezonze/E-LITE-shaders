@@ -1,4 +1,3 @@
-// PROFILE SPLASH BASE (Configuração Inicial)
 subScale = 4 * viewHeight / 1080;
 subEntry = smoothstep(0.0, 1.0, frameTimeCounter);
 

@@ -17,6 +17,7 @@
     "dayNightMix",
     "rainStrength",
     "skyColor",
+    "fogColor",
     "isEyeInWater",
     "eyeBrightnessSmooth",
     "vxViewProjInv",

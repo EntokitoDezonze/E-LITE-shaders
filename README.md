@@ -1,13 +1,14 @@
 # E-LITE shaders (MakeUp edit)
-# Version: 5.1
+# Version: 5.1.1
 
 E-LITE shaders (formerly known as LITE) is a modification of [MakeUp - Ultra Fast](https://modrinth.com/shader/makeup-ultra-fast-shaders) that aims to make it fancier while maintaining great performance. It adds a lot of customisation as well as a Portuguese translation, and is ideal for use on most PCs, with highly adaptable graphics profiles.
 
-**_DO NOT use OptiFine preview versions, they are very buggy._**
+**_Please do not report E-LITE bugs on the MakeUp – Ultra Fast page._**
+**_Do not use OptiFine preview versions, they are very buggy._**
 
 # TESTED ON:
 
-- Minecraft 1.12.2 - 1.21.11
+- Minecraft 1.12.2 - 26.2
 - NVIDIA, AMD and Intel, NO warranty that it works on all hardware.
 - Windows 10 and 11.
 
@@ -24,8 +25,9 @@ Majority of these features can be turned off or reduced to enhance performance.
 - Ambient occlusion.
 - Bloom, Motion blur and Depth of Field.
 - +5 customized color schemes.
-- Optional auto-exposure
-- Distant horizons support (Iris only)
+- Optional auto-exposure.
+- Distant horizons & Voxy support (Iris only)
+- LabPBR support.
 - And more...
 
 [Gallery](https://modrinth.com/shader/lite-shaders/gallery)

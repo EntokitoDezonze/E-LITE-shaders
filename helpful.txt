@@ -1,28 +1,30 @@
-Teleport to Nether:
+# Teleport to Nether:
 /execute in minecraft:the_nether run teleport ~ ~ ~
 
-Teleport to The End:
+# Teleport to The End:
 /execute in minecraft:the_end run teleport ~ ~ ~
 
-Teleport to Overworld:
+# Teleport to Overworld:
 /execute in minecraft:overworld run teleport ~ ~ ~
 
-Stop time:
+# Stop time before 26.1:
 /gamerule doDaylightCycle false
 
-Fast day:
+## After 26.1:
+/gamerule advance_time false
+
+# Fast day:
 /tick rate 400
 
-Blindness:
+# Blindness:
 /effect give @p blindness 99999
 
-Remove effects:
+# Remove effects:
 /effect clear @p
 
-Lightning bolt:
-/summon lightning_bolt [pos]
-
-Moon phase:
+# Lightning bolt:
+/summon lightning_bolt ~ ~ ~
+# Moon phase:
 /time set 18000 - Full Moon
 /time set 44000 - Waning Gibbous
 /time set 68000 - Last Quarter

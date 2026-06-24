@@ -5,14 +5,14 @@
         }
     #elif defined NETHER
         if(isEyeInWater == 0 && FOG_ADJUST < 15.0) {  // In the air
-            blockColor.rgb = mix(blockColor.rgb, mix(fogColor * 0.25, vec3(0.5), 0.025), frogAdjust);
+            blockColor.rgb = mix(blockColor.rgb, mix(fogColor * 0.5, vec3(1.0), -0.025), frogAdjust);
         }
     #else
         #if COLOR_SCHEME != 5
             #if VOL_LIGHT < 1 && V_CLOUDS > 0
                 float fogInfluence = dayBlendFloatVoxyN(mix(1.0, 1.333, pow(sunInfluenceV, 0.333)), mix(1.01, 1.333, pow(sunInfluenceV, 0.333)), 1.0, dayMixerV, nightMixerV, dayMomentV);
             #elif VOL_LIGHT > 0 && V_CLOUDS < 1
-                float fogInfluence = 1.0;
+                float fogInfluence = dayBlendFloatVoxyN(mix(1.0, 1.11, fastpow(sunInfluenceV, 6.0)), 1.0, 1.0, dayMixerV, nightMixerV, dayMomentV);
             #elif VOL_LIGHT > 0 && V_CLOUDS > 0
                 float fogInfluence = dayBlendFloatVoxyN(mix(1.0, 1.11, fastpow(sunInfluenceV, 6.0)), 1.0, 1.0, dayMixerV, nightMixerV, dayMomentV);
             #else

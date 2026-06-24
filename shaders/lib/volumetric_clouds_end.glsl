@@ -42,11 +42,7 @@ vec3 get_end_cloud(vec3 view_vector, vec3 block_color, float bright, float dithe
         intersection_pos += (increment * dither);
 
         for (int i = 0; i < samples; i++) {
-            #if CLOUD_VOL_STYLE == 0
-                float current_value = texture2D(gaux2, (intersection_pos.xz * .0008) + (frameTimeCounter * CLOUD_HI_FACTOR * 3.0)).r;
-            #else
-                float current_value = texture2D(colortex2, (intersection_pos.xz * .0008) + (frameTimeCounter * CLOUD_HI_FACTOR * 3.0)).r;
-            #endif
+            float current_value = texture2D(gaux2, (intersection_pos.xz * .0008) + (frameTimeCounter * CLOUD_HI_FACTOR * 3.0)).r;
             
             #if V_CLOUDS == 2 && CLOUD_VOL_STYLE == 0
                 current_value += texture2D(gaux2, (intersection_pos.zx * .0008) + (frameTimeCounter * CLOUD_LOW_FACTOR * 3.0)).r;

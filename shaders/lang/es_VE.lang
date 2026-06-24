@@ -403,7 +403,7 @@ option.END_STARS=§9▶§r Estrellas en El End
 
 option.STARS_BRIGHTNESS=Brillo estelar
 option.STARS_COVERAGE=Cobertura estelar
-
+option.STARS_COVERAGE.comment=Multiplicador de cobertura de las estrellas. Solo afecta a las estrellas §5§lMAX§r.option.STARS_COVERAGE.comment=Multiplicador de cobertura de las estrellas. Solo afecta a las estrellas §5§lMAX§r.
 option.CUSTOM_SKYFIX=Fix de cielos pers.
 
 option.SANDSTORM=§9▶§r Tormenta de arena
@@ -469,7 +469,7 @@ option.HOVER.comment=¡Hola! Aquí encontrarás información sobre E-LITE shader
 value.HOVER.0=
 
 option.VERSION=Info. de versión
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1§r. Build: RELEASE. Código: §5§lELT51§r. Fecha de la versión: 12 de Junio 2026. Basado en MakeUp Ultrafast 9.5a
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.1§r. Build: RELEASE. Código: §5§lELT511§r. Fecha de la versión: 24 de Junio 2026. Basado en MakeUp Ultrafast 9.5b
 value.VERSION.0=
 
 option.PROFILES=Perfiles gráficos

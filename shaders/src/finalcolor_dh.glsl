@@ -10,7 +10,7 @@
         block_color.rgb = mix(fogColor * 0.1, vec3(1.0), 0.04);
     #else
         #ifdef FOG_ACTIVE
-            block_color.rgb = mix(block_color.rgb, mix(fogColor * 0.1, vec3(1.0), 0.04), fog_adj);
+            block_color.rgb = mix(block_color.rgb, mix(fogColor * 0.5, vec3(1.0), -0.025), fog_adj);
         #endif
     #endif
 #elif defined THE_END

@@ -111,3 +111,14 @@ vec4 sixthPowVec4(vec4 x) {
     vec4 temp2 = x * x;
     return temp2 * temp2 * temp2;
 }
+
+/* arccos Approximation */
+// Source: https://www.forwardscattering.org/post/66
+// Code by Nicholas Chapman
+float fastApproxACos(float x){
+	if(x < 0.0) {
+		return 3.14159265 - ((x * 0.124605335 + 0.1570634) * (0.99418175 + x) + sqrt(2.0 + 2.0 * x));	
+    } else {
+		return (x * -0.124605335 + 0.1570634) * (0.99418175 - x) + sqrt(2.0 - 2.0 * x);
+    }
+}

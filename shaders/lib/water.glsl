@@ -185,6 +185,13 @@ vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
             earth_distance_dh =
                 2.0 * dhNearPlane * dhFarPlane / (dhFarPlane + dhNearPlane - (2.0 * earth_distance_dh - 1.0) * (dhFarPlane - dhNearPlane));
             earth_distance = min(earth_distance, earth_distance_dh);
+        #elif defined VOXY
+            const float vxNear = 16.0;
+            const float vxFar  = 48000.0;
+            float earth_distance_vx = texture2D(vxDepthTexTrans, pos.xy).r;
+            earth_distance_vx =
+                2.0 * vxNear * vxFar / (vxFar + vxNear - (2.0 * earth_distance_vx - 1.0) * (vxFar - vxNear));
+            earth_distance = min(earth_distance, earth_distance_vx);
         #endif
 
         water_absortion = earth_distance - water_distance;
@@ -211,7 +218,7 @@ vec3 get_normals(vec3 bump, vec3 fragpos) {
     return normalize(bump * tbn_matrix);
 }
 
-vec4 reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, float dither) {
+vec4 reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, float dither) {    
     vec3 reflected = reflect(normalize(fragpos), normal);
     #if SSR_TYPE == 0  // Flipped image
         #if defined DISTANT_HORIZONS || defined VOXY

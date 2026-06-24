@@ -20,15 +20,17 @@ float surface_depth = 1.0;
         float lod = 0.5 * log2(delta_max_sqr);
         lod = clamp(lod, 0.0, 4.0);
 
+        float noise = shifted_dither13(gl_FragCoord.xy) * 0.5 + 0.5;
         float step_size = 1.0 / float(steps);
-        float ray_pos = 1.0;
+        float ray_pos = 1.0 + step_size * noise;
 
-        float noise = shifted_eclectic_r_dither(gl_FragCoord.xy);
+        
         vec2 raw_dir = view_tg.xy * POM_DEPTH * 0.25 / -view_tg.z;
         vec2 uv_step = raw_dir * step_size * (1.0 - pom_fade);
-        vec2 p_uv = local_uv; 
+        vec2 p_uv = local_uv + uv_step * noise; 
         
-        for(int i = 0; i < steps; i++) {
+        float lod_factor = clamp(lod / 4.0, 0.0, 1.0);
+        for(int i = 0; i < steps * mix(1.0, 0.0, lod_factor); i++) {
             float h_map = texture2DLod(normals, fract(p_uv) * atlas_uv.zw + atlas_uv.xy, lod).a;
             if (ray_pos <= h_map) break;
             p_uv += uv_step;

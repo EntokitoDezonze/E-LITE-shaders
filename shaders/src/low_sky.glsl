@@ -4,7 +4,7 @@
 #else
     #if COLOR_SCHEME == 2
     vec3 low_sky_color_rgb = dayBlend(
-            HORIZON_SUNSET_COLOR * dayBlend(vec3(1.0), vec3(1.0, 1.5, 1.0), vec3(2.0, 1.5, 1.0)),
+            HORIZON_SUNSET_COLOR * dayBlend(vec3(1.0), vec3(1.0, 1.5, 1.0), vec3(2.0, 1.5, 0.8)),
             HORIZON_DAY_COLOR,
             HORIZON_NIGHT_COLOR
         );

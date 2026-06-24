@@ -29,7 +29,7 @@ float invFogAdjust = 1.0 / FOG_ADJUST;
         float sunDayFactor = dayBF(1.0, 0.1, 0.0);
 
         #if defined DISTANT_HORIZONS || defined VOXY
-            float dynamic_density = 0.003 + (0.001 * sunInfluence * sunDayFactor);
+            float dynamic_density = 0.002 + (0.001 * sunInfluence * sunDayFactor);
         #else
             float dynamic_density = 0.004 + (0.005 * sunInfluence * sunDayFactor);
         #endif
@@ -38,7 +38,7 @@ float invFogAdjust = 1.0 / FOG_ADJUST;
             float dist_adj = max(0.0, gl_FogFragCoord - (float(vxRenderDistance * 16) / mix(24.0, 240.0, rainStrength)));
             near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
         #elif defined DISTANT_HORIZONS
-            float dist_adj = (gl_FogFragCoord - (far / mix(3.5, 25.0, rainStrength)));
+            float dist_adj = (gl_FogFragCoord - (dhRenderDistance / mix(30.0, 240.0, rainStrength)));
             near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
         #else
             float dist_adj = (gl_FogFragCoord - (far / mix(7.0, 25.0, rainStrength)));
@@ -65,27 +65,16 @@ float invFogAdjust = 1.0 / FOG_ADJUST;
                 float sight = far;
             #endif
         #endif
-        float density = 0.1;
     #else
         #if defined DISTANT_HORIZONS
             float sight = dhRenderDistance;
-            float density = 0.003 * 5;
         #elif defined VOXY
-            float sight = (vxRenderDistance * 16);
-            float density = 0.001;
+            float sight = (vxRenderDistance * 16) * 0.75;
         #else
             float sight = far * 0.75;
-            float density = 0.005;
         #endif 
     #endif
-    
-    #ifdef NEAR_FOG
-        float dist_adj = max(0.0, gl_FogFragCoord - (sight * 0.1));
-        near_fog = clamp(1.0 - exp(-dist_adj * density * invFogAdjust), 0.0, 1.0);
-    #else
-        near_fog = 0.0;
-    #endif
 
-    float horizon_fog = clamp(gl_FogFragCoord / sight, 0.0, 1.0);
-    fog_adj = max(near_fog, pow(horizon_fog, FOG_ADJUST * 0.25)); // Made by Tas :)
+    float horizon_fog = pow(clamp(gl_FogFragCoord / sight, 0.0, 1.0), 0.75);
+    fog_adj = pow(horizon_fog, FOG_ADJUST * 0.25); // Made by Tas :)
 #endif

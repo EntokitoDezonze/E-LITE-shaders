@@ -199,12 +199,15 @@ void main() {
             
             #if ROUND_SUN == 1
                 float vol_intensity =
-                    clamp(dot(center_view_vector, intermediate_vector) * dayBF(1.0, 2.0, 1.0), 0.0, 1.0);
+                    clamp(dot(center_view_vector, intermediate_vector) * dayBF(0.5, 2.0, 1.0), 0.0, 1.0);
             #else
                 float vol_intensity =
                     clamp(dot(center_view_vector, intermediate_vector), 0.0, 1.0);
             #endif
-            vol_intensity *= dot(view_vector, intermediate_vector);
+                float cosTheta = dot(view_vector, intermediate_vector);
+                float acos_approx = fastApproxACos(cosTheta);
+                float linear = 1.0 - (acos_approx * 0.6366197);
+                vol_intensity *= squarePow(linear);
             vol_intensity =
                 pow(clamp(vol_intensity, 0.0, 1.0), vol_mixer) * 0.5 * abs(light_mix * 2.0 - 1.0);
             block_colorvl =

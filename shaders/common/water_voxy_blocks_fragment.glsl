@@ -49,7 +49,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
         #ifdef THE_END
             vec3 omniLight = LIGHT_DAY_COLOR * 2.0;
         #else
-            vec3 omniLight = LIGHT_DAY_COLOR * omniStrength;
+            vec3 omniLight = vec3(0.05 + 0.2 * step(49.0, AVOID_DARK_LEVEL));
         #endif
     #else
         directLightColor = mix(directLightColor, ZENITH_SKY_RAIN_COLOR * luma(directLightColor) * rain_mul, rainStrength);
@@ -86,7 +86,11 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
             omniColor = clamp(omniColor, AVOID_DARK_LEVEL * 0.0025, 10.0);
         #endif
 
-        omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.0333, omniColorMin, visibleSky);
+        #ifdef SIMPLE_AUTOEXP
+            omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.15 + 0.05 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
+        #else
+            omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
+        #endif
 
         vec3 omniLight = mix(omniColorMin, omniColor, visibleSky * visibleSky * visibleSky * visibleSky) * omniStrength;
     #endif
@@ -158,7 +162,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
         #if defined NEAR_FOG && defined FOG_ACTIVE
             float sunDayFactor = dayBlendFloatVoxyN(1.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV);
-            float dynamic_density = 0.003 + (0.001 * sunInfluenceV * sunDayFactor);
+            float dynamic_density = 0.002 + (0.001 * sunInfluenceV * sunDayFactor);
 
             float dist_adj = max(0.0, fogFragCoord - (float(vxRenderDistance * 16) / mix(24.0, 240.0, rainStrength)));
             nearFogVoxy = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
@@ -174,18 +178,11 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
         // --- END / NETHER ---
         #if defined NETHER
             float sight = float(vxRenderDistance * 16);
-            float density = 0.1;
         #else
             float sight = float(vxRenderDistance * 16) * 0.75;
-            float density = 0.005;
         #endif
 
-        #ifdef NEAR_FOG
-            float dist_adj = max(0.0, fogFragCoord - (sight * 0.1));
-            nearFogVoxy = clamp(1.0 - exp(-dist_adj * density * invFogAdjust), 0.0, 1.0);
-        #endif
-
-        float horizon_fog = clamp(fogFragCoord / sight, 0.0, 1.0);
+        float horizon_fog = pow(clamp(fogFragCoord / sight, 0.0, 1.0), 0.75);
         float frogAdjust = max(nearFogVoxy, pow(horizon_fog, FOG_ADJUST * 0.25));
     #endif
 
@@ -216,7 +213,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
     vec3 skyColorReflect;
     if(isEyeInWater == 0 || isEyeInWater == 2) {
-        skyColorReflect = mix(current_low_sky_color, zenithSkyColor, sqrt(clamp(dot(normalizedReflectWaterVector, upVector), 0.0001, 1.0)));
+        skyColorReflect = mix(current_low_sky_color, current_hi_sky_color, sqrt(clamp(dot(normalizedReflectWaterVector, upVector), 0.0001, 1.0)));
     } else {
         skyColorReflect = zenithSkyColor * .5 * ((eyeBrightSmoothFloat.y * .8 + 48) * 0.004166666666666667);
     }
@@ -239,7 +236,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
             blockColor.rgb *= mix(realLight, vec3(1.0), nightVision * .125) * tintColor.rgb;
 
-            blockColor.rgb = water_shader_voxy(fragposition, surfaceNormal, blockColor.rgb, skyColorReflect, normalizedReflectWaterVector, fresnel, visibleSky, directLightColor, lmcoord);
+            blockColor.rgb = water_shader_voxy(fragposition, surfaceNormal, blockColor.rgb, skyColorReflect, fresnel, visibleSky, directLightColor, lmcoord);
 
             blockColor.a = sqrt(blockColor.a);
         #else
@@ -256,7 +253,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
                 (directLightStrength * visibleSky * directLightColor) * (1.0 - rainStrength * 0.75) +
                 candleColor;
 
-            realLight *= mix(mix(0.666, 1.0, fresnel), 1.0, WATER_ABSORPTION * 10 - 0.5);
+            //realLight *= mix(mix(0.666, 1.0, fresnel), 1.0, WATER_ABSORPTION * 10 - 0.5);
 
             #if WATER_COLOR_SOURCE == 0
                 blockColor.rgb = waterTexture * realLight * WATER_COLOR;
@@ -267,13 +264,15 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
             blockColor = vec4(refraction_voxy(fragposition, blockColor.rgb, waterNormalBase), 1.0);
 
             #if WATER_TEXTURE == 1
-                waterTexture += 0.25;
-                waterTexture *= waterTexture;
-                waterTexture *= waterTexture;
-                fresnel = clamp(fresnel * (waterTexture), 0.0, 1.0);
+                float water_texture2 = waterTexture + 0.25;
+                water_texture2 *= water_texture2;
+                fresnel = clamp(fresnel * (water_texture2), 0.0, 1.0);
+                float normalfactor = sqrt(waterTexture * 0.5 + 0.5) / 0.9;
+            #else
+                float normalfactor = 1.0;
             #endif
 
-            blockColor.rgb = water_shader_voxy(fragposition, surfaceNormal * sqrt(water_texture * 0.5 + 0.5), blockColor.rgb, skyColorReflect, normalizedReflectWaterVector * water_texture, fresnel, visibleSky, directLightColor, lmcoord);
+            blockColor.rgb = water_shader_voxy(fragposition, surfaceNormal * normalfactor, blockColor.rgb, skyColorReflect, fresnel, visibleSky, directLightColor, lmcoord);
         #endif
     } else {  // Otros translúcidos
         blockColor = parameters.sampledColour;

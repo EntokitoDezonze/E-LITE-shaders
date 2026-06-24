@@ -13,6 +13,7 @@ uniform float pale_garden;
 uniform float snow;
 uniform float taiga;
 uniform float hill;
+uniform float hasAurora;
 
 float taiga_snow = clamp(taiga + snow + hill, 0.0, 1.0); // Pre-calculated
 

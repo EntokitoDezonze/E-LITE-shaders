@@ -7,8 +7,12 @@ Javier Garduño - GNU Lesser General Public License v3.0
 uniform float day_moment;
 uniform float day_mixer;
 uniform float night_mixer;
+#if !defined VOXY_BLOCK && !defined VOXY_WATER
+    uniform int worldTime;
+    uniform vec3 fogColor;
+#endif
 uniform int moonPhase;
-uniform vec3 fogColor;
+
 
 #define NIGHT_BRIGHT_PHASE (NIGHT_BRIGHT + (NIGHT_BRIGHT_RANGE / 4.0) * abs(4.0 - moonPhase))
 
@@ -38,7 +42,7 @@ uniform vec3 fogColor;
     #define LIGHT_NIGHT_COLOR vec3(0.015, 0.02, 0.035) * NIGHT_BRIGHT_PHASE
     
     #if SIMPLE_SKY == 0 // E-LITE 5
-        #define ZENITH_SUNSET_COLOR vec3(0.105, 0.135, 0.21)
+        #define ZENITH_SUNSET_COLOR vec3(0.11025,  0.14175,  0.2205)
         #define ZENITH_DAY_COLOR vec3(0.13, 0.31, 0.65)
         #define ZENITH_NIGHT_COLOR vec3(0.0075, 0.015, 0.0225) * NIGHT_BRIGHT_PHASE
         

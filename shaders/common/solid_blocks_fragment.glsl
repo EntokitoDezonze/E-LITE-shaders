@@ -21,7 +21,7 @@ uniform sampler2DShadow shadowtex1, shadowtex0;
 
 uniform float viewWidth, viewHeight, far, near, light_mix, rainStrength, wetness, blindness, frameTime, frameTimeCounter, inv_aspect_ratio, nightVision, dhNearPlane;
 uniform float pixel_size_x, pixel_size_y; // pixel_size
-uniform int frameCounter, isEyeInWater, worldTime, entityId;
+uniform int frameCounter, isEyeInWater, entityId;
 uniform vec3 sunPosition, moonPosition, cameraPosition, previousCameraPosition;
 uniform vec4 entityColor;
 uniform ivec2 eyeBrightnessSmooth;
@@ -40,6 +40,7 @@ varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color, candle_color, omni_light;
+varying float vanilla_ao;
 
 #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
     varying vec4 vDistTg;
@@ -105,9 +106,13 @@ vec2 pixel_size;
 
 #include "/lib/end_portal.glsl"
 vec3 computeRealLight(vec3 omni, vec3 directColor, float directStrength, vec3 shadow, vec3 material, vec3 candle) {
-    return (omni + shadow * directColor * (directStrength * (1.0 + material)) * (1.0 - (rainStrength * 0.75))) + candle;
+    vec3 spec_energy;
+    #if MATERIAL_GLOSS > 0
+        spec_energy = material / (1.0 + material * 0.05); 
+    #endif
+    return (omni + shadow * directColor * (directStrength * (1.0 + spec_energy)) * (1.0 - (rainStrength * 0.75))) + candle;
 }
-varying float vanilla_ao;
+
 void main() {
     /* Unpack */
     vec3 viewPos = mat3(gbufferProjectionInverse) * (vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z) * 2.0 - 1.0);
@@ -136,7 +141,13 @@ void main() {
     pure_block_color = texture2D(tex, final_uv);
     vec4 block_color = vec4(pure_block_color.rgb * tint_color.rgb, pure_block_color.a);
     float block_luma = luma(block_color.rgb);
-    block_color.rgb *= vanilla_ao;
+    #if !defined GBUFFER_TEXTURED && !defined GBUFFER_ENTITIES
+        block_color.rgb *= vanilla_ao;
+    #elif defined GBUFFER_ENTITIES
+        block_color *= vanilla_ao;
+    #else
+        block_color.a *= vanilla_ao;
+    #endif
 
     pixel_size = vec2(pixel_size_x, pixel_size_y);
     final_candle_color = candle_color;
@@ -190,25 +201,21 @@ void main() {
         #endif
 
         #if defined COLORED_SHADOW
-            vec3 shadow_c = mix(get_colored_shadoww(shadow_real_pos, dither, flat_normal), vec3(1.0), shadow_diffuse);
+            vec3 shadow_c = mix(getColoredShadowAL(shadow_real_pos, dither, flat_normal), vec3(1.0), shadow_diffuse);
         #else
-            vec3 shadow_c = mix(get_shadoww(shadow_real_pos, dither, flat_normal), vec3(1.0), shadow_diffuse);
+            vec3 shadow_c = mix(getShadowAL(shadow_real_pos, dither, flat_normal), vec3(1.0), shadow_diffuse);
         #endif
     #else
         vec3 shadow_c = vec3(abs((light_mix * 2.0) - 1.0));
     #endif
 
     // === Grass correction
-    #ifdef SHADOW_CASTING
-        float directLight2;
-        if(isEyeInWater == 0) {
-            directLight2 = mix(direct_light_strength, (sqrt(sqrt(direct_light_strength) * 0.85) * luma(shadow_c)), float(isGrass > 0.5));
-        } else {
-            directLight2 = mix(direct_light_strength, (direct_light_strength * 0.5 * luma(shadow_c)), float(isGrass > 0.5));  
-        }
-    #else
-        float directLight2 = direct_light_strength;
-    #endif
+    float directLight2;
+    if(isEyeInWater == 0) {
+        directLight2 = mix(direct_light_strength, (sqrt(sqrt(direct_light_strength) * 0.85) * luma(shadow_c)), float(isGrass > 0.5));
+    } else {
+        directLight2 = mix(direct_light_strength, (direct_light_strength * 0.5 * luma(shadow_c)), float(isGrass > 0.5));  
+    }
 
     // === PBR auxiliary
     #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
@@ -236,30 +243,79 @@ void main() {
             shadow_factor = get_pom_shadow(surface_depth, local_uv, light_tg, dither, shadow_c);
         }
         block_color.rgb *= shadow_factor;
+        block_color.rgb *= mix(vec3(0.7, 0.9, 1.2), vec3(1.0), shadow_factor);
     #endif
     
     // === Block reflection
     float currentRoughness = roughness;
     #if (MATERIAL_GLOSS > 0 && !defined NETHER)
+        float f0_val;
         #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
             vec4 specMap = texture2D(specular, final_uv);
             float smoothness = specMap.r;
-            float f0_val = mix(specMap.g * (1.0 - specMap.a), specMap.g, step(1.0, specMap.a));
-            float isMetal = step(0.9, f0_val);
-            float final_gloss_power = pow(smoothness, 4.0) * 256.0 + 1.0;
-            float block_luma2 = block_luma + smoothness * mix(30.0, 100.0, isMetal);
-            block_luma2 *= pow(smoothness, 4.0);
-            currentRoughness = pow(1.0 - smoothness, 2.0);
+            f0_val = mix(specMap.g * clamp(1.0 - specMap.a, 0.04, 1.0), specMap.g, step(0.99, specMap.a));
+            reflex_index2 = f0_val;
+            float isMetal = step(0.9018, f0_val);
+            float porosity_clip = mix(1.0 - specMap.b, 1.0, isMetal);
+            float final_gloss_power = squarePow(smoothness) * mix(96.0, 320.0, isMetal) + 1.0;
+            float block_luma2 = block_luma * 100;
+            float sss_factor = fourthPow(clamp(1.0 - smoothness, 0.0, 1.0));
+            block_luma2 *= mix(sss_factor, fourthPow(smoothness), porosity_clip);
+            
+            float luma_shading = max(25.0 - fourthPow(block_luma * 3.0), 0.0);
+            float trigger = smoothstep(0.1, 0.0, block_luma);
+            float explosion = 1.0 / (block_luma + 0.005);
+            luma_shading += squarePow(explosion) * trigger * 100.0;
+            float metal_shading = fastpow(max(block_luma2, 1e-5), 0.1) * 150.0;
+            
+            block_luma2 = mix(block_luma2, mix(luma_shading, metal_shading, isMetal), porosity_clip);
+            block_luma2 *= 1.0 + cubePow(smoothness);
+            currentRoughness = squarePow(1.0 - smoothness);
         #else
             float final_gloss_power = glossParms.g;
             float block_luma2 = pow(block_luma * glossParms.b, glossParms.a);
             float isMetal = 0.0;
         #endif
+    #endif
 
-        vec3 gloss = ggxSpecular(sub_position3, lmcoord_alt, final_gloss_power, bumpedNormal, direct_light_color * glossParms.r, isMetal);
+    #if MATERIAL_GLOSS > 0 && defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        isMetal = step(0.9018, f0_val);
+        float isCustomMetal = step(0.998, f0_val);
+        float metalID = floor(f0_val * 255.0 + 0.5);
+
+        // Documented in https://shaderlabs.org/wiki/LabPBR_Material_Standard
+        // F = (n-1)² + k² / (n+1)² + k²
+        vec3 f0_iron     = vec3(0.5611, 0.5594, 0.5348);
+        vec3 f0_gold     = vec3(0.9234, 0.6384, 0.2872);
+        vec3 f0_aluminum = vec3(0.9213, 0.9168, 0.9161);
+        vec3 f0_chrome   = vec3(0.5598, 0.5555, 0.5501);
+        vec3 f0_copper   = vec3(0.9255, 0.6433, 0.4497);
+        vec3 f0_lead     = vec3(0.6620, 0.6558, 0.6120);
+        vec3 f0_platinum = vec3(0.6931, 0.6698, 0.6277);
+        vec3 f0_silver   = vec3(0.9634, 0.9458, 0.9084);
+
+        vec3 metal_f0 = f0_iron;
+        metal_f0 = mix(metal_f0, f0_gold,     step(231.0, metalID));
+        metal_f0 = mix(metal_f0, f0_aluminum, step(232.0, metalID));
+        metal_f0 = mix(metal_f0, f0_chrome,   step(233.0, metalID));
+        metal_f0 = mix(metal_f0, f0_copper,   step(234.0, metalID));
+        metal_f0 = mix(metal_f0, f0_lead,     step(235.0, metalID));
+        metal_f0 = mix(metal_f0, f0_platinum, step(236.0, metalID));
+        metal_f0 = mix(metal_f0, f0_silver,   step(237.0, metalID));
+
+        vec3 material_f0 = mix(vec3(f0_val), metal_f0, isMetal);
+    #else
+        vec3 material_f0 = vec3(1.0);
+    #endif
+
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER)
+        vec3 gloss;
+        if(block_type != 1.0){
+            gloss = ggxSpecular(sub_position3, lmcoord_alt, final_gloss_power, bumpedNormal, direct_light_color * glossParms.r, isMetal);
+        }
         gloss = clamp(gloss, 0.0, 1.0);
-        block_color.rgb = saturate(block_color.rgb, max(1.0 - luma(gloss * 2), 0.75));
-        vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, gloss * block_luma2, candle_color);
+        block_color.rgb = saturate(block_color.rgb, max(1.0 - mix(0.0, 1.0, luma(gloss * dayBF(1.0, 2.0, 1.0)) * luma(shadow_c)), 0.0));
+        vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, gloss * max(block_luma2, 0.0), candle_color);
     #else
         vec3 gloss = vec3(0.0);
         vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, vec3(0.0), candle_color);
@@ -285,7 +341,7 @@ void main() {
             vec3 R = reflect(sub_position3_norm, bumpedNormal);
             vec2 sky_uv = vec2(atan(R.z, R.x) * 0.1591549 + 0.5, acos(-R.y) * 0.3183098 + 0.1);
             vec3 sky_refl = texture2D(gaux4, clamp(sky_uv, 0.01, 0.99)).rgb;
-            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2);
+            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2, material_f0);
         }
     #endif
 

@@ -1,4 +1,9 @@
-# E-LITE shaders version 5.1
+  ___    _    ___ _____ ___   ___   _   _ 
+ | _____| |  |_ _|_   _| __| | __| / | / |
+ | _|___| |__ | |  | | | _|  |__ \_| |_| |
+ |___|  |____|___| |_| |___| |___(_|_(_|_|
+                                          
+# E-LITE shaders version 5.1.1
 
 MakeUp - Ultrafast original creator: Javier Garduño
 Links:
@@ -15,50 +20,31 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- This update improves the overall look and feel, refining what arrived in 5.0 and adding new features such as LabPBR and Voxy support.
+- Small patch to fix bugs and improve shader's look.
 
 # General changes:
-- Remade fog adjustment in the Nether; now it works better.
-- Small color changes.
-- Small adjustments to the round sun.
-- Sharpness effect intensity was reduced in dark and bright places.
-- Blocklight dispersion and color were slightly changed.
-- Sky reflection was upgraded and now reflects with higher fidelity.
-- Some code was rewritten.
-- "Extreme" profile is discontinued due to its similarity to "High".
-- "Medium" profile no longer has AO, Motion Blur, Bloom, and Godrays, improving performance by up to 10%.
-- Automatic quality adjustment while on low FPS (introduced in version 4.6) has been removed.
-- (INHERITED) Added support for some mods (Create, Botania, etc.).
-- Indirect lighting was improved, becoming more realistic.
-- "Enhanced" style is now "Natural".
-- "Vanilla" style water now has small relief details on reflections.
-- Armor trims now glow.
-- Rainy weather now looks and feels better.
-- End portal now has parallax.
-- Water now has a blue tint when viewed from outside.
-- Title now disappears when GUI is hidden.
-
-# New feature: LabPBR support!
-- Supports reflections, normal mapping on lighting, and POM.
-
-# Lighting changes:
-- Material gloss now uses a more advanced and sophisticated model, looking better in all scenarios (GGX).
-- Indirect light was reworked; now it looks less flat.
+- Crimson and warped stems and hyphae now glow.
+- Removed unused files.
+- Nether fog has been reworked.
+- Small changes in how LabPBR materials reflect light.
+- Small improvements on how blocks reflect light w/block reflection (without LabPBR).
+- Small sky color changes.
+- Reduced depth-based godrays intensity.
 
 # Bugfixes:
-- Fixed Aurora Borealis texture cutting off in the sky.
-- Fixed some flickering issues on specular block reflections.
-- Fixed big caves having weird lighting in distant places.
-- Fixed caves changing brightness during day/night cycle.
-- Fixed big caves showing too bright fog and clouds on the horizon when using low render distances.
-- Fixed square sun reflection not having the correct angle.
-- Fixed failure on AMD/Intel GPU hardware when using pixel-locked shadows.
-- Fixed a bug that made Title/Profile splash too small on 4K resolution and too big on low resolutions.
-- A tentative attempt was made to fix light leaking in caves.
-- Fixed a bug that made boxy clouds reflection on water stretched.
+- Fixed some missing translations in Portuguese and Spanish versions.
+- Fixed Aurora borealis having a "square-shaped" look when boxy clouds were enabled.
+- Fixed a bug that made translucent particles and entities very dark.
+- Fixed raindrops on the "Particle rain" mod being too dark.
+- Fixed Nether fog having wrong colors.
+- Fixed stretched reflections when water texture is enabled.
+- Fixed a bug that made lighting very dark when using LabPBR with POM disabled.
+- Fixed a bug that made boxy clouds not work on The End.
+- Fixed Voxy fog not working on Nether.
+- Fixed "Fullbright" mode broken on caves and Nether.
 
-Version code: ELT51
+Version code: ELT511
 
-Based on MakeUp Ultrafast 9.5a
+Based on MakeUp Ultrafast 9.5b
 
 Olá de Entokito :)

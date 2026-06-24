@@ -7,7 +7,7 @@
 #elif defined NETHER
     #ifdef FOG_ACTIVE
         if(isEyeInWater == 0 && FOG_ADJUST < 15.0) {  // In the air
-            block_color.rgb = mix(block_color.rgb, mix(fogColor * 0.25, vec3(0.5), 0.025), fog_adj);
+            block_color.rgb = mix(block_color.rgb, mix(fogColor * 0.5, vec3(1.0), -0.025), fog_adj);
         }
     #endif
 #else
@@ -16,7 +16,7 @@
             #if VOL_LIGHT < 1 && V_CLOUDS > 0
                 float fogInfluence = dayBF(mix(1.0, 1.333, pow(sunInfluence, 0.333)), mix(1.01, 1.333, pow(sunInfluence, 0.333)), 1.0); // works fine :)
             #elif VOL_LIGHT > 0 && V_CLOUDS < 1
-                float fogInfluence = 1.0;
+                float fogInfluence = dayBF(mix(1.0, 1.11, fastpow(sunInfluence, 6.0)), 1.0, 1.0);
             #elif VOL_LIGHT > 0 && V_CLOUDS > 0
                 float fogInfluence = dayBF(mix(1.0, 1.11, fastpow(sunInfluence, 6.0)), 1.0, 1.0);
             #else
@@ -25,7 +25,6 @@
         #else
             float fogInfluence = 1.0;
         #endif
-
 
         #if FOG_TINT == 0
             vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 0.5), vec3(1.0), fog_adj);

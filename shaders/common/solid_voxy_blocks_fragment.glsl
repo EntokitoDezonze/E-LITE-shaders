@@ -54,11 +54,12 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
     float farDirectLightStrength = clamp(directLightStrength, 0.0, 1.0);
     if (isFoliageEntity) {  // It's foliage, light is atenuated by angle
-        if (customId != ENTITY_LEAVES) {
-            farDirectLightStrength = farDirectLightStrength * 0.25 + 0.75;
-        }
-        if (customId == ENTITY_LEAVES) {
-           farDirectLightStrength = directLightStrength * 0.5 + 0.5;
+        if (customId != ENTITY_LEAVES && customId != ENTITY_SMALLGRASS) {
+            farDirectLightStrength = farDirectLightStrength;
+        } else if (customId == ENTITY_SMALLGRASS) {
+            farDirectLightStrength = directLightStrength * 0.25 + 0.75;
+        } else if (customId == ENTITY_LEAVES) {
+            farDirectLightStrength = directLightStrength * 0.5 + 0.5;
         }
 
         #ifdef SHADOW_CASTING
@@ -75,7 +76,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
         #ifdef THE_END
             vec3 omniLight = LIGHT_DAY_COLOR * 2.0;
         #else
-            vec3 omniLight = LIGHT_DAY_COLOR * omniStrength;
+            vec3 omniLight = vec3(0.05 + 0.2 * step(49.0, AVOID_DARK_LEVEL));
         #endif
     #else
         directLightColor = mix(directLightColor, ZENITH_SKY_RAIN_COLOR * luma(directLightColor) * rain_mul, rainStrength);
@@ -112,7 +113,11 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
             omniColor = clamp(omniColor, AVOID_DARK_LEVEL * 0.0025, 10.0);
         #endif
 
-        omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.0333, omniColorMin, visibleSky);
+        #ifdef SIMPLE_AUTOEXP
+            omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.15 + 0.05 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
+        #else
+            omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
+        #endif
 
         vec3 omniLight = mix(omniColorMin, omniColor, visibleSky * visibleSky * visibleSky * visibleSky) * omniStrength;
     #endif
@@ -178,7 +183,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
         #if defined NEAR_FOG && defined FOG_ACTIVE
             float sunDayFactor = dayBlendFloatVoxyN(1.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV);
-            float dynamic_density = 0.003 + (0.001 * sunInfluenceV * sunDayFactor);
+            float dynamic_density = 0.002 + (0.001 * sunInfluenceV * sunDayFactor);
 
             float dist_adj = max(0.0, fogFragCoord - (float(vxRenderDistance * 16) / mix(24.0, 240.0, rainStrength)));
             nearFogVoxy = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
@@ -194,20 +199,14 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
         // --- END / NETHER ---
         #if defined NETHER
             float sight = float(vxRenderDistance * 16);
-            float density = 0.1;
         #else
-            float sight = float(vxRenderDistance * 16);
-            float density = 0.003;
+            float sight = float(vxRenderDistance * 16) * 0.75;
         #endif
 
-        #ifdef NEAR_FOG
-            float dist_adj = max(0.0, fogFragCoord - (sight * 0.1));
-            nearFogVoxy = clamp(1.0 - exp(-dist_adj * density * invFogAdjust), 0.0, 1.0);
-        #endif
-
-        float horizon_fog = clamp(fogFragCoord / sight, 0.0, 1.0);
-        float frogAdjust = max(nearFogVoxy, pow(horizon_fog, FOG_ADJUST * 0.25));
+        float horizon_fog = pow(clamp(fogFragCoord / sight, 0.0, 1.0), 0.75);
+        float frogAdjust = pow(horizon_fog, FOG_ADJUST * 0.25);
     #endif
+
 
     #if !defined NETHER
         #ifdef SHADOW_CASTING

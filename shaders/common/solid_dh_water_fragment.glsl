@@ -28,7 +28,6 @@ uniform float frameTimeCounter;
 uniform int isEyeInWater;
 uniform vec3 sunPosition;
 uniform vec3 moonPosition;
-uniform int worldTime;
 uniform float nightVision;
 uniform float rainStrength;
 uniform float wetness;
@@ -197,7 +196,7 @@ void main() {
 
         block_color.rgb *= mix(real_light, vec3(1.0), nightVision * .125) * tint_color.rgb;
 
-        block_color.rgb = water_shader_dh(fragposition, surface_normal, block_color.rgb, sky_color_reflect, norm_reflect_water_vec, fresnel, visible_sky, dither, direct_light_color);
+        block_color.rgb = water_shader_dh(fragposition, surface_normal, block_color.rgb, sky_color_reflect, fresnel, visible_sky, direct_light_color);
 
         block_color.a = sqrt(block_color.a);
     #else
@@ -220,10 +219,12 @@ void main() {
             block_color = vec4(refraction(fragposition, block_color.rgb, water_normal_base), 1.0);
 
         #if WATER_TEXTURE == 1
-            fresnel = clamp(fresnel * (water_texture * water_texture + 0.5), 0.0, 1.0);
+                float water_texture2 = water_texture + 0.3;
+                water_texture2 *= water_texture2;
+                fresnel = clamp(fresnel * (water_texture2), 0.0, 1.0);
         #endif
 
-        block_color.rgb = water_shader_dh(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5), block_color.rgb, sky_color_reflect * dayBF(1.15, 1.0, 1.0), norm_reflect_water_vec * water_texture, fresnel, visible_sky, dither, direct_light_color);
+        block_color.rgb = water_shader_dh(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5) / 0.9, block_color.rgb, sky_color_reflect * dayBF(1.15, 1.0, 1.0), fresnel, visible_sky, direct_light_color);
     #endif
 
     } else {  // Otros translúcidos

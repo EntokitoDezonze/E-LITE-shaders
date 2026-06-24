@@ -6,8 +6,11 @@ Javier Garduño - GNU Lesser General Public License v3.0
 
 uniform float day_moment;
 uniform float day_mixer;
+#if !defined VOXY_BLOCK && !defined VOXY_WATER
+    uniform int worldTime;
+    uniform vec3 fogColor;
+#endif
 uniform float night_mixer;
-uniform vec3 fogColor;
 
 #define MID_SUNSET_COLOR HORIZON_SUNSET_COLOR
 #define MID_DAY_COLOR HORIZON_DAY_COLOR

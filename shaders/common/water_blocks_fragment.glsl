@@ -30,7 +30,6 @@ uniform int isEyeInWater;
 uniform vec3 sunPosition;
 uniform vec3 moonPosition;
 uniform float sunAngle;
-uniform int worldTime;
 uniform float nightVision;
 uniform float rainStrength;
 uniform float wetness;
@@ -46,6 +45,8 @@ uniform int frameCounter;
     uniform float dhNearPlane;
     uniform float dhFarPlane;
     uniform sampler2D dhDepthTex1;
+#elif defined VOXY
+    uniform sampler2D vxDepthTexTrans;
 #endif
 
 #if V_CLOUDS > 0
@@ -224,10 +225,10 @@ void main() {
                     vec3 shadow_real_pos = shadow_pos;
                 #endif
                 #if defined COLORED_SHADOW
-                    vec3 shadow_c = get_colored_shadow(shadow_real_pos, dither);
+                    vec3 shadow_c = getColoredShadow(shadow_real_pos, dither);
                     shadow_c = mix(shadow_c, vec3(1.0), shadow_diffuse);
                 #else
-                    vec3 shadow_c = get_shadow(shadow_real_pos, dither);
+                    vec3 shadow_c = getShadow(shadow_real_pos, dither);
                     shadow_c = mix(shadow_c, vec3(1.0), shadow_diffuse);
                 #endif
             #else
@@ -269,9 +270,13 @@ void main() {
                 float water_texture2 = water_texture + 0.25;
                 water_texture2 *= water_texture2;
                 fresnel = clamp(fresnel * (water_texture2), 0.0, 1.0);
+                float normalfactor = sqrt(water_texture * 0.5 + 0.5) / 0.9;
+            #else
+                float normalfactor = 1.0;
             #endif
 
-            block_color.rgb = water_shader(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5), block_color.rgb, sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
+
+            block_color.rgb = water_shader(fragposition, surface_normal * normalfactor, block_color.rgb, sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
         #endif
 
     } else {  // Otros translúcidos
@@ -289,10 +294,10 @@ void main() {
 
         #if defined SHADOW_CASTING && !defined NETHER
             #if defined COLORED_SHADOW
-                vec3 shadow_c = get_colored_shadow(shadow_pos, dither);
+                vec3 shadow_c = getColoredShadow(shadow_pos, dither);
                 shadow_c = mix(shadow_c, vec3(1.0), shadow_diffuse);
             #else
-                vec3 shadow_c = get_shadow(shadow_pos, dither);
+                vec3 shadow_c = getShadow(shadow_pos, dither);
                 shadow_c = mix(shadow_c, vec3(1.0), shadow_diffuse);
             #endif
         #else

@@ -8,30 +8,34 @@
             float reflection = 0.0;
 
             #if  SUN_REFLECTION == 2
-                vec3 forward = normalize(mat3(gbufferModelViewInverse) * nastroPos);
+                vec3 sunDir = normalize(mat3(gbufferModelViewInverse) * sunPosition);
                 vec3 nFragWorld = normalize(mat3(gbufferModelViewInverse) * nfragPos);
-
-                vec3 worldRef = vec3(0.0, 1.0, 0.0);
-                if (abs(dot(forward, worldRef)) > 0.99) worldRef = vec3(0.0, 0.0, 1.0);
-
-                vec3 rightBase = normalize(cross(worldRef, forward));
-                vec3 upBase = cross(forward, rightBase);
+                vec3 worldUp = vec3(0.00, 1.0, 0.0);
+                vec3 rightBase = normalize(cross(worldUp, sunDir));
+                vec3 upBase = cross(sunDir, rightBase);
 
                 float rawX = dot(nFragWorld, rightBase);
                 float rawY = dot(nFragWorld, upBase);
 
-                float angle = sunPathRotation * 0.01745329; 
-                float s = sin(angle);
-                float c = cos(angle);
-                
+                float angleRad = sunPathRotation * 0.01745329;
+                float maxSunHeight = cos(abs(angleRad));
+                float currentHeight = clamp(sunDir.y, 0.0, maxSunHeight);
+                float progressToZenith = currentHeight / maxSunHeight;
+                progressToZenith = fastpow(progressToZenith, 2.5);
+                float dynamicAngle = angleRad * (1.0 - progressToZenith);
+
+                float s = sin(dynamicAngle);
+                float c = cos(dynamicAngle);
+
                 float dotX = rawX * c - rawY * s;
                 float dotY = rawX * s + rawY * c;
-                
-                float square_shape = max(abs(dotX), abs(dotY));
-                float size = 1.08 - smoothstep1;
-                float frontal_mask = step(0.0, dot(nFragWorld, forward));
-                
-                reflection = smoothstep(size + 0.01, size, square_shape) * frontal_mask;
+
+                float square = max(abs(dotX), abs(dotY));
+
+                float size = 1.071 - smoothstep1;
+                float frontal_mask = step(0.0, dot(nFragWorld, sunDir));
+
+                reflection = smoothstep(size + 0.01, size, square) * frontal_mask;
             #else
                 float astro_vector = max(dot(nfragPos, nastroPos), 0.0);
                 reflection = smoothstep(smoothstep1, 1.0, astro_vector);
@@ -105,7 +109,8 @@ vec3 get_normals(vec3 bump, vec3 fragpos) {
     return normalize(bump * tbn_matrix);
 }
 
-vec4 reflection_calc_dh(vec3 fragpos, vec3 normal, vec3 reflected, vec3 infinite_color, float dither) {
+vec4 reflection_calc_dh(vec3 fragpos, vec3 normal, vec3 infinite_color) {
+    vec3 reflected = reflect(normalize(fragpos), normal);
     vec3 pos = camera_to_screen(fragpos + reflected * 768.0);
     float pos_y_normalized = pos.y / RENDER_SCALE;
 
@@ -134,10 +139,8 @@ vec3 water_shader_dh(
     vec3 normal,
     vec3 color,
     vec3 sky_reflect,
-    vec3 reflected,
     float fresnel,
     float visible_sky,
-    float dither,
     vec3 light_color
 ) {
     vec4 reflection = vec4(0.0);
@@ -145,7 +148,7 @@ vec3 water_shader_dh(
 
     #if REFLECTION_SLIDER > 0
         reflection =
-            reflection_calc_dh(fragpos, normal, reflected, sky_reflect, dither);
+            reflection_calc_dh(fragpos, normal, sky_reflect);
     #endif
 
     reflection.rgb = mix(
@@ -162,7 +165,7 @@ vec3 water_shader_dh(
         #ifndef NETHER
             #ifndef THE_END
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX) +
-                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999)) * light_color * infinite * visible_sky * dayBlend(vec3(1.0, 1.0, 0.15), vec3(1.0, 1.0, 0.15), vec3(1.0));       
+                    vec3(sun_reflection(reflect(normalize(fragpos), normal), 0.999)) * light_color * infinite * visible_sky * dayBlend(vec3(1.0, 1.0, 0.55), vec3(1.0, 1.0, 0.8), vec3(1.0));       
             #else
                 return mix(color, reflection.rgb, fresnel * REFLEX_INDEX);
             #endif

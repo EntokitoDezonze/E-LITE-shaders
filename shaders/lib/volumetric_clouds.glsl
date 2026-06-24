@@ -337,15 +337,14 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
             int layers = 12; 
 
             for (int i = 0; i < layers; i++) {
-                float altitude = 800.0 + (float(i) + dither) * 35.0;
+                float altitude = 1000.0 + (float(i) + dither) * 35.0;
                 // Bugfix by Tas :)
                 float t = altitude / (max(view_vector.y, 0.05) + 0.05);
-                vec2 base = fract(cameraPosition.xz * 0.0005) * 2000.0;
-                vec2 world_uv = (base + view_vector.xz * t) * 0.00015;
+                vec2 world_uv = (cameraPosition.xz + view_vector.xz * t) * 0.00015;
                 
-                float wind = frameTimeCounter * 0.2 * 35 * sqrt(CLOUD_HI_FACTOR);
+                float wind = frameTimeCounter * 0.1 * 35 * sqrt(CLOUD_HI_FACTOR);
 
-                float noise = texture2D(gaux2, world_uv).r;
+                float noise = texture2D(colortex2, world_uv).r;
                 
                 float zenith = clamp(view_vector.y, 0.0, 1.0);
                 float stripe_freq = mix(30.0, 90.0, zenith * zenith);
@@ -365,9 +364,9 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
             float horizon_mask = smoothstep(0.05, 0.25, view_vector.y);
             
             #if AURORA == 1
-                float final_intensity = 0.025 * horizon_mask * (1.0 - rainStrength) * taiga_snow;
+                float final_intensity = 0.04 * horizon_mask * (1.0 - rainStrength) * hasAurora;
             #elif AURORA == 2
-                float final_intensity = 0.025 * horizon_mask * (1.0 - rainStrength);
+                float final_intensity = 0.04 * horizon_mask * (1.0 - rainStrength);
             #endif
 
             block_color += aurora_sum * final_intensity;

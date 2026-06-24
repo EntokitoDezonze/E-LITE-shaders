@@ -286,8 +286,6 @@ void main() {
         #include "/src/textRender/VoxyDHError.glsl"
     #endif
     
-    
-
     #if defined ERROR1 && defined ERROR2
         block_color *= 0.0;
         #include "/src/textRender/multipleErrors.glsl"

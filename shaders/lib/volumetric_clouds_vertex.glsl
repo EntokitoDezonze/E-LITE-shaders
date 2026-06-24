@@ -26,15 +26,15 @@ vec3 antiRed = dayBlend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red
         dayBlend(
             saturate(LIGHT_SUNSET_COLOR, dayBF(0.9, 0.0, 0.5)) * dayBF(0.55, 0.0, 0.25),
             saturate(LIGHT_DAY_COLOR * dayBF(0.5, 1.0, 0.0), 0.0),
-            LIGHT_NIGHT_COLOR * 1.333
+            saturate(LIGHT_NIGHT_COLOR, 0.5) * 1.666
         ),
-        ZENITH_SKY_RAIN_COLOR * dayBF(1.0, 0.6, 1.0) * gray(dark_cloud_color),
+        ZENITH_SKY_RAIN_COLOR * dayBF(1.0, 0.4, 1.0) * gray(dark_cloud_color),
         rainStrength
     );
 
     dark_cloud_color = mix(
         dark_cloud_color,
-        ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * dayBF(1.15, 0.65, 1.25)),
+        ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * dayBF(1.15, 0.55, 1.25)),
         rainStrength
     );
 #else

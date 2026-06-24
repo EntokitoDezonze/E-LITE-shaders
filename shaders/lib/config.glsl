@@ -62,6 +62,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define ENTITY_RAIL 9014.0
 #define ENTITY_END_FRAME 9015.0
 #define ENTITY_TRIM 9016.0
+#define ENTITY_WARPED 9017.0
+#define ENTITY_CRIMSON 9018.0
 
 // Season
 #define SEASONABLE 8000.0
@@ -259,7 +261,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
   #define PIXEL_SIZE ((viewHeight + viewWidth) / 750) // <- ALWAYS WILL HAVE PRORPOTIONAL PIXEL SIZE
 #endif
 
-// Information Utils E-LITE shaders ELT51
+// Information Utils E-LITE shaders ELT511
 #define HOVER 0 // [0]
 #define VERSION 0 // [0]
 #define PROFILES 0 // [0]

@@ -25,7 +25,7 @@ vec3 emissive_color = vec3(1.0);
         
         float saturation = 0.0;
         correct_light_ore = clamp(luma(1.0 - real_light), 0.5, 1.0);
-        correct_light = clamp(luma(2.0 - real_light), 0.5, 1.0) - luma(gloss);
+        correct_light = clamp(luma(2.0 - real_light + gloss), 0.5, 1.0) - luma(gloss);
         
         float min_color = min(min(color.r, color.g), color.b);
         float max_color = max(max(color.r, color.g), color.b);
@@ -125,6 +125,8 @@ vec3 emissive_color = vec3(1.0);
         float factor_fake = step(9.0, float(emitter_type)) * step(float(emitter_type), 9.0); // Fake emmisors
         float factor_rail = step(10.0, float(emitter_type)) * step(float(emitter_type), 10.0); // Rails
         float factor_end = step(11.0, float(emitter_type)) * step(float(emitter_type), 11.0); // End Portal frame
+        float factor_warped = step(13.0, float(emitter_type)) * step(float(emitter_type), 13.0); // Warped
+        float factor_crimson = step(14.0, float(emitter_type)) * step(float(emitter_type), 14.0); // Crimson
         
         // REDSTONE MATERIAL (emitter_type == 1)
         vec3 target_color_alt_redmat = vec3(1.0);
@@ -233,7 +235,7 @@ vec3 emissive_color = vec3(1.0);
         float match_3_lba = step(dot(color - target_color_light_lba, color - target_color_light_lba), 1.0);
 
         emissive_color = mix(emissive_color, emissive_color * 1.75 * vec3(1.0, 0.75, 1.0), match_1_lba * factor_lba);
-        emissive_color -= mix(vec3(0.0), gray(candle_color * 0.9) * correct_light, match_2_lba * factor_lba);
+        emissive_color -= mix(vec3(0.0), candle_color * correct_light, match_2_lba * factor_lba);
         emissive_color -= mix(vec3(0.0), (candle_color * 0.5) - gray(candle_color * 0.5) * correct_light, match_3_lba * factor_lba);
         
         // FROGLIGHT (emitter_type == 8)
@@ -258,16 +260,30 @@ vec3 emissive_color = vec3(1.0);
         
         reflex_index2 = mix(0.0, 0.5, end_match2 * factor_end);
 
-        emissive_color = mix(emissive_color, emissive_color * 1.5 * correct_light, end_match * factor_end);
-        emissive_color = mix(emissive_color, emissive_color * 3.5 * color * correct_light, end_match2 * factor_end);
+        emissive_color = mix(emissive_color, emissive_color * 1.5 * correct_light + gloss, end_match * factor_end);
+        emissive_color = mix(emissive_color, emissive_color * 3.5 * color + gloss,  end_match2 * factor_end);
+
+        // NETHER (emitter_type == 13 & 14)
+        vec3 target_color_warped = vec3(0.05, 0.7, 0.8);
+        float distance_to_target_warped = distance(color, target_color_warped);
+        float brightness_warped = smoothstep(0.6, 0.0, distance_to_target_warped) * 20.0;
+        float match_warped = step(0.7, saturation) * step(luminance, 0.5);
+        emissive_color = mix(emissive_color, emissive_color * (1.0 + brightness_warped * correct_light), match_warped * factor_warped);
+
+        vec3 target_color_crimson = vec3(1.0, 0.0, 0.0);
+        float distance_to_target_crimson = distance(color, target_color_crimson);
+        float brightness_crimson = smoothstep(0.6, 0.0, distance_to_target_crimson) * 25.0;
+        float match_crimson = step(0.5, saturation);
+        emissive_color = mix(emissive_color, emissive_color * (1.0 + brightness_crimson * correct_light), match_crimson * factor_crimson);
     #endif
     }
 #endif
 
 #if defined GBUFFER_TEXTURED
-    vec3 target_color_rain = vec3(0.0, 0.7098, 1.0);
-    float match_rain = step(dot(pure_block_color.rgb - target_color_rain, pure_block_color.rgb - target_color_rain), 0.3);
-    block_color = mix(block_color, saturate_v4(block_color * 1.5, 0.25), match_rain);
+    vec3 target_color_rain = vec3(0.5, 0.65, 1.0);
+    float match_rain = step(dot(pure_block_color.rgb - target_color_rain, pure_block_color.rgb - target_color_rain), 0.2);
+    block_color = mix(block_color, block_color * 1.5, match_rain);
+    block_color.a = mix(block_color.a, block_color.a * 0.25, match_rain);
 #endif
 
 #if (defined EMISSIVE_MATERIAL) && defined GBUFFER_ENTITIES
@@ -289,7 +305,7 @@ vec3 emissive_color = vec3(1.0);
 #if defined GBUFFER_WEATHER
     vec3 target_color_rain = vec3(0.0, 0.7098, 1.0);
     float match_rain = step(dot(pure_block_color.rgb - target_color_rain, pure_block_color.rgb - target_color_rain), 0.3);
-    block_color = mix(block_color, saturate_v4(block_color * 3.0, 0.5), match_rain);
+    block_color = mix(block_color, saturate_v4(block_color * 3.0, 0.25), match_rain);
     block_color.a *= mix(0.2, 0.15, match_rain);
 #endif
 

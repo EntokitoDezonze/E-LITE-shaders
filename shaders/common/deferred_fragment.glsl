@@ -176,7 +176,7 @@ void main() {
         float cave_influence = 1.0;
     #endif
 
-    #if ((V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY) || AURORA > 0
+    #if ((V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY) || AURORA > 0 && !defined NETHER
         if(linear_d > 0.9999) {  // Only sky
             vec4 world_pos = gbufferModelViewInverse * gbufferProjectionInverse * (vec4(texcoord, 1.0, 1.0) * 2.0 - 1.0);
             view_vector = normalize(world_pos.xyz);
@@ -209,7 +209,7 @@ void main() {
         #if defined NETHER
             #if !defined DISTANT_HORIZONS
                 if(linear_d > 0.9999) {  // Only sky
-                    block_color = vec4(mix(fogColor * 0.25, vec3(0.5), 0.025), 1.0);
+                    block_color = vec4(mix(fogColor * 0.5, vec3(1.0), -0.025), 1.0);
                 }
             #endif
         #elif !defined NETHER && !defined THE_END
@@ -238,11 +238,17 @@ void main() {
 
         #ifdef DISTANT_HORIZONS
             if (d >= 1.0 && dh_d < 1) {
-                float ao_attdh = pow(clamp(dh_d * 1.6, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
-                
-                float final_aodh = clamp(mix(dh_dbao(dither), 1.0, ao_attdh), 0.0, 1.0);
+                float fog = mix(fog_density_coeff, 0.2, rainStrength);
+
+                float ao_factor = dh_d * fog;
+                float ao_attdh = exp2(-ao_factor * ao_factor);
+                #if defined NETHER
+                    ao_attdh = fastpow(ao_attdh, 50.0);
+                    ao_attdh = fastpow(ao_attdh, 2.0);
+                #endif
+                float final_aodh = mix(1.0, dh_dbao(dither), ao_attdh);
                 block_color.rgb *= final_aodh;
-            }            
+            } 
         #endif
 
         float final_ao = clamp(mix(dbao(dither), 1.0, ao_att), 0.0, 1.0);
