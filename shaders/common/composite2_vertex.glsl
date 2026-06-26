@@ -1,10 +1,9 @@
 #include "/lib/config.glsl"
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

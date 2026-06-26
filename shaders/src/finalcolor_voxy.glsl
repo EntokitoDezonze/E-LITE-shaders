@@ -57,7 +57,7 @@
 
 #if MC_VERSION >= 11900
     if(blindness > .01 || darknessFactor > .01) {
-        blockColor.rgb = mix(blockColor.rgb, vec3(0.0), max(blindness, darknessLightFactor) * fogFragCoord * 0.0);
+        blockColor.rgb = mix(blockColor.rgb, vec3(0.0), max(blindness, darknessLightFactor) * fogFragCoord * 0.2);
     }
 #else
     if(blindness > .01) {

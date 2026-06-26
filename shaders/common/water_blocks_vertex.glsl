@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform vec3 sunPosition;
 uniform int isEyeInWater;
 uniform float light_mix;
@@ -60,8 +58,7 @@ uniform vec3 skyColor;
 float direct_light_strength;
 vec3 direct_light_color;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec2 lmcoord;
 varying vec4 tint_color;
@@ -109,8 +106,7 @@ varying vec3 pure_low_sky_color;
 attribute vec4 mc_Entity;
 attribute vec4 at_tangent;
 
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
 #endif
@@ -121,8 +117,7 @@ attribute vec4 at_tangent;
     #include "/lib/shadow_vertex.glsl"
 #endif
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/luma.glsl"
 
 #define FOG_BIOME
@@ -130,7 +125,7 @@ attribute vec4 at_tangent;
 #include "/lib/biome_sky.glsl"
 //#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     vec2 eye_bright_smooth = vec2(eyeBrightnessSmooth);

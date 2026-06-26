@@ -4,8 +4,7 @@
 #include "/lib/config.glsl"
 #include "/lib/luma.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -14,8 +13,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 gbufferProjectionInverse;
 uniform float pixel_size_x;
 uniform float pixel_size_y;
@@ -39,8 +37,7 @@ uniform int frameCounter;
 uniform ivec2 eyeBrightnessSmooth;
 uniform sampler2D dhDepthTex0;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec3 up_vec;
 varying vec2 texcoord;
 varying vec3 hi_sky_color;
@@ -51,8 +48,7 @@ varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
 varying vec4 position;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/dither.glsl"
 #include "/lib/biome_sky.glsl"
 #include "/lib/basic_utils.glsl"
@@ -63,10 +59,7 @@ varying vec4 position;
     #include "/lib/depth_dh.glsl"
 #endif
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;

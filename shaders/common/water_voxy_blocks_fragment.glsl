@@ -3,8 +3,7 @@
 #include "/lib/luma.glsl"
 #include "/lib/dither.glsl"
 
-/* Color utils */
-
+// == Color utils
 #if defined THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER

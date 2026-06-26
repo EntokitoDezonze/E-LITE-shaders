@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D colortex1;
 uniform ivec2 eyeBrightnessSmooth;
 uniform int isEyeInWater;
@@ -65,8 +63,8 @@ uniform float frameTime;
     uniform float frameTimeCounter;
     uniform int frameCounter;
 #endif
-/* Ins / Outs */
 
+// == Varyings
 varying vec2 texcoord;
 varying vec3 up_vec;  // Flat
 varying vec3 direct_light_color;
@@ -86,8 +84,7 @@ varying vec3 direct_light_strength;
     #endif
 #endif
 
-/* Utility functions */ 
-
+// == Utility
 #include "/lib/depth.glsl"
 #include "/lib/luma.glsl"
 #include "/lib/basic_utils.glsl"
@@ -121,13 +118,9 @@ varying vec3 direct_light_strength;
     #endif
 #endif
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
-    //if(fragment_cull()) discard;
     vec4 block_color = texture2DLod(colortex1, texcoord * RENDER_SCALE, 0);
     
     float d = texture2DLod(depthtex0, texcoord * RENDER_SCALE, 0).r;
@@ -274,15 +267,7 @@ void main() {
 
     block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
     
-    /* DRAWBUFFERS:124 */
-
+    /* DRAWBUFFERS:14 */
     gl_FragData[0] = vec4(block_color.rgb, d);
-
-    #ifdef BLOOM
-        gl_FragData[1] = block_color;
-    #endif
-
-    #if SSR_TYPE > -1 || MATERIAL_GLOSS > 1
-       gl_FragData[2] = block_color;
-    #endif
+    gl_FragData[1] = block_color;
 }

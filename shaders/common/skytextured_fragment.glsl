@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -12,8 +11,7 @@
 
 #include "/lib/luma.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D tex;
 uniform float viewWidth;
 uniform float viewHeight;
@@ -28,8 +26,7 @@ uniform vec3 sunPosition;
     uniform mat4 gbufferProjectionInverse;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying float sky_luma_correction;
@@ -38,10 +35,7 @@ varying float current_wetness;
 
 /* Utilitary functions */
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;

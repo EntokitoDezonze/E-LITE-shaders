@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 gbufferModelView;
 uniform float rainStrength;
 uniform float wetness;
@@ -21,8 +19,7 @@ uniform vec4 lightningBoltPosition;
 uniform float frameTime;
 uniform int frameCounter;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec3 up_vec;
 varying vec3 direct_light_color;
@@ -42,19 +39,16 @@ varying vec3 direct_light_strength;
     #endif
 #endif
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/luma.glsl"
 #include "/lib/oscilator_utils.glsl"
 #include "/lib/biome_sky.glsl"
-//#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     texcoord = gl_MultiTexCoord0.xy;
-    //resize_vertex(gl_Position);
 
     up_vec = normalize(gbufferModelView[1].xyz);
 

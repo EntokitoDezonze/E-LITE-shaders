@@ -74,8 +74,13 @@ if (dot(normal, normal) > 0.0001) { // Workaround for undefined normals
 vec3 sunWorldVec = normalize(mat3(gbufferModelViewInverse) * sun_vec);
 float ydotl = clamp(sunWorldVec.y, 0.0, 1.0);
 
-vec3 normalWorld = mat3(gbufferModelViewInverse) * normal;
-vec3 outNormal = normalize(normalWorld);
+#ifdef SHADOW_CASTING
+    vec3 normalWorld = mat3(gbufferModelViewInverse) * normal;
+    vec3 outNormal = normalize(normalWorld);
+#else
+    vec3 outNormal = vec3(1.0);
+#endif
+
 
 #if defined THE_END || defined NETHER
     direct_light_strength = sun_light_strength;

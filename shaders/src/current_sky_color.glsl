@@ -1,7 +1,7 @@
-/* __   ______________
-  / /  /  _/_  __/ __/
- / /___/ /  / / / _/  
-/____/___/ /_/ /___/  
+/* ____    __   ______________
+  / ______/ /  /  _/_  __/ __/
+ / _//___/ /___/ /  / / / _/  
+/___/   /____/___/ /_/ /___/  
                       
 E-LITE shaders 5 - current_sky_color.glsl #include "/src/current_sky_color.glsl"
 Sky color calculation. - Cálculo da cor do céu. */
@@ -11,8 +11,8 @@ float lightning = step(0.001, lightningBoltPosition.w);
 float sun_influence = dot(nfragpos, sunPosition * 0.01);
 float sun_ss = smoothstep(-1.0, 1.0, sun_influence);
 
-float final_sun_factor = pow(sun_ss, dayBFlgcy(1.0, 1.0, 2.0));
-float final_sun_factor2 = pow(sun_ss, dayBF(1.5, 0.0, 10.0));
+float final_sun_factor = fastpow(sun_ss, dayBFlgcy(1.0, 1.0, 2.0));
+float final_sun_factor2 = fastpow(sun_ss, dayBF(1.5, 0.0, 10.0));
 
 #if COLOR_SCHEME == 4
     float final_sun_factor3 = pow(sun_ss, dayBF(1.0, 0.0, 1.75));

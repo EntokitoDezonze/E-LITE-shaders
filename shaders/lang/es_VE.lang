@@ -469,7 +469,7 @@ option.HOVER.comment=¡Hola! Aquí encontrarás información sobre E-LITE shader
 value.HOVER.0=
 
 option.VERSION=Info. de versión
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.1§r. Build: RELEASE. Código: §5§lELT511§r. Fecha de la versión: 24 de Junio 2026. Basado en MakeUp Ultrafast 9.5b
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.2§r. Build: Dev Preview. Código: §5§lELT512§r. Fecha de la versión: 24 de Junio 2026. Basado en MakeUp Ultrafast 9.5b
 value.VERSION.0=
 
 option.PROFILES=Perfiles gráficos

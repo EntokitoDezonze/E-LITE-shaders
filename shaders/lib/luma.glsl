@@ -13,10 +13,6 @@ vec3 gray(vec3 color) {
     return vec3(luma);
 } // Equivalent to saturate(color, 0.0)
 
-float color_average(vec3 color) {
-    return (color.r + color.g + color.b) / 3;
-} // Color average between red, green, and blue channels.
-
 float colorAverage(vec3 color) {
     return (color.r + color.g + color.b) * 0.3333333333;
 }
@@ -45,7 +41,7 @@ float get_sat(vec3 color) {
     return maxC - minC;
 }
 
-vec3 nl(vec3 color, float targetLuma) {
+vec3 normalizeLuma(vec3 color, float targetLuma) {
     float luma = luma(color);
     return color * (targetLuma / max(luma, 0.0001));
 }

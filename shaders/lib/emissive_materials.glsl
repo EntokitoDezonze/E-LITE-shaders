@@ -147,7 +147,7 @@ vec3 emissive_color = vec3(1.0);
         total_match_redmat = max(total_match_redmat, match_1_redmat);
         final_emissive_redmat = mix(final_emissive_redmat, vec3(20.0 * correct_light) * vec3(1.0, 0.5, 0.5), match_2_redmat);
         total_match_redmat = max(total_match_redmat, match_2_redmat);
-        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * 8.0 * correct_light, match_3_redmat); 
+        final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * 10.0 * luma(tint_color.rgb) + gloss * correct_light, match_3_redmat); 
         total_match_redmat = max(total_match_redmat, match_3_redmat);
         final_emissive_redmat = mix(final_emissive_redmat, vec3(1.0, 0.5, 0.5) * vec3(10.0 * correct_light), match_4_redmat);
         total_match_redmat = max(total_match_redmat, match_4_redmat);
@@ -266,7 +266,7 @@ vec3 emissive_color = vec3(1.0);
         // NETHER (emitter_type == 13 & 14)
         vec3 target_color_warped = vec3(0.05, 0.7, 0.8);
         float distance_to_target_warped = distance(color, target_color_warped);
-        float brightness_warped = smoothstep(0.6, 0.0, distance_to_target_warped) * 20.0;
+        float brightness_warped = smoothstep(0.8, 0.0, distance_to_target_warped) * 8.0;
         float match_warped = step(0.7, saturation) * step(luminance, 0.5);
         emissive_color = mix(emissive_color, emissive_color * (1.0 + brightness_warped * correct_light), match_warped * factor_warped);
 

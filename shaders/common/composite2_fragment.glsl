@@ -1,24 +1,24 @@
 #include "/lib/config.glsl"
 
+#if MC_VERSION < 11604
+    const bool colortex0Clear = false;
+    const bool colortex1Clear = false;
+    const bool colortex2Clear = false;
+    const bool colortex3Clear = false;
+    const bool gaux1Clear = false;
+    const bool gaux2Clear = false;
+    const bool gaux3Clear = false;
+    const bool gaux4Clear = false;
+#endif
 
-const bool colortex0Clear = false;
-const bool colortex1Clear = false;
-const bool colortex2Clear = false;
-const bool colortex3Clear = false;
-const bool gaux1Clear = false;
-const bool gaux2Clear = false;
-const bool gaux3Clear = false;
-const bool gaux4Clear = false;
-
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D colortex1;
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
 
 #if AA_TYPE > 0 || defined MOTION_BLUR
-    uniform sampler2D colortex3;  // TAA past averages
+    uniform sampler2D colortex3;  // Previous frames
     uniform float pixel_size_x;
     uniform float pixel_size_y;
     uniform mat4 gbufferProjectionInverse;
@@ -32,12 +32,10 @@ uniform int frameCounter;
     uniform float frameTime;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 0
     #include "/lib/projection_utils.glsl"
 #endif
@@ -45,9 +43,6 @@ varying vec2 texcoord;
 #ifdef MOTION_BLUR
     #include "/lib/dither.glsl"
 #endif
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
 
 #if AA_TYPE > 0
     #include "/lib/luma.glsl"
@@ -59,10 +54,9 @@ varying vec2 texcoord;
     #include "/lib/motion_blur.glsl"
 #endif
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
-    //if (fragment_cull()) discard;
     vec4 block_color = texture2DLod(colortex1, texcoord, 0);
 
     // Precalc past position and velocity

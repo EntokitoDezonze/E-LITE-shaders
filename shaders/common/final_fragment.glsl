@@ -110,7 +110,7 @@ const int gaux4Format = R11F_G11F_B10F;
 const int shadowcolor0Format = RGBA8;
 */
 
-// Buffers clear
+// == Buffers clear
 const bool colortex0Clear = false;
 const bool colortex1Clear = false;
 const bool colortex2Clear = false;
@@ -120,8 +120,7 @@ const bool gaux2Clear = false;
 const bool gaux3Clear = false;
 const bool gaux4Clear = false;
 
-/* Uniforms */
-
+// == Uniforms
 #ifdef DEBUG_MODE
 uniform sampler2D shadowtex1;
 uniform sampler2D shadowcolor0;
@@ -147,13 +146,11 @@ uniform sampler2D depthtex1;
 uniform float frameTime;
 uniform bool hideGUI;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying float exposure;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/basic_utils.glsl"
 #include "/lib/tone_maps.glsl"
 #include "/lib/dither.glsl"
@@ -177,9 +174,6 @@ varying float exposure;
 #ifdef FXAA
     #include "/lib/fxaa.glsl"
 #endif
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
 
 #include "/lib/textRender/textRender.glsl"
 

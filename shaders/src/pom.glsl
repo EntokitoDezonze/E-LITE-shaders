@@ -16,8 +16,7 @@ float surface_depth = 1.0;
     float pom_fade = clamp((vdist - 16.0) / 16, 0.0, 1.0); 
 
     if (pom_fade < 1.0 && view_tg.z < 0.0) {
-        float delta_max_sqr = max(dot(dX, dX), dot(dY, dY));
-        float lod = 0.5 * log2(delta_max_sqr);
+        float lod = clamp(log2(vdist) - 2.0, 0.0, 4.0);
         lod = clamp(lod, 0.0, 4.0);
 
         float noise = shifted_dither13(gl_FragCoord.xy) * 0.5 + 0.5;

@@ -8,8 +8,7 @@
     const bool colortex2MipmapEnabled = true;
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform float inv_aspect_ratio;
@@ -33,7 +32,7 @@ uniform int frameCounter;
 #endif
 
 #if AA_TYPE > 0 || defined MOTION_BLUR
-    uniform sampler2D colortex3;  // TAA past averages
+    uniform sampler2D colortex3;  // Previous frames
     uniform mat4 gbufferProjectionInverse;
     uniform mat4 gbufferProjection;
     uniform mat4 gbufferModelViewInverse;
@@ -44,14 +43,10 @@ uniform int frameCounter;
     uniform sampler2D depthtex1;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 
-/* Utility functions */
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
+// == Utility
 #if defined BLOOM || defined DOF
     #include "/lib/dither.glsl"
 #endif
@@ -63,17 +58,16 @@ varying vec2 texcoord;
     #include "/lib/blur.glsl"
 #endif
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
-    //if(fragment_cull()) discard;
     vec4 block_color = texture2DLod(colortex1, texcoord, 0);
 
     #if defined BLOOM || defined DOF
         #if AA_TYPE > 0
-            float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
+            float dither = shifted_dither_makeup(gl_FragCoord.xy);
         #else
-            float dither = semiblue(gl_FragCoord.xy);
+            float dither = dither_makeup(gl_FragCoord.xy);
         #endif
     #endif
     

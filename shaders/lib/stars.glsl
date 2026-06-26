@@ -13,20 +13,14 @@ Modified.
 
 float NoisyStarField(in vec2 p_grid_coord, float fThreshhold) {
     #ifndef THE_END
-        float discard_day = dayBF(0.1, 0.0, 1.0);
-        if(discard_day < 0.01) return 0.0; // <- Discard stars during daytime on overworld
+        if(dayBF(0.1, 0.0, 1.0) < 0.01) return 0.0; // <- Discard stars during daytime on overworld
     #endif
     
     float StarVal = noise2D_grid(p_grid_coord);
-    
-    if (StarVal >= fThreshhold) {
-        StarVal = fastpow((StarVal - fThreshhold) / (1.0 - fThreshhold), 10.0); // <- Calculate stars
-        
-        if (StarVal < 0.3) return 0.0;
 
-        return clamp(StarVal, 0.1, 1.0);
-    }
-    return 0.0;
+    float isStar = step(fThreshhold, StarVal);
+    StarVal = fastpow((StarVal - fThreshhold) / (1.0 - fThreshhold), 10.0);
+    return isStar * step(0.3, StarVal) * clamp(StarVal, 0.1, 1.0);
 }
 
 vec3 stars() {
@@ -38,36 +32,23 @@ vec3 stars() {
 
     #ifndef THE_END
         if (sunPathRotation != 0.0) {
-            float path_rotation_rad = sunPathRotation * 0.0174532925; // <- Degrees to radians.
-            float tilt_c = cos(path_rotation_rad);
-            float tilt_s = sin(-path_rotation_rad);
+            float rad = sunPathRotation * 0.0174532925;
+            float tc = cos(rad);
+            float ts = sin(-rad);
 
-            float tilted_y = dir.y * tilt_c - dir.z * tilt_s;
-            float tilted_z = dir.y * tilt_s + dir.z * tilt_c;
-            
-            dir.y = tilted_y;
-            dir.z = tilted_z;
-            
+            float dy = dir.y * tc - dir.z * ts;
+            dir.z = dir.y * ts + dir.z * tc;
+            dir.y = dy;
+
             float angle = sunAngle * 6.4 - 0.14;
-            float c = cos(angle);
-            float s = sin(angle);
-            float new_x = dir.x * s - dir.z * c;
-            float new_z = dir.x * c + dir.z * s;
-            dir.x = new_x;
-            dir.z = new_z;
+            mat2 rot = mat2(sin(angle), -cos(angle), cos(angle), sin(angle));
+            dir.xz *= rot;
         } else {
-            float inv_y = dir.y;
-            dir.y = dir.z; 
-            dir.z = -inv_y; 
-            float angle = sunAngle * 6.28318530718;
-            float c = cos(angle);
-            float s = sin(angle);
-        
-            float new_x = dir.x * c - dir.z * s;
-            float new_z = dir.x * s + dir.z * c;
+            dir.yz = vec2(dir.z, -dir.y);
             
-            dir.x = new_x;
-            dir.z = new_z;
+            float angle = sunAngle * 6.28318530718;
+            mat2 rot = mat2(cos(angle), sin(angle), -sin(angle), cos(angle));
+            dir.xz *= rot;
         }
     #endif
     // This calc makes the stars to follow the moon.

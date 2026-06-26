@@ -1,6 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
+// == Color utils
 
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
@@ -8,7 +8,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
+// == Uniforms
 
 uniform float rainStrength;
 uniform float wetness;
@@ -28,6 +28,7 @@ uniform ivec2 eyeBrightnessSmooth;
 #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
     uniform mat4 gbufferModelViewInverse;
     uniform mat4 gbufferProjectionInverse;
+    uniform mat4 gbufferModelView;
 #endif
 
 uniform sampler2D colortex1;
@@ -37,32 +38,37 @@ uniform float viewHeight;
 uniform float frameTime;
 uniform float frameTimeCounter;
 
-/* Ins / Outs */
+// == Varying
 
 varying vec2 texcoord;
 varying vec3 direct_light_color;
 varying vec3 direct_light_strength;
 
 #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
-    varying vec3 vol_light_color;  // Flat
+    varying vec3 vol_light_color;
 #endif
 
-varying float exposure;  // Flat
+varying float exposure;
 
 #if VOL_LIGHT == 1 && !defined NETHER
-    varying vec2 lightpos;  // Flat
-    varying vec3 astro_pos;  // Flat
+    varying vec2 lightpos;
+    varying vec3 astro_pos;
+#endif
+
+#if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
+    varying vec3 v_view_vector;
+    varying vec3 v_center_view_vector;
 #endif
 
 #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
     varying mat4 modeli_times_projectioni;
 #endif
 
-/* Utility functions */
+// == Utility
 
 #include "/lib/luma.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
@@ -119,6 +125,13 @@ void main() {
         vec2 pos1 = tpos.xy / tpos.z;
         lightpos = pos1 * 0.5 + 0.5;
         lightpos *= RENDER_SCALE;
+    #endif
+
+    #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
+        vec4 clip_pos = vec4(gl_MultiTexCoord0.xy * 2.0 - 1.0, 1.0, 1.0);
+        vec4 view_pos = gbufferProjectionInverse * clip_pos;
+        v_view_vector = (gbufferModelViewInverse * view_pos).xyz; 
+        v_center_view_vector = (gbufferModelViewInverse * gbufferProjectionInverse * vec4(0.0, 0.0, 1.0, 1.0)).xyz;
     #endif
 
     #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)

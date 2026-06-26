@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #if MC_VERSION < 11604
     uniform vec3 skyColor;
     #ifdef THE_END
@@ -15,8 +14,7 @@
     uniform vec3 skyColor;
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
@@ -31,8 +29,7 @@ uniform float frameTime;
 
 uniform float rainStrength;
 
-/* Ins / Outs */
-
+// == Varyings
 #if MC_VERSION < 11604
     varying vec3 hi_sky_color;
     varying vec3 mid_sky_color;
@@ -47,8 +44,7 @@ varying vec3 up_vec;
 varying vec2 texcoord;
 varying vec4 position;
 
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
 #endif
@@ -58,7 +54,7 @@ varying vec4 position;
 #endif
 //#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;

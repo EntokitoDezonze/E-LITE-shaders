@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 gbufferProjectionInverse;
 uniform float frameTime;
 
@@ -9,19 +8,17 @@ uniform float frameTime;
     uniform mat4 gbufferModelViewInverse;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
 #endif
 
 //#include "/lib/downscale.glsl"
  
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;

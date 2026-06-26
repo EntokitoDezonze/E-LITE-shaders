@@ -184,7 +184,7 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
         float att_factor = mix(1.0, 0.75, bright * (1.0 - rainStrength));
 
         vec3 cloud_color_1 = vec3(0.0);
-        cloud_color_1 = mix(cloud_color_orig * att_factor, dark_cloud_color_orig * att_factor, pow(density, 0.4));
+        cloud_color_1 = mix(cloud_color_orig * att_factor, dark_cloud_color_orig * att_factor, sqrt(sqrt(density)));
 
         vec3 light_color = dayBlend(
             saturate(LIGHT_SUNSET_COLOR, mix(1.0, 0.5, rainStrength)) * 1.66,

@@ -1,9 +1,9 @@
-  ___    _    ___ _____ ___   ___   _   _ 
- | _____| |  |_ _|_   _| __| | __| / | / |
- | _|___| |__ | |  | | | _|  |__ \_| |_| |
- |___|  |____|___| |_| |___| |___(_|_(_|_|
-                                          
-# E-LITE shaders version 5.1.1
+  ___    _    ___ _____ ___   ___   _   ___ 
+ | _____| |  |_ _|_   _| __| | __| / | |_  )
+ | _|___| |__ | |  | | | _|  |__ \_| |_ / / 
+ |___|  |____|___| |_| |___| |___(_|_(_/___|
+                                            
+# E-LITE shaders version 5.1.2
 
 MakeUp - Ultrafast original creator: Javier Garduño
 Links:
@@ -20,30 +20,18 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- Small patch to fix bugs and improve shader's look.
+-
+
 
 # General changes:
-- Crimson and warped stems and hyphae now glow.
-- Removed unused files.
-- Nether fog has been reworked.
-- Small changes in how LabPBR materials reflect light.
-- Small improvements on how blocks reflect light w/block reflection (without LabPBR).
-- Small sky color changes.
-- Reduced depth-based godrays intensity.
+- Ice now has "Glass" effect on reflections.
+- Small optimizations made on code.
+- DH chunks texture now has bigger pixels.
 
 # Bugfixes:
-- Fixed some missing translations in Portuguese and Spanish versions.
-- Fixed Aurora borealis having a "square-shaped" look when boxy clouds were enabled.
-- Fixed a bug that made translucent particles and entities very dark.
-- Fixed raindrops on the "Particle rain" mod being too dark.
-- Fixed Nether fog having wrong colors.
-- Fixed stretched reflections when water texture is enabled.
-- Fixed a bug that made lighting very dark when using LabPBR with POM disabled.
-- Fixed a bug that made boxy clouds not work on The End.
-- Fixed Voxy fog not working on Nether.
-- Fixed "Fullbright" mode broken on caves and Nether.
+- 
 
-Version code: ELT511
+Version code: ELT512
 
 Based on MakeUp Ultrafast 9.5b
 

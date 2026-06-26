@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D tex;
 uniform sampler2D noisetex;
 varying vec3 worldPos;
@@ -11,8 +10,7 @@ uniform float rainStrength;
 uniform float viewWidth;
 uniform float viewHeight;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying float is_noshadow;
 varying float visible_sky;
@@ -27,10 +25,7 @@ varying float is_water;
 #include "/lib/luma.glsl"
 #include "/lib/basic_utils.glsl"
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     #ifndef CAUSTICS

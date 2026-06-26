@@ -1,7 +1,7 @@
-/* __   ______________
-  / /  /  _/_  __/ __/
- / /___/ /  / / / _/  
-/____/___/ /_/ /___/  
+/* ____    __   ______________
+  / ______/ /  /  _/_  __/ __/
+ / _//___/ /___/ /  / / / _/  
+/___/   /____/___/ /_/ /___/  
                       
 E-LITE shaders 5 - current_sky_color.glsl #include "/src/current_sky_color.glsl"
 Sky color calculation. - Cálculo da cor do céu. */

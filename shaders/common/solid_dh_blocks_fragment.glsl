@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform float light_mix;
 uniform float nightVision;
 uniform float rainStrength;
@@ -18,8 +17,7 @@ uniform int dhRenderDistance;
 uniform float viewWidth;
 uniform float viewHeight;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color;
@@ -31,19 +29,15 @@ varying vec4 sub_position;
 varying float fog_adj;
 varying float near_fog;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/luma.glsl"
 #include "/lib/dither.glsl"
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
 
 vec3 computeRealLightDH(vec3 omni, vec3 directColor, float directStrength, float shadow, vec3 candle, float rain) {
     return omni + vec3(shadow) * directColor * directStrength * (1.0 - (rain * 0.75)) + candle;
 }
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;
@@ -65,7 +59,7 @@ void main() {
     vec4 block_color = tint_color;
     
     // Synthetic pseudo-texture
-    vec3 synth_pos = (position.xyz + cameraPosition) * 16.0;
+    vec3 synth_pos = (position.xyz + cameraPosition) * 8.0;
     synth_pos = floor(synth_pos + 0.01);
     float synth_noise = (hash13(synth_pos) - 0.5) * 0.1;
     block_color.rgb += vec3(synth_noise);

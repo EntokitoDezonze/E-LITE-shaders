@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 gbufferProjectionInverse;
 uniform float frameTime;
 
@@ -14,15 +13,13 @@ uniform float frameTime;
     uniform mat4 gbufferModelViewInverse;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 #if V_CLOUDS == 0 || defined UNKNOWN_DIM
     varying vec2 texcoord;
     varying vec4 tint_color;
 #endif
 
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
 #endif
@@ -31,9 +28,7 @@ uniform float frameTime;
     #include "/lib/luma.glsl"
 #endif
 
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     #if V_CLOUDS == 0 || defined UNKNOWN_DIM
@@ -41,5 +36,4 @@ void main() {
         tint_color = gl_Color;
     #endif
     #include "/src/position_vertex.glsl"
-    //resize_vertex(gl_Position);
 }

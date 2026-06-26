@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
 /* Color utils */
-
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -11,7 +10,6 @@
 #endif
 
 /* Uniforms */
-
 uniform float rainStrength;
 uniform float wetness;
 uniform mat4 gbufferProjectionInverse;
@@ -24,28 +22,24 @@ uniform float frameTime;
     uniform mat4 gbufferModelViewInverse;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec4 tint_color;
 varying vec2 texcoord;
 varying vec3 basic_light;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/luma.glsl"
 #include "/lib/basic_utils.glsl"
 
-#if AA_TYPE > 1
+#if AA_TYPE > 0
     #include "/src/taa_offset.glsl"
 #endif
-//#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     #include "/src/basiccoords_vertex.glsl"
     #include "/src/position_vertex.glsl"
-    //resize_vertex(gl_Position);
     tint_color = gl_Color;
 
     basic_light = dayBlend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR);

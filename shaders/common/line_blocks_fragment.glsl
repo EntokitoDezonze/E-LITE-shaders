@@ -1,21 +1,19 @@
-/* Utility functions */
+// == Utility
 #include "/lib/config.glsl"
 
-/* Ins / Outs & Uniforms */
+// == Varyings
 varying vec4 tint_color;
 
 #ifdef RGB_LINE
     varying vec3 pos;
 #endif
 
+// == Uniforms
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int renderStage;
 uniform sampler2D gaux3;
 uniform float frameTimeCounter;
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
 
 #ifdef RGB_LINE
     vec3 rgb_line(vec3 pos) {
@@ -28,9 +26,10 @@ uniform float frameTimeCounter;
     }
 #endif
 
+// == Main function
+
 void main() {
-    //if(fragment_cull()) discard;
-    
+   
     vec4 block_color = tint_color;
     float exposure = texture2D(gaux3, vec2(0.5)).r;
 

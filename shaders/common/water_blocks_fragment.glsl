@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D tex;
 uniform float viewWidth;
 uniform float viewHeight;
@@ -82,8 +80,7 @@ uniform float blindness;
 
 uniform mat4 gbufferModelView;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec2 lmcoord;
 varying vec4 tint_color;
@@ -155,10 +152,7 @@ vec3 nfragpos = normalize(fragpos.xyz);
     #include "/lib/shadow_vertex.glsl"
 #endif
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;
@@ -283,13 +277,15 @@ void main() {
         block_color = texture2D(tex, texcoord);
         float block_luma = luma(block_color.rgb);
         block_color *= tint_color;
+        vec3 cristalNormal = water_normal;
 
         if(block_type < 0.11 && block_type > 0.09) { // Enhanced Portal
             block_color.rgb *= cubePow(block_luma) * sqrt(block_luma) * 1000;
         } else if(block_type > 2.3 && block_type < 2.5) { // Ice
+            block_color.a *= 1;
+            block_color.r *= 0.8;
+            cristalNormal *= sqrt(luma(block_color.rgb) * 0.5 + 0.5) / 0.9;
             block_color = saturate_v4(block_color, 0.5);
-            block_color.a *= 0.75;
-            block_color.r *= 0.9;
         }
 
         #if defined SHADOW_CASTING && !defined NETHER
@@ -317,7 +313,7 @@ void main() {
             } else {
                 sat = 3.0;
             }
-            block_color = cristal_shader(fragposition, water_normal, saturate_v4(block_color, sat), sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
+            block_color = cristal_shader(fragposition, cristalNormal, saturate_v4(block_color, sat), sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
         }
     }
 

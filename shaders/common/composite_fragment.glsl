@@ -1,8 +1,10 @@
 #include "/lib/config.glsl"
-const bool colortex1MipmapEnabled = true;
 
-/* Color utils */
+#if !defined SIMPLE_AUTOEXP
+    const bool colortex1MipmapEnabled = true;
+#endif
 
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -11,7 +13,7 @@ const bool colortex1MipmapEnabled = true;
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
+// == Uniforms
 uniform sampler2D colortex1;
 uniform float far;
 uniform float near;
@@ -63,8 +65,7 @@ uniform vec3 cameraPosition;
     #endif
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec3 direct_light_color;
 varying vec3 direct_light_strength;
@@ -80,21 +81,23 @@ varying float exposure;
     varying mat4 modeli_times_projectioni;
 #endif
 
-/* Utility functions */
+#if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
+    varying vec3 v_view_vector;
+    varying vec3 v_center_view_vector;
+#endif
 
+
+// == Utility
 #include "/lib/basic_utils.glsl"
 #include "/lib/depth.glsl"
 #include "/lib/luma.glsl"
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
 
 #if (VOL_LIGHT == 1 || (VOL_LIGHT == 2)) && !defined NETHER
     #include "/lib/dither.glsl"
     #include "/lib/volumetric_light.glsl"
 #endif
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     vec4 block_color = texture2DLod(colortex1, texcoord, 0);
@@ -120,11 +123,16 @@ void main() {
 
     // Underwater fog
     // Pre-calculating values.
-    float water_absorption_exponent_val = WATER_FOG + (WATER_ABSORPTION * 4.0);
-    float eye_brightness_scaled_val = (eye_bright_smooth.y * .8 + 48.0) * 0.004166666666666667;
-    vec3 water_light_color_base = NIGHT_CORRECTION * saturate(WATER_COLOR, mix(1.0, 0.25, rainStrength)) * COLOR_CORRECTION * direct_light_strength;
+    float water_absorption_exponent_val;
+    float eye_brightness_scaled_val;
+    vec3 water_light_color_base;
 
     if (isEyeInWater == 1) {
+        // Underwater fog
+        // Pre-calculating values.
+        float water_absorption_exponent_val = WATER_FOG + (WATER_ABSORPTION * 4.0);
+        float eye_brightness_scaled_val = (eye_bright_smooth.y * .8 + 48.0) * 0.004166666666666667;
+        vec3 water_light_color_base = NIGHT_CORRECTION * saturate(WATER_COLOR, mix(1.0, 0.25, rainStrength)) * COLOR_CORRECTION * direct_light_strength;
         float x = clamp(1.0 - linear_d, 0.0, 1.0);
         float water_absorption = 1.0 - fastpow(x, water_absorption_exponent_val);
 
@@ -152,14 +160,14 @@ void main() {
         #if AA_TYPE > 0
             float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
         #else
-            float dither = eclectic_r_dither(gl_FragCoord.xy);
+            float dither = r_dither(gl_FragCoord.xy);
         #endif
-    #endif
 
-    float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0);
-    height_factor = pow(height_factor, 0.1);
-    float cave_influence = height_factor * clamp(1.0 - eyeBrightnessSmooth.y * 0.1, 0.0, 1.0);
-    cave_influence = smoothstep(1.0, 0.0, cave_influence);
+        float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0);
+        height_factor = pow(height_factor, 0.1);
+        float cave_influence = height_factor * clamp(1.0 - eyeBrightnessSmooth.y * 0.1, 0.0, 1.0);
+        cave_influence = smoothstep(1.0, 0.0, cave_influence);
+    #endif
 
     vec3 block_colorvl;
 
@@ -174,11 +182,8 @@ void main() {
             float vol_light = ss_godrays(dither) * cave_influence;
         #endif
 
-        vec4 center_world_pos = modeli_times_projectioni * (vec4(0.5, 0.5, 1.0, 1.0) * 2.0 - 1.0);
-        vec3 center_view_vector = normalize(center_world_pos.xyz);
-
-        vec4 world_pos = modeli_times_projectioni * (vec4(texcoord / RENDER_SCALE, 1.0, 1.0) * 2.0 - 1.0);
-        vec3 view_vector = normalize(world_pos.xyz);
+        vec3 view_vector = normalize(v_view_vector);
+        vec3 center_view_vector = normalize(v_center_view_vector);
 
         #if defined THE_END
             // Fixed light source position in sky for intensity calculation
@@ -223,10 +228,10 @@ void main() {
         #else
             float vol_light = get_volumetric_light(dither, screen_distance, modeli_times_projectioni);
         #endif
+
         // Volumetric intensity adjustments
 
-        vec4 world_pos = modeli_times_projectioni * (vec4(texcoord, 1.0, 1.0) * 2.0 - 1.0);
-        vec3 view_vector = normalize(world_pos.xyz);
+        vec3 view_vector = normalize(v_view_vector);
 
         #if defined THE_END
             // Fixed light source position in sky for volumetrics intensity calculation (The End)
@@ -238,13 +243,13 @@ void main() {
 
         #if defined THE_END
             vol_intensity =
-                ((squarePow(clamp((vol_intensity + .666667) * 0.6, 0.0, 1.0)) * 0.5));
-            block_colorvl = block_color.rgb + (vol_light_color * vol_light * vol_intensity * 2.0);
+                ((square_pow(clamp((vol_intensity + .666667) * 0.6, 0.0, 1.0)) * 0.5));
+            block_colorvl.rgb += (vol_light_color * vol_light * vol_intensity * 2.0);
         #else
             vol_intensity =
                 pow(clamp((vol_intensity + 0.5) * 0.666666666666666, 0.0, 1.0), vol_mixer) * 0.6 * abs(light_mix * 2.0 - 1.0);
 
-            block_colorvl =
+            block_colorvl.rgb =
                 mix(block_color.rgb, vol_light_color * vol_light, vol_intensity * (vol_light * 0.5 + 0.5) * (1.0 - rainStrength));
         #endif
     #elif VOL_LIGHT != 1
@@ -269,22 +274,31 @@ void main() {
 
         block_color = clamp(block_color, vec4(0.0), vec4(50.0, 50.0, 50.0, 1.0));
         
-        /* DRAWBUFFERS:1246 */
-        gl_FragData[0] = vec4(block_colorvl, 1.0);
-        gl_FragData[1] = block_color * bloom_luma;
-        #if SSR_TYPE > -1 || MATERIAL_GLOSS > 1
+        #if REFLECTION_SLIDER > 0 && MATERIAL_GLOSS > 1
+            /* DRAWBUFFERS:1246 */
+            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[1] = block_color * bloom_luma;
             gl_FragData[2] = block_color;
+            gl_FragData[3] = vec4(exposure, 0.0, 0.0, 0.0);
+        #else
+            /* DRAWBUFFERS:126 */
+            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[1] = block_color * bloom_luma;
+            gl_FragData[2] = vec4(exposure, 0.0, 0.0, 0.0);
         #endif
-        gl_FragData[3] = vec4(exposure, 0.0, 0.0, 0.0);
     #else
         block_colorvl = clamp(block_colorvl, vec3(0.0), vec3(50.0));
         block_color = clamp(block_color, vec4(0.0), vec4(50.0, 50.0, 50.0, 1.0));
         
-        /* DRAWBUFFERS:146 */
-        gl_FragData[0] = vec4(block_colorvl, 1.0);
-        #if SSR_TYPE > -1 || MATERIAL_GLOSS > 1
+        #if REFLECTION_SLIDER > 0 && MATERIAL_GLOSS > 1
+            /* DRAWBUFFERS:146 */
+            gl_FragData[0] = vec4(block_colorvl, 1.0);
             gl_FragData[1] = block_color;
+            gl_FragData[2] = vec4(exposure, 0.0, 0.0, 0.0);
+        #else
+            /* DRAWBUFFERS:16 */
+            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[1] = vec4(exposure, 0.0, 0.0, 0.0);
         #endif
-        gl_FragData[2] = vec4(exposure, 0.0, 0.0, 0.0);
     #endif
 }

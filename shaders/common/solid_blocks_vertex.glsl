@@ -38,7 +38,7 @@ uniform vec3 moonPosition, sunPosition, skyColor;
     uniform float frameTimeCounter;
 #endif
 
-/* Ins / Outs */
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color;
@@ -82,11 +82,10 @@ varying float vanilla_ao;
     varying float reflexIndex;
 #endif
 
-#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR
-    varying vec3 sub_position3, sub_position3_norm;
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING
+    varying vec3 sub_position3, sub_position3_norm, flat_normal;
     
 #endif
-varying vec3 flat_normal;
 
 #if defined SHADOW_CASTING && !defined NETHER
     vec3 shadow_pos;

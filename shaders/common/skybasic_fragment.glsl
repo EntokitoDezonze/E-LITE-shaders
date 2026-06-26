@@ -1,8 +1,7 @@
 #include "/lib/config.glsl"
 #include "/lib/luma.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -11,8 +10,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D gaux4;
 uniform float pixel_size_x;
 uniform float pixel_size_y;
@@ -37,8 +35,7 @@ uniform vec3 sunPosition;
     uniform vec4 lightningBoltPosition;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 #if MC_VERSION < 11604
     varying vec3 hi_sky_color;
     varying vec3 mid_sky_color;
@@ -52,8 +49,7 @@ varying vec4 star_data;
 varying vec3 up_vec;
 varying vec4 position;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/basic_utils.glsl"
 
 #if STAR_SLIDER == 2 || AA_TYPE > 0
@@ -66,10 +62,7 @@ varying vec4 position;
 #endif
 
 #include "/lib/biome_sky.glsl"
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;
