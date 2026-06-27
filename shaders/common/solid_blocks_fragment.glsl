@@ -273,7 +273,7 @@ void main() {
             float trigger = smoothstep(0.1, 0.0, block_luma);
             float explosion = 1.0 / (block_luma + 0.005);
             luma_shading += squarePow(explosion) * trigger * 100.0;
-            float metal_shading = fastpow(max(block_luma2, 1e-5), 0.1) * 150.0;
+            float metal_shading = sqrt(sqrt(sqrt(max(block_luma2, 1e-5)))) * 150.0;
             
             block_luma2 = mix(block_luma2, mix(luma_shading, metal_shading, isMetal), porosity_clip);
             block_luma2 *= 1.0 + cubePow(smoothness);
@@ -346,7 +346,7 @@ void main() {
     #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
         if ((reflex_index2 + currentRoughness) > 0.001) {
             vec3 R = reflect(sub_position3_norm, bumpedNormal);
-            vec2 sky_uv = vec2(atan(R.z, R.x) * 0.1591549 + 0.5, acos(-R.y) * 0.3183098 + 0.1);
+            vec2 sky_uv = vec2(fastAtan2(R.z, R.x) * 0.1591549 + 0.5, fastApproxACos(-R.y) * 0.3183098 + 0.1);
             vec3 sky_refl = texture2D(gaux4, clamp(sky_uv, 0.01, 0.99)).rgb;
             block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2, material_f0);
         }

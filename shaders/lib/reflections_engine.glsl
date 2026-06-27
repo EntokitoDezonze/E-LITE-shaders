@@ -156,7 +156,7 @@ vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
     
     for(int i = 0; i < 3; i++) {
         float angle = i * 2.0944 + dither * 6.2831;
-        vec2 offset = vec2(cos(angle), sin(angle)) * blur_vec * dither;
+        vec2 offset = vec2(fastCos17(angle), fastSin17(angle)) * blur_vec * dither;
         col += texture2D(gaux1, final_uv + offset).rgb;
     }
     col /= 3.0;
