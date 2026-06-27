@@ -15,7 +15,7 @@ float final_sun_factor = fastpow(sun_ss, dayBFlgcy(1.0, 1.0, 2.0));
 float final_sun_factor2 = fastpow(sun_ss, dayBF(1.5, 0.0, 10.0));
 
 #if COLOR_SCHEME == 4
-    float final_sun_factor3 = pow(sun_ss, dayBF(1.0, 0.0, 1.75));
+    float final_sun_factor3 = fastpow(sun_ss, dayBF(1.0, 0.0, 1.75));
     vec3 current_low_sky_color = mix(mid_sky_color * dayBF(1.0, 1.0, 0.75), low_sky_color, final_sun_factor3);
     vec3 current_mid_sky_color = mid_sky_color;
     vec3 current_hi_sky_color = hi_sky_color;

@@ -74,7 +74,6 @@ varying vec4 data_pack_a; // x: fog_adj, y: direct_light_strength, z: block_type
 varying vec4 data_pack_b; // x: near_fog, y: visible_sky, z: sunInfluence, w: roughness
 varying vec2 emissiveData; // x: ore_type_f, y: emitter_type_f
 varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
-varying float vanilla_ao;
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
     varying vec2 lmcoord_alt;
@@ -142,7 +141,6 @@ void main() {
     float exposure_v = texture2D(gaux3, vec2(0.5)).r;
     vec2 eye_bright_smooth = vec2(eyeBrightnessSmooth);
     int mc_ex = int(mc_Entity.x); 
-    vanilla_ao = gl_Color.a;
 
     #include "/src/basiccoords_vertex.glsl"
     #include "/src/position_vertex.glsl"

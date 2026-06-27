@@ -40,7 +40,6 @@ varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color, candle_color, omni_light;
-varying float vanilla_ao;
 
 #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
     #ifdef POM
@@ -152,13 +151,6 @@ void main() {
     pure_block_color = texture2D(tex, final_uv);
     lowp vec4 block_color = vec4(pure_block_color.rgb * tint_color.rgb, pure_block_color.a);
     lowp float block_luma = luma(block_color.rgb);
-    #if !defined GBUFFER_TEXTURED && !defined GBUFFER_ENTITIES && !defined GBUFFER_BEACONBEAM
-        block_color.rgb *= vanilla_ao;
-    #elif defined GBUFFER_ENTITIES
-        block_color *= vanilla_ao;
-    #else
-        block_color.a *= vanilla_ao;
-    #endif
 
     pixel_size = vec2(pixel_size_x, pixel_size_y);
     final_candle_color = candle_color;
