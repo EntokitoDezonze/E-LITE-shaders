@@ -32,6 +32,7 @@ vec4 getNormal(vec2 local_p) {
 
 float get_pom_shadow(float surface_h, vec2 p_uv, vec3 light_tg, float dither, vec3 shadow_c) {
     if (light_tg.z <= -0.05 || surface_h > 0.98) return 1.0;
+    float pom_fade = clamp((vdist - 16.0) / 16, 0.0, 1.0); 
     float step_size = 1.0 / float(SS_SAMPLES), shadow = 1.0;
     vec2 shadow_dir = light_tg.xy * (0.05 / max(light_tg.z, 0.05));
 
@@ -45,5 +46,5 @@ float get_pom_shadow(float surface_h, vec2 p_uv, vec3 light_tg, float dither, ve
     float luma_inv = 1.0 - luma(direct_light_color);
     float soften = clamp(luma_inv * sqrt(luma_inv) + (0.65 - luma(shadow_c)), 0.0, 1.0);
     
-    return mix(shadow * 0.4 + 0.75, 1.0, soften);
+    return mix(shadow * 0.4 + 0.66, 1.0, soften + pom_fade); // Fixing bad blending.
 }
