@@ -27,12 +27,15 @@ vec4 getNormal(vec2 local_p) {
     vec2 clamped_p = clamp(local_p, 0.001, 0.999);
     vec2 final_uv = clamped_p * atlas_uv.zw + atlas_uv.xy;
     
-    return texture2D(normals, final_uv);
+    return texture2DLod(normals, final_uv, 0.0);
 }
 
 float get_pom_shadow(float surface_h, vec2 p_uv, vec3 light_tg, float dither, vec3 shadow_c) {
-    if (light_tg.z <= -0.05 || surface_h > 0.98) return 1.0;
-    float pom_fade = clamp((vdist - 16.0) / 16, 0.0, 1.0); 
+    float pom_fade;
+    #ifdef POM
+        pom_fade = sqrt(clamp((vdist - 8.0) / 8, 0.0, 1.0)); 
+    #endif
+    if (light_tg.z <= -0.05 || surface_h > 0.98 || pom_fade > 0.999) return 1.0;
     float step_size = 1.0 / float(SS_SAMPLES), shadow = 1.0;
     vec2 shadow_dir = light_tg.xy * (0.05 / max(light_tg.z, 0.05));
 

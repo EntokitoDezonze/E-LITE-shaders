@@ -29,7 +29,7 @@ Changelog:
 - DH chunks texture now has bigger pixels.
 
 # Bugfixes:
-- 
+- Fixed POM shadows having broken transition.
 
 Version code: ELT512
 

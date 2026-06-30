@@ -247,7 +247,7 @@ void main() {
     
     // === Block reflection
     float currentRoughness = roughness;
-    #if (MATERIAL_GLOSS > 0 && !defined NETHER)
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER) || (MATERIAL_GLOSS > 1)
         float f0_val;
         #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
             vec4 specMap = texture2D(specular, final_uv);
