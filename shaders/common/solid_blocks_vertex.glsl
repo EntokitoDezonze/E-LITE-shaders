@@ -76,9 +76,12 @@ varying vec2 emissiveData; // x: ore_type_f, y: emitter_type_f
 varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
-    varying vec2 lmcoord_alt;
     varying vec4 glossParms; 
     varying float reflexIndex;
+#endif
+
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING || defined EMISSIVE_MATERIAL
+    varying vec2 lmcoord_alt;
 #endif
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING
@@ -227,9 +230,12 @@ void main() {
         } else if (mc_ex >= 10018 && mc_ex <= 10019) { // Foliage
             l_fact = (mc_ex == 10018) ? 20.0 : 2.5; l_pow = 1.5; g_pow = 0.5; g_fact = 1.0;
         }
-        lmcoord_alt = lmcoord;
         glossParms = vec4(g_fact, g_pow, l_fact, l_pow);
         reflexIndex = reflex_v;
+    #endif
+
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING || defined EMISSIVE_MATERIAL
+        lmcoord_alt = lmcoord;
     #endif
 
     #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR

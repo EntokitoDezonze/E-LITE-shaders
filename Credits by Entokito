@@ -20,16 +20,17 @@ Changelog:
 - avc1657
 
 # OVERVIEW
--
-
+- Small patch to bugfixes and small tweaks.
 
 # General changes:
 - Ice now has "Glass" effect on reflections.
 - Small optimizations made on code.
 - DH chunks texture now has bigger pixels.
+- Small optimizations made.
 
 # Bugfixes:
 - Fixed POM shadows having broken transition.
+- Fixed failure when using LabPBR on Nether.
 
 Version code: ELT512
 

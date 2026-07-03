@@ -17,17 +17,17 @@ vec3 sky_color;
 dither = (dither - 0.5) * 0.03125;
 
 #if ((COLOR_SCHEME == 2 && SIMPLE_SKY == 0) || COLOR_SCHEME == 5) && !defined UNKNOWN_DIM 
-vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) * 2.0 - 1.0;
+    vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);
     vec3 nfragpos = normalize(fragpos.xyz);
     
     float n_u = clamp(dot(nfragpos, up_vec) + (0.1 + dither), 0.0, 1.0);
     float blend_initial = sqrt(n_u);
 
-    float height_factor = clamp(1.0 - (cameraPosition.y * 0.01587301587), 0.0, 1.0); // 1.0 / 63.0
+    float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0); // 1.0 / 63.0
     height_factor = fastpow(height_factor, 0.1);
     float cave_influence = height_factor * clamp(1.0 - eyeBrightnessSmooth.y * 0.005, 0.0, 1.0);
-    cave_influence = smoothstep(0.0, 1.0, cave_influence);
+    cave_influence = smoothstep(0.9, 1.0, cave_influence);
     cave_influence = dayBF(cave_influence, cave_influence, 0.0);
 
     const float t_mid = 0.6;

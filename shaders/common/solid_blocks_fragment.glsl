@@ -54,9 +54,12 @@ varying vec3 direct_light_color, candle_color, omni_light;
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING
     varying vec3 sub_position3, sub_position3_norm, flat_normal;
-    varying vec2 lmcoord_alt;
     varying vec4 glossParms;
     varying float reflexIndex;
+#endif
+
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING || defined EMISSIVE_MATERIAL
+    varying vec2 lmcoord_alt;
 #endif
 
 #if defined SHADOW_CASTING && !defined NETHER
@@ -149,7 +152,7 @@ void main() {
 
     // === Auxiliary
     pure_block_color = texture2D(tex, final_uv);
-    lowp vec4 block_color = vec4(pure_block_color.rgb * tint_color.rgb, pure_block_color.a);
+    lowp vec4 block_color = pure_block_color * tint_color;
     lowp float block_luma = luma(block_color.rgb);
 
     pixel_size = vec2(pixel_size_x, pixel_size_y);
@@ -252,24 +255,28 @@ void main() {
         #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
             vec4 specMap = texture2D(specular, final_uv);
             float smoothness = specMap.r;
-            f0_val = mix(specMap.g * clamp(1.0 - specMap.a, 0.04, 1.0), specMap.g, step(0.99, specMap.a));
-            reflex_index2 = f0_val;
+            f0_val = specMap.g;
+
             float isMetal = step(0.9018, f0_val);
             float porosity_clip = mix(1.0 - specMap.b, 1.0, isMetal);
-            float final_gloss_power = squarePow(smoothness) * mix(96.0, 320.0, isMetal) + 1.0;
-            float block_luma2 = block_luma * 100;
-            float sss_factor = fourthPow(clamp(1.0 - smoothness, 0.0, 1.0));
-            block_luma2 *= mix(sss_factor, fourthPow(smoothness), porosity_clip);
-            
-            float luma_shading = max(25.0 - fourthPow(block_luma * 3.0), 0.0);
+            float sss_factor = fastpow(clamp(1.0 - smoothness, 0.0, 1.0), 4.0);
+
+            reflex_index2 = mix(f0_val, 1.0, smoothness * step(porosity_clip, 0.1));
+
+            float final_gloss_power = fastpow(smoothness, 2.0) * mix(64.0, 320.0, isMetal) + 1.0;
+            float block_luma2 = block_luma * 100.0;
+
+            block_luma2 *= mix(sss_factor, fastpow(smoothness, 4.0), porosity_clip);
+
+            float luma_shading = max(25.0 - fastpow(block_luma * 3.0, 4.0), 0.0);
             float trigger = smoothstep(0.1, 0.0, block_luma);
             float explosion = 1.0 / (block_luma + 0.005);
-            luma_shading += squarePow(explosion) * trigger * 100.0;
-            float metal_shading = sqrt(sqrt(sqrt(max(block_luma2, 1e-5)))) * 150.0;
-            
+            luma_shading += fastpow(explosion, 2.0) * trigger * 100.0;
+            float metal_shading = fastpow(max(block_luma2, 1e-5), 0.25) * 150.0;
+
             block_luma2 = mix(block_luma2, mix(luma_shading, metal_shading, isMetal), porosity_clip);
-            block_luma2 *= 1.0 + cubePow(smoothness);
-            currentRoughness = squarePow(1.0 - smoothness);
+            block_luma2 *= 1.0 + fastpow(smoothness, 3.0);
+            currentRoughness = fastpow(1.0 - smoothness, 2.0);
         #else
             float final_gloss_power = glossParms.g;
             float block_luma2 = pow(block_luma * glossParms.b, glossParms.a);
@@ -278,10 +285,7 @@ void main() {
     #endif
 
     #if MATERIAL_GLOSS > 0 && defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        isMetal = step(0.9018, f0_val);
-        float isCustomMetal = step(0.998, f0_val);
         float metalID = floor(f0_val * 255.0 + 0.5);
-
         // Documented in https://shaderlabs.org/wiki/LabPBR_Material_Standard
         // F = (n-1)² + k² / (n+1)² + k²
         vec3 f0_iron     = vec3(0.5611, 0.5594, 0.5348);
@@ -336,11 +340,11 @@ void main() {
 
     // === SSR
     #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        if ((reflex_index2 + currentRoughness) > 0.001) {
+        if ((reflex_index2) > 0.001) {
             vec3 R = reflect(sub_position3_norm, bumpedNormal);
             vec2 sky_uv = vec2(fastAtan2(R.z, R.x) * 0.1591549 + 0.5, fastApproxACos(-R.y) * 0.3183098 + 0.1);
             vec3 sky_refl = texture2D(gaux4, clamp(sky_uv, 0.01, 0.99)).rgb;
-            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2, material_f0);
+            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2, material_f0, isMetal);
         }
     #endif
 
