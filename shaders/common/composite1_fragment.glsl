@@ -27,8 +27,8 @@ uniform int frameCounter;
 #endif
 
 #if defined DOF || defined MOTION_BLUR
-    uniform float pixel_size_x;
-    uniform float pixel_size_y;
+    uniform float pixelSizeX;
+    uniform float pixelSizeY;
 #endif
 
 #if AA_TYPE > 0 || defined MOTION_BLUR

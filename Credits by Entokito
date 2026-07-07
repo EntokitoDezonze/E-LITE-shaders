@@ -27,10 +27,13 @@ Changelog:
 - Small optimizations made on code.
 - DH chunks texture now has bigger pixels.
 - Small optimizations made.
+- Indirect light was reworked and looks smoother.
 
 # Bugfixes:
 - Fixed POM shadows having broken transition.
 - Fixed failure when using LabPBR on Nether.
+- Fixed Sky being dark when joining caves above sea level.
+- Fixed Depth of Field not working properly.
 
 Version code: ELT512
 

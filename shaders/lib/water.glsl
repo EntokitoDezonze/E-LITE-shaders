@@ -165,7 +165,7 @@ vec3 normal_waves(vec3 pos) {
 }
 
 vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
-    vec2 pos = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y);
+    vec2 pos = gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY);
 
     #if REFRACTION == 1
         pos = pos + refraction.xy * (0.075 / (1.0 + length(fragpos) * 0.4));
@@ -300,7 +300,7 @@ vec4 cristal_reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, fl
         #else
             vec3 reflected_vector = reflect(normalize(fragpos), normal) * 76.0;
         #endif
-            vec3 pos = camera_to_screen(fragpos + reflected_vector);
+        vec3 pos = camera_to_screen(fragpos + reflected_vector);
     #else
         vec3 reflected_vector = reflect(normalize(fragpos), normal);
         vec3 pos = fast_raymarch(reflected_vector, fragpos, infinite, dither);

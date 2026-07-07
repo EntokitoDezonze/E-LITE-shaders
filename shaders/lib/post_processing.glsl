@@ -38,8 +38,8 @@ Utilities, effects and fake effects. - Utilidades, efeitos e efeitos falsos. */
         float force = SHARP_FORCE;
         float blur_radius_px = 1.0;
 
-        vec2 offset_x = vec2(blur_radius_px * pixel_size_x, 0.0);
-        vec2 offset_y = vec2(0.0, blur_radius_px * pixel_size_y);
+        vec2 offset_x = vec2(blur_radius_px * pixelSizeX, 0.0);
+        vec2 offset_y = vec2(0.0, blur_radius_px * pixelSizeY);
 
         vec3 left_c   = texture2D(image, coords - offset_x).rgb;
         vec3 right_c  = texture2D(image, coords + offset_x).rgb;

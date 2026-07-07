@@ -54,8 +54,8 @@ uniform float viewHeight;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float frameTime;
 
 #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
@@ -174,7 +174,7 @@ void main() {
             vec4 world_pos = gbufferModelViewInverse * gbufferProjectionInverse * (vec4(texcoord, 1.0, 1.0) * 2.0 - 1.0);
             view_vector = normalize(world_pos.xyz);
 
-            vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
+            vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
             vec3 nfragpos = normalize(fragpos.xyz);
             float sun_influence = dot(nfragpos, sunPosition * 0.01);
             float normalized_sun_influence = smoothstep(-1.0, 1.0, sun_influence);
@@ -207,7 +207,7 @@ void main() {
             #endif
         #elif !defined NETHER && !defined THE_END
             if(linear_d > 0.9999 && isEyeInWater == 1) {  // Only sky and water
-                vec4 screen_pos = vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0);
+                vec4 screen_pos = vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0);
                 vec4 fragposition = gbufferProjectionInverse * (screen_pos * 2.0 - 1.0);
 
                 vec4 world_pos = gbufferModelViewInverse * vec4(fragposition.xyz, 0.0);

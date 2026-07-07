@@ -276,13 +276,13 @@ void main() {
         
         #if REFLECTION_SLIDER > 0 && MATERIAL_GLOSS > 1
             /* DRAWBUFFERS:1246 */
-            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[0] = vec4(block_colorvl, block_color.a);
             gl_FragData[1] = block_color * bloom_luma;
             gl_FragData[2] = block_color;
             gl_FragData[3] = vec4(exposure, 0.0, 0.0, 0.0);
         #else
             /* DRAWBUFFERS:126 */
-            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[0] = vec4(block_colorvl, block_color.a);
             gl_FragData[1] = block_color * bloom_luma;
             gl_FragData[2] = vec4(exposure, 0.0, 0.0, 0.0);
         #endif
@@ -292,12 +292,12 @@ void main() {
         
         #if REFLECTION_SLIDER > 0 && MATERIAL_GLOSS > 1
             /* DRAWBUFFERS:146 */
-            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[0] = vec4(block_colorvl, block_color.a);
             gl_FragData[1] = block_color;
             gl_FragData[2] = vec4(exposure, 0.0, 0.0, 0.0);
         #else
             /* DRAWBUFFERS:16 */
-            gl_FragData[0] = vec4(block_colorvl, 1.0);
+            gl_FragData[0] = vec4(block_colorvl, block_color.a);
             gl_FragData[1] = vec4(exposure, 0.0, 0.0, 0.0);
         #endif
     #endif

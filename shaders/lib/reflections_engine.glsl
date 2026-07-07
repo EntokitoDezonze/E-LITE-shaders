@@ -109,36 +109,16 @@ vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
     float distFactor = 25.0;
 
     #if MATERIAL_GLOSS == 3
-        vec3 march_result = fast_raymarch(reflected, sub_position3, infinite, dither);
-        rayTarget = sub_position3 + reflected * distFactor;
-        vec3 fallback = camera_to_screen(rayTarget);
+        vec3 pos = fast_raymarch(reflected, sub_position3, infinite, dither);
 
-        float useFallback = float(infinite > 0.5);
-        vec2 ssr_uv;
-
-        vec3 view_pos = screen_to_camera(march_result);
-        vec3 curr_world_pos = mat3(gbufferModelViewInverse) * view_pos + gbufferModelViewInverse[3].xyz;
-        vec3 prev_world_pos = curr_world_pos + (cameraPosition - previousCameraPosition);
-        vec3 prev_view_pos = mat3(gbufferPreviousModelView) * prev_world_pos + gbufferPreviousModelView[3].xyz;
-
-        vec2 prev_proj = vec2(
-            gbufferPreviousProjection[0].x,
-            gbufferPreviousProjection[1].y
-        ) * prev_view_pos.xy + gbufferPreviousProjection[3].xy;
-
-        ssr_uv = (prev_proj / -prev_view_pos.z) * 0.5 + 0.5;
-
-        vec2 fallback_uv = fallback.xy;
-
-        final_uv = mix(ssr_uv, fallback_uv, useFallback);
+        if (pos.x > 99.0) { // Fallback
+            pos = camera_to_screen(sub_position3 + reflected * 16.0);
+        }
     #else
-        rayTarget = sub_position3 + reflected * distFactor;
-        vec3 curr_feet_player_pos = mat3(gbufferModelViewInverse) * rayTarget + gbufferModelViewInverse[3].xyz;
-        vec3 prev_feet_player_pos = curr_feet_player_pos + (cameraPosition - previousCameraPosition);
-        vec3 prev_view_pos = mat3(gbufferPreviousModelView) * prev_feet_player_pos + gbufferPreviousModelView[3].xyz;
-        vec2 final_pos_proj = vec2(gbufferPreviousProjection[0].x, gbufferPreviousProjection[1].y) * prev_view_pos.xy + gbufferPreviousProjection[3].xy;
-        final_uv = (final_pos_proj / -prev_view_pos.z) * 0.5 + 0.5;
+        vec3 reflected_vector = reflect(normalize(sub_position3), normal) * 76.0;
+        vec3 pos = camera_to_screen(sub_position3 + reflected_vector);
     #endif
+    final_uv = pos.xy;
 
     float border_x = max(-fourthPow(abs(2.0 * final_uv.x - 1.0)) + 1.0, 0.0);
     float border_y = max(-fourthPow(abs(2.0 * final_uv.y - 1.0)) + 1.0, 0.0);

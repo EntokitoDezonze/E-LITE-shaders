@@ -20,7 +20,7 @@ uniform sampler2D tex, specular, normals, gaux1, gaux3, gaux4, shadowcolor0, dep
 uniform sampler2DShadow shadowtex1, shadowtex0;
 
 uniform float viewWidth, viewHeight, far, near, light_mix, rainStrength, wetness, blindness, frameTime, frameTimeCounter, inv_aspect_ratio, nightVision, dhNearPlane;
-uniform float pixel_size_x, pixel_size_y; // pixel_size
+uniform float pixelSizeX, pixelSizeY; // pixel_size
 uniform int frameCounter, isEyeInWater, entityId;
 uniform vec3 sunPosition, moonPosition, cameraPosition, previousCameraPosition;
 uniform vec4 entityColor;
@@ -155,7 +155,7 @@ void main() {
     lowp vec4 block_color = pure_block_color * tint_color;
     lowp float block_luma = luma(block_color.rgb);
 
-    pixel_size = vec2(pixel_size_x, pixel_size_y);
+    pixel_size = vec2(pixelSizeX, pixelSizeY);
     final_candle_color = candle_color;
     
     #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1

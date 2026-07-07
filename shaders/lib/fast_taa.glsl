@@ -12,10 +12,10 @@ vec3 fast_taa(vec3 current_color, vec2 texcoord_past) {
     } else {
         vec3 previous = texture2DLod(colortex3, texcoord_past, 0.0).rgb;
 
-        vec3 near_color0 = texture2DLod(colortex1, texcoord + vec2(-pixel_size_x, 0.0) * RENDER_SCALE, 0.0).rgb;
-        vec3 near_color1 = texture2DLod(colortex1, texcoord + vec2(pixel_size_x, 0.0) * RENDER_SCALE, 0.0).rgb;
-        vec3 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixel_size_y) * RENDER_SCALE, 0.0).rgb;
-        vec3 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixel_size_y) * RENDER_SCALE, 0.0).rgb;
+        vec3 near_color0 = texture2DLod(colortex1, texcoord + vec2(-pixelSizeX, 0.0) * RENDER_SCALE, 0.0).rgb;
+        vec3 near_color1 = texture2DLod(colortex1, texcoord + vec2(pixelSizeX, 0.0) * RENDER_SCALE, 0.0).rgb;
+        vec3 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixelSizeY) * RENDER_SCALE, 0.0).rgb;
+        vec3 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixelSizeY) * RENDER_SCALE, 0.0).rgb;
         
         vec3 nmin =
             min(current_color, min(near_color0, min(near_color1, min(near_color2, near_color3))));
@@ -54,10 +54,10 @@ vec4 fast_taa_depth(vec4 current_color, vec2 texcoord_past) {
     } else {
         vec4 previous = texture2DLod(colortex3, texcoord_past, 0.0);
 
-        vec4 near_color0 = texture2DLod(colortex1, texcoord + vec2(-pixel_size_x, 0.0), 0.0);
-        vec4 near_color1 = texture2DLod(colortex1, texcoord + vec2(pixel_size_x, 0.0), 0.0);
-        vec4 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixel_size_y), 0.0);
-        vec4 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixel_size_y), 0.0);
+        vec4 near_color0 = texture2DLod(colortex1, texcoord + vec2(-pixelSizeX, 0.0), 0.0);
+        vec4 near_color1 = texture2DLod(colortex1, texcoord + vec2(pixelSizeX, 0.0), 0.0);
+        vec4 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixelSizeY), 0.0);
+        vec4 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixelSizeY), 0.0);
 
         vec4 nmin =
             min(current_color, min(near_color0, min(near_color1, min(near_color2, near_color3))));

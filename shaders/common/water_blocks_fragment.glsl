@@ -13,8 +13,8 @@
 uniform sampler2D tex;
 uniform float viewWidth;
 uniform float viewHeight;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float near;
 uniform float far;
 uniform sampler2D gaux1;
@@ -102,7 +102,7 @@ varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
 
-vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
+vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
 vec3 nfragpos = normalize(fragpos.xyz);
 
 #if defined SHADOW_CASTING && !defined NETHER

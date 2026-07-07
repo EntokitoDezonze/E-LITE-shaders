@@ -17,7 +17,7 @@ vec3 sky_color;
 dither = (dither - 0.5) * 0.03125;
 
 #if ((COLOR_SCHEME == 2 && SIMPLE_SKY == 0) || COLOR_SCHEME == 5) && !defined UNKNOWN_DIM 
-    vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) * 2.0 - 1.0;
+    vec2 screenCoord = gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY) * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);
     vec3 nfragpos = normalize(fragpos.xyz);
     
@@ -55,7 +55,7 @@ dither = (dither - 0.5) * 0.03125;
     
     sky_color += dither * (3.0 * luma(sky_color));
 #elif COLOR_SCHEME == 4 // Vanilla
-    vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) / RENDER_SCALE * 2.0 - 1.0;
+    vec2 screenCoord = gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY) / RENDER_SCALE * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);
     vec3 nfragpos = normalize(fragpos.xyz);
     
@@ -69,7 +69,7 @@ dither = (dither - 0.5) * 0.03125;
     float t2 = smoothstep(0.0, 0.65, blend_initial - 0.2 - (final_sun_factor * dayBF(0.05, 0.05, 0.05)));
     sky_color = mix(current_low_sky_color, current_hi_sky_color, t2);
 #else // Legacy
-    vec2 screenCoord = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y) / RENDER_SCALE * 2.0 - 1.0;
+    vec2 screenCoord = gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY) / RENDER_SCALE * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);
     vec3 nfragpos = normalize(fragpos.xyz);
     

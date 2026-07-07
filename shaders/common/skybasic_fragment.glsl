@@ -12,8 +12,8 @@
 
 // == Uniforms
 uniform sampler2D gaux4;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float rainStrength;
 uniform mat4 gbufferProjectionInverse;
 uniform float viewWidth;
@@ -83,7 +83,7 @@ void main() {
         #if MC_VERSION < 11604
             #include "/src/get_sky.glsl"
         #else
-            vec4 background_color = texture2DLod(gaux4, gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), 0);
+            vec4 background_color = texture2DLod(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), 0);
             vec3 sky_color = vec3(0.0);
         #endif
 

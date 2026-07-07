@@ -15,8 +15,8 @@
 
 // == Uniforms
 uniform mat4 gbufferProjectionInverse;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float rainStrength;
 uniform float wetness;
 uniform vec3 sunPosition;

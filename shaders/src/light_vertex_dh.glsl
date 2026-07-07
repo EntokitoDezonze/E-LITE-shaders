@@ -84,7 +84,7 @@ vec3 outNormal = normalize(normalWorld);
 
 direct_light_strength = clamp(direct_light_strength, 0.0, 1.0);
 
-float omni_strength = (direct_light_strength * 0.25) + 1.0;
+float omni_strength = (direct_light_strength * 0.05) + 1.0;
 float vs2 = visible_sky * visible_sky;
 float vs4 = vs2 * vs2;
 
@@ -136,11 +136,7 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
         omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
     #endif
 
-    #ifdef SIMPLE_AUTOEXP
-        omni_light = mix(omni_min, omni_color, vs4) * omni_strength;
-    #else
-        omni_light = mix(omni_min, omni_color, vs4) * omni_strength;
-    #endif
+    omni_light = mix(omni_min, omni_color, vs4);
 
 #else
     #ifdef THE_END

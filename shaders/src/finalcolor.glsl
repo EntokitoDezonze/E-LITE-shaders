@@ -41,10 +41,10 @@
             if(darknessFactor > .01) {
                 fog_texture = vec3(0.0);
             } else {
-                fog_texture = texture2D(gaux4, gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y)).rgb * fogInfluence * fogColorMod;
+                fog_texture = texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb * fogInfluence * fogColorMod;
             }
         #else
-            vec3 fog_texture = texture2D(gaux4, gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y)).rgb * fogInfluence * fogColorMod;
+            vec3 fog_texture = texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb * fogInfluence * fogColorMod;
         #endif
         #if defined GBUFFER_ENTITIES
             if(isEyeInWater == 0 && entityId != 10101 && FOG_ADJUST < 15.0) {  // In the air
