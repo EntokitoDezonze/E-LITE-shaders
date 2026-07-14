@@ -189,6 +189,9 @@ void main() {
         if(blockEntityId == 10400) block_type_v = 2.0;
     #endif
 
+    if(mc_ex == ENTITY_WHITE_LEAVES) block_type_v = 3.0;
+    if(mc_ex == ENTITY_LEAVES) block_type_v = 4.0;
+
     float ore_v = 0.0;
     float emitter_v = 0.0;
     #if defined EMISSIVE_ORE
@@ -256,5 +259,5 @@ void main() {
     data_pack_a = vec4(fog_adj, direct_light_strength, block_type_v, exposure_v);
     data_pack_b = vec4(near_fog, visible_sky, sunInfluence, roughness_v);
     emissiveData = vec2(ore_v, emitter_v);
-    foliageData = vec3(0.0, 0.0, isGrass);
+    foliageData = vec3(isFoliage, 0.0, isGrass);
 }

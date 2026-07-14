@@ -232,9 +232,14 @@ void main() {
     #endif
 
     #if !defined NETHER && defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        vec3 shadowLightDir = mix(-sunPosition, sunPosition, light_mix) * 0.01;
-        float diffuseRelief = clamp(dot(bumpedNormal, shadowLightDir), 0.0, 1.0);
-        float shadow_c_relief = (isGrass < 0.5) ? sqrt(directLight2 * diffuseRelief) : directLight2;
+        float shadow_c_relief;
+        if(foliageData.x < 0.3) {  
+            vec3 shadowLightDir = mix(-sunPosition, sunPosition, light_mix) * 0.01;
+            float diffuseRelief = clamp(dot(bumpedNormal, shadowLightDir), 0.0, 1.0);
+            shadow_c_relief = (isGrass < 0.5) ? sqrt(directLight2 * diffuseRelief) : directLight2;
+        } else {
+            shadow_c_relief = directLight2;
+        }
     #else
         float shadow_c_relief = directLight2;
     #endif
@@ -326,6 +331,12 @@ void main() {
 
     block_color.rgb *= mix(real_light, vec3(1.0), nightVision * 0.125);
     block_color.rgb *= mix(vec3(1.0), vec3(NV_COLOR_R, NV_COLOR_G, NV_COLOR_B), nightVision);
+
+    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1){
+        block_color.rgb *= vec3(1.0, 0.8, 0.95) * 1.1;
+        block_color.rgb = saturate(block_color.rgb, mix(0.75, 1.0, luma(shadow_c)));
+        }
+    if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
 
     // === Entity Damage / Thunderbolt
     #if defined GBUFFER_ENTITIES

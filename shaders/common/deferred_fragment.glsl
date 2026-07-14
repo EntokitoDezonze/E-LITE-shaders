@@ -69,6 +69,7 @@ varying vec2 texcoord;
 varying vec3 up_vec;  // Flat
 varying vec3 direct_light_color;
 varying vec3 direct_light_strength;
+varying vec3 dirToView;
 
 #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY || AURORA > 0
     varying float umbral;
@@ -79,7 +80,8 @@ varying vec3 direct_light_strength;
 
 #if AO == 1
     varying float fog_density_coeff;
-    #ifdef DISTANT_HORIZONS
+    varying float biomeMul;
+    #ifdef NEAR_FOG
         varying float sunInfluence;
     #endif
 #endif
@@ -227,7 +229,12 @@ void main() {
             }
         #endif
 
-        float ao_att = pow(clamp(linear_d * 1.6, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
+        float horizon_fog = mix(fog_density_coeff * biomeMul, fog_density_coeff * biomeMul * 0.2, rainStrength);
+        float ao_density = pow(clamp(linear_d, 0.0, 1.0), horizon_fog);
+        float cut = smoothstep(0.6, 0.75 - (1.0 / far), linear_d);
+        float sun_dist = smoothstep(0.1, 0.9, linear_d);
+        float ao_att = sunInfluence * sun_dist;
+        ao_att = max(max(ao_density, cut), ao_att);
 
         #ifdef DISTANT_HORIZONS
             if (d >= 1.0 && dh_d < 1) {

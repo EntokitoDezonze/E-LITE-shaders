@@ -24,13 +24,14 @@ dither = (dither - 0.5) * 0.03125;
     float n_u = clamp(dot(nfragpos, up_vec) + (0.1 + dither), 0.0, 1.0);
     float blend_initial = sqrt(n_u);
 
-    float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0); // 1.0 / 63.0
-    height_factor = fastpow(height_factor, 0.1);
-    float cave_influence = height_factor * clamp(1.0 - eyeBrightnessSmooth.y * 0.005, 0.0, 1.0);
+    float height_factor = clamp(1.0 - (cameraPosition.y / 63.0), 0.0, 1.0);
+    height_factor = pow(height_factor, 0.25);
+    float eye_brightness_scaled_val = (eyeBrightnessSmooth.y * .8 + 48.0) * 0.004166666666666667;
+    float cave_influence = height_factor * clamp(1.0 - eye_brightness_scaled_val * 0.1, 0.0, 1.0);
     cave_influence = smoothstep(0.9, 1.0, cave_influence);
     cave_influence = dayBF(cave_influence, cave_influence, 0.0);
 
-    const float t_mid = 0.6;
+    const float t_mid = 0.55;
     const float t_end = 1.0;
 
     #include "/src/current_sky_color.glsl"
@@ -41,10 +42,10 @@ dither = (dither - 0.5) * 0.03125;
     current_hi_sky_color = xyzToRgb(current_hi_sky_color);
 
     float sun_factor_offset = final_sun_factor * dayBF(0.0, 0.0, 0.1);
-    float t1 = smoothstep(t_mid, t_end, blend_initial + sun_factor_offset);
+    float t1 = smoothstep(t_mid - 0.05, t_end, blend_initial + sun_factor_offset);
     
     float sun_factor_sub = dayBF(0.05, 0.1, 0.05) + (final_sun_factor * dayBF(0.05, 0.05, 0.0));
-    float t2 = smoothstep(0.0, t_mid, blend_initial - sun_factor_sub);
+    float t2 = smoothstep(0.0, t_mid + 0.05, blend_initial - sun_factor_sub);
 
     current_mid_sky_color = mix(current_mid_sky_color, saturate(current_mid_sky_color * 0.1, 0.0), cave_influence) * biome_sky;
     current_low_sky_color = mix(current_low_sky_color, saturate(current_low_sky_color * 0.1, 0.0), cave_influence) * biome_sky_low;

@@ -10,7 +10,7 @@ Sun render. - Renderização do sol.
 vec3 draw_sun() {
     vec2 resolution = vec2(viewWidth, viewHeight);
 
-    vec3 dir = reconstructWorldPosition(gl_FragCoord.z, resolution); 
+    vec3 dir = dirToView; 
     vec3 nDir = normalize(dir);
     vec3 sunDir = normalize(mat3(gbufferModelViewInverse) * sunPosition);
     float cosTheta = dot(nDir, sunDir);

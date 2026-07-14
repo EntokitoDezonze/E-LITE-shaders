@@ -83,7 +83,7 @@ void main() {
         vec3 block_color = ZENITH_DAY_COLOR;
     #else
         #include "/src/get_sky.glsl"
-        block_color = saturate(block_color, 0.85);
+        block_color = saturate(block_color, 0.9);
     #endif
 
     #include "/src/writebuffers.glsl"

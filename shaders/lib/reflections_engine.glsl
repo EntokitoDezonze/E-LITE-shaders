@@ -98,16 +98,15 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
 }
 
 vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
-    float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
+    float dither = shifted_dither13(gl_FragCoord.xy);
     if (reflected.z >= 0.0) return vec4(0.0);
 
-    vec3 hit_pos;
-    float infinite = 0.0;
-    vec2 final_uv;
+    float distFactor = 32.0;
+    float infinite;
 
-    vec3 rayTarget;
-    float distFactor = 25.0;
-
+    vec3 rough_jitter = vec3((dither - 0.75) * roughness * 0.01);
+    vec3 refl_dir = reflected + rough_jitter;
+    vec3 rayTarget = sub_position3 + refl_dir * distFactor;
     #if MATERIAL_GLOSS == 3
         vec3 pos = fast_raymarch(reflected, sub_position3, infinite, dither);
 
@@ -118,32 +117,46 @@ vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
         vec3 reflected_vector = reflect(normalize(sub_position3), normal) * 76.0;
         vec3 pos = camera_to_screen(sub_position3 + reflected_vector);
     #endif
-    final_uv = pos.xy;
 
-    float border_x = max(-fourthPow(abs(2.0 * final_uv.x - 1.0)) + 1.0, 0.0);
-    float border_y = max(-fourthPow(abs(2.0 * final_uv.y - 1.0)) + 1.0, 0.0);
-    float border = min(border_x, border_y);
-    
+    vec3 curr_view_pos = rayTarget;
+
+    // Previous texcoord to avoid "out of sync" reflections
+    vec3 curr_feet_player_pos = mat3(gbufferModelViewInverse) * curr_view_pos + gbufferModelViewInverse[3].xyz;
+    vec3 prev_feet_player_pos = pos.z > 0.56 ? curr_feet_player_pos + cameraPosition - previousCameraPosition : curr_feet_player_pos;
+    vec3 prev_view_pos = mat3(gbufferPreviousModelView) * prev_feet_player_pos + gbufferPreviousModelView[3].xyz;
+    vec2 final_pos_proj = vec2(gbufferPreviousProjection[0].x, gbufferPreviousProjection[1].y) * prev_view_pos.xy + gbufferPreviousProjection[3].xy;
+    vec2 texcoord_past = (final_pos_proj / -prev_view_pos.z) * 0.5 + 0.5;
+
+    float border = min(max(-fourthPow(abs(2.0 * pos.x - 1.0)) + 1.0, 0.0),
+                        max(-fourthPow(abs(2.0 * pos.y - 1.0)) + 1.0, 0.0));
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
-        float blur_radius = roughness * 0.2;
+        float blur_radius = roughness * 1;
     #else
-        float blur_radius = roughness * 0.05;
+        float blur_radius = roughness * 0.01;
     #endif
     
-    vec2 blur_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);
+    vec2 blur_radius_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);
+
+    float dither_base = dither;
     vec3 col = vec3(0.0);
-    
-    for(int i = 0; i < 3; i++) {
-        float angle = i * 2.0944 + dither * 6.2831;
-        vec2 offset = vec2(fastCos17(angle), fastSin17(angle)) * blur_vec * dither;
-        col += texture2D(gaux1, final_uv + offset).rgb;
+    float totalWeight = 0.0;
+    int samples = 3;
+
+    for(int i = 0; i < samples; i++) {
+        float angle = i * 2.0944 + dither * 6.283185;
+        vec2 dir = vec2(fastCos17(angle), fastSin17(angle));
+        float dist = (float(i) + dither_base) / float(samples);
+        
+        vec2 sampleOffset = dir * blur_radius_vec * dist;
+        col += texture2D(gaux1, texcoord_past + sampleOffset).rgb;
+        totalWeight += 1.0;
     }
-    col /= 3.0;
+    col /= totalWeight;
 
     return vec4(col, border);
-}
 
+}
 
 vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, float fresnel, float visible_sky, float roughness, float reflex_index, vec3 f0, float isMetal) {
     float upward = clamp(normal.y, 0.0, 1.0);

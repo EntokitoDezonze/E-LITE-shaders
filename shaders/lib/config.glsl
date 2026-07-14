@@ -116,7 +116,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define VANILLA_AO 1 // [0 1] Turn on for vanilla ambient occlusion (Faster than main AO).
 #define REFRACTION 1  // [0 1] Activate refractions.
 #define AOSTEPS 4.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0 10.0] How many samples are taken for AO (High performance cost, Vanilla AO does not use it).
-#define AO_STRENGTH 1.10 // [0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.66 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50] Ambient occlusion strength (strength does not affect performance).
+#define AO_STRENGTH 1.0 // [0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.66 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50] Ambient occlusion strength (strength does not affect performance).
 #define AA_TYPE 3 // [0 1 2 3]  No: Disable antialiasing (not recommended). Denoise only: Supersampling is only used to eliminate noise. TAA: Enable antialiasing (Recommended). Sharp TAA: A subtle sharpening effect is used on the TAA. (Low-Medium perfomance cost)
 #define FXAA // Enables FXAA, very helpful especially on low resolutions.
 //#define MOTION_BLUR // Turn on motion blur (Low perfomance cost)
@@ -440,7 +440,7 @@ const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50
 #define SHADOW_QTY_SLIDER 3 // [1 2 3 4 5 6]
 
 #define SHADOW_CASTING // Enable or disable shadows. Configure quality in advanced options. (Very low - Very High perfomance cost)
-#define OMNI_MUL 0.4  // [0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95]
+#define OMNI_MUL 0.35  // [0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95]
 
 #define SUN_MUL 1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define MOON_MUL 1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
@@ -517,7 +517,7 @@ const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50
     #elif SHADOW_QTY_SLIDER == 6
       const int shadowMapResolution = 3072;
       #define SHADOW_FIX_FACTOR 0.05
-      #define SHADOW_DIST 0.9
+      #define SHADOW_DIST 0.95
     #endif
   #else
     const float shadowIntervalSize = 3.0;
@@ -568,7 +568,11 @@ const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50
 
 // Redefined constants
 #if VANILLA_AO == 1
-  uniform float ambientOcclusionLevel = AO_STRENGTH; // Avoiding bug in Optifine 1.12.2, do not put "const"!
+  #if AO > 0
+    const float ambientOcclusionLevel = 0.1;
+  #else
+    const float ambientOcclusionLevel = 0.75;
+  #endif
 #else
   const float ambientOcclusionLevel = 0.0;
 #endif

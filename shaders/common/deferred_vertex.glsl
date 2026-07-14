@@ -17,13 +17,18 @@ uniform float viewWidth;
 uniform float viewHeight;
 uniform vec4 lightningBoltPosition;
 uniform float frameTime;
+uniform vec3 sunPosition;
 uniform int frameCounter;
+uniform mat4 gbufferProjectionInverse;
+uniform mat4 gbufferModelViewInverse;
+
 
 // == Varyings
 varying vec2 texcoord;
 varying vec3 up_vec;
 varying vec3 direct_light_color;
 varying vec3 direct_light_strength;
+varying vec3 dirToView;
 
 #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY
     varying float umbral;
@@ -34,7 +39,8 @@ varying vec3 direct_light_strength;
 
 #if AO == 1
     varying float fog_density_coeff;
-    #ifdef DISTANT_HORIZONS
+    varying float biomeMul;
+    #ifdef NEAR_FOG
         varying float sunInfluence;
     #endif
 #endif
@@ -42,6 +48,7 @@ varying vec3 direct_light_strength;
 // == Utility
 #include "/lib/luma.glsl"
 #include "/lib/oscilator_utils.glsl"
+#define FOG_BIOME
 #include "/lib/biome_sky.glsl"
 
 // == Main function
@@ -49,6 +56,9 @@ varying vec3 direct_light_strength;
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     texcoord = gl_MultiTexCoord0.xy;
+    vec3 ndc = gl_Position.xyz / gl_Position.w;
+    vec4 viewSpace = gbufferProjectionInverse * vec4(ndc, 1.0);
+    dirToView = normalize((gbufferModelViewInverse * vec4(viewSpace.xyz, 0.0)).xyz);
 
     up_vec = normalize(gbufferModelView[1].xyz);
 
@@ -58,6 +68,13 @@ void main() {
 
     #if AO == 1
         fog_density_coeff = dayBFlgcy(FOG_SUNSET, FOG_DAY, FOG_NIGHT) * FOG_ADJUST;
+        biomeMul = pow(biome_fog, 1.35);
+        #ifdef NEAR_FOG
+            vec3 dirToSun  = sunPosition * 0.01; 
+            float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, dirToView));
+            sunInfluence = sunAngle * sunAngle * sunAngle * dayBF(1.0, 0.1, 0.0); 
+            sunInfluence = mix(1.0, 1, sunInfluence);
+        #endif
     #endif
 
     #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY

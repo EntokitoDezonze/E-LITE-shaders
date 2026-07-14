@@ -132,11 +132,8 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
         #ifndef SHADOW_CASTING
             outNormal.y = outNormal.y * 0.5 + 0.5;
         #endif
-        #ifdef FOLIAGE_V
-            if(is_fol > 0.99) outNormal.y = 2.0;
-        #endif
         vec3 omni_color = saturate(mix(hi_sky_color_rgb * mix(dayBF(3.0, 4.5, 4.0), dayBF(4.0, 6.0, 5.5), rainStrength) * dayBlendSunset *
-        mix(1.0, outNormal.y * 0.15 + 0.85, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.5, 6.0) * OMNI_MUL, OMNI_TINT), 0.28);
+        mix(1.0, outNormal.y * 0.15 + 0.85, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.3, 6.0) * OMNI_MUL, OMNI_TINT), 0.28);
     #elif COLOR_SCHEME == 4
         vec3 omni_color = direct_light_color * (OMNI_MUL + dayBF(0.1, 0.1, 0.5));
     #else

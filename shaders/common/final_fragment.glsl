@@ -209,9 +209,9 @@ void main() {
         float luma_factor = luma(block_color);
 
         float shadow_desaturation = smoothstep(0.02, 0.25, luma_factor);
-        vec3 shadow_tint = vec3(0.9, 0.94, 1.0);
+        vec3 shadow_tint = vec3(0.8, 0.9, 1.0);
 
-        block_color = mix(saturate(block_color, 0.75) * shadow_tint, block_color, shadow_desaturation);
+        block_color = mix(vibrance(block_color, -0.333) * shadow_tint, block_color, shadow_desaturation);
     } // Water overlay
 
     #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 4
