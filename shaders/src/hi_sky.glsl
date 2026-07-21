@@ -1,10 +1,10 @@
 #ifdef UNKNOWN_DIM
     vec3 hi_sky_color_rgb = skyColor;
-    hi_sky_color = rgbToXyz(hi_sky_color_rgb);
+    hi_sky_color = rgbToOklab(hi_sky_color_rgb);
 #else
     #if COLOR_SCHEME == 2
     vec3 hi_sky_color_rgb = dayBlend(
-            saturate(ZENITH_SUNSET_COLOR, dayBFlgcy(1.0, 1.0, 1.5)) * dayBlend(vec3(1.0), vec3(1.0), vec3(0.25)),
+            saturate(ZENITH_SUNSET_COLOR, dayBFlgcy(1.0, 1.0, 0.0)) * dayBlend(vec3(1.0), vec3(1.0), vec3(0.25)),
             ZENITH_DAY_COLOR,
             saturate(ZENITH_NIGHT_COLOR, 0.25)
         );
@@ -15,7 +15,7 @@
             rainStrength
         );
 
-        hi_sky_color = rgbToXyz(hi_sky_color_rgb);
+        hi_sky_color = rgbToOklab(hi_sky_color_rgb);
     #else
         vec3 hi_sky_color_rgb = dayBlend(
             ZENITH_SUNSET_COLOR,
@@ -37,12 +37,12 @@
             );
         #endif
 
-        hi_sky_color = rgbToXyz(hi_sky_color_rgb);
+        hi_sky_color = rgbToOklab(hi_sky_color_rgb);
     #endif
 #endif
 
 vec3 pure_hi_sky_color_rgb = dayBlend(
-        ZENITH_SUNSET_COLOR,
+        saturate(ZENITH_SUNSET_COLOR, dayBF(1.0, 1.0, 0.0)),
         ZENITH_DAY_COLOR,
         saturate(ZENITH_NIGHT_COLOR, 0.5)
     );
@@ -53,4 +53,4 @@ vec3 pure_hi_sky_color_rgb = dayBlend(
         rainStrength
     );
 
-    pure_hi_sky_color = rgbToXyz(pure_hi_sky_color_rgb);
+    pure_hi_sky_color = rgbToOklab(pure_hi_sky_color_rgb);

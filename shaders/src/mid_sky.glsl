@@ -1,8 +1,8 @@
 #if COLOR_SCHEME == 2
 vec3 mid_sky_color_rgb = dayBlend(
-        saturate(MID_SUNSET_COLOR, dayBFlgcy(1.0, 1.0, 0.25)) * dayBlend(vec3(1.0), vec3(1.0), vec3(2.0)),
+        saturate(MID_SUNSET_COLOR, dayBFlgcy(1.0, 1.0, 0.0)) * dayBlend(vec3(1.0), vec3(1.0), vec3(2.0)),
         MID_DAY_COLOR,
-        saturate(MID_NIGHT_COLOR, dayBF(1.0, 1.0, 0.0)) * dayBF(1.0, 1.0, 1.25)
+        saturate(MID_NIGHT_COLOR, dayBF(0.0, 1.0, 0.0)) * dayBF(1.0, 1.0, 1.25)
     );
 
     mid_sky_color_rgb = mix(
@@ -11,7 +11,7 @@ vec3 mid_sky_color_rgb = dayBlend(
         rainStrength
     );
 
-    mid_sky_color = rgbToXyz(mid_sky_color_rgb);
+    mid_sky_color = rgbToOklab(mid_sky_color_rgb);
 #else
 vec3 mid_sky_color_rgb = dayBlend(
         MID_SUNSET_COLOR,
@@ -25,13 +25,13 @@ vec3 mid_sky_color_rgb = dayBlend(
         rainStrength
     );
 
-    mid_sky_color = rgbToXyz(mid_sky_color_rgb );
+    mid_sky_color = rgbToOklab(mid_sky_color_rgb);
 #endif
 
 vec3 pure_mid_sky_color_rgb = dayBlend(
         saturate(MID_SUNSET_COLOR, 0.5),
         MID_DAY_COLOR,
-        MID_NIGHT_COLOR
+        gray(MID_NIGHT_COLOR)
     );
 
     pure_mid_sky_color_rgb = mix(
@@ -40,4 +40,4 @@ vec3 pure_mid_sky_color_rgb = dayBlend(
         (rainStrength - 0.05)
     );
 
-    pure_mid_sky_color = rgbToXyz(pure_mid_sky_color_rgb);
+    pure_mid_sky_color = rgbToOklab(pure_mid_sky_color_rgb);

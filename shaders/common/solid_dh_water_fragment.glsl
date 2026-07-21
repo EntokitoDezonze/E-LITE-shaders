@@ -153,7 +153,7 @@ void main() {
         sky_color_reflect = hi_sky_color * .5 * ((eye_bright_smooth.y * .8 + 48) * 0.004166666666666667);
     }
 
-    sky_color_reflect = xyzToRgb(sky_color_reflect);
+    sky_color_reflect = oklabToRgb(sky_color_reflect);
 
     #if !defined VANILLA_WATER && WATER_TEXTURE == 1
         vec4 block_color = vec4(0.1);

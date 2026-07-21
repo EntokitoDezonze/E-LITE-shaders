@@ -15,6 +15,7 @@ varying vec4 tint_color;
 varying float sky_luma_correction;
 varying vec3 cursed_sky;
 varying float current_wetness;
+
 uniform float viewWidth; 
 uniform float viewHeight; 
 uniform int frameCounter;
@@ -27,6 +28,7 @@ uniform float frameTime;
 // == Uniforms
 uniform float rainStrength;
 uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjectionInverse;
 
 // == Utility
 #include "/lib/luma.glsl"

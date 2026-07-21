@@ -193,18 +193,18 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
         );
 
         // Sun halo.
-        #if CLOUD_VOL_STYLE == 0
+        #if CLOUD_VOL_STYLE == 0 // Natural
             cloud_color_1 =
                 mix(cloud_color_1, cloud_color_1 + light_color * dayBF(6.0, 5.0, 0.0), (1.0 - pow(cloud_value, 0.1)) * fastpow(bright, 10.0) * (1.0 - rainStrength * 0.9));
-        #else
+        #else // Box
             cloud_color_1 =
                 mix(cloud_color_1, cloud_color_1 + light_color * dayBF(2.0, 0.75, 10.0), (1.0 - cloud_value) * squarePow(bright) * (1.0 - rainStrength));
         #endif
 
-        #if CLOUD_VOL_STYLE == 0
+        #if CLOUD_VOL_STYLE == 0 // Natural
             cloud_color_1 =
                 mix(cloud_color_1, cloud_color_1 + light_color * dayBF(0.3, 0.1, 0.25), (pow(cloud_value, 1.0)) * bright * bright * bright * bright * (1.0 - rainStrength * 0.9));
-        #else
+        #else // Box
             cloud_color_1 =
                 mix(cloud_color_1, cloud_color_1 + light_color * dayBF(0.2, 0.1, 0.25), (pow(cloud_value, 1.0)) * bright * bright * bright * (1.0 - rainStrength));
         #endif

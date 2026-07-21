@@ -168,9 +168,9 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #endif
 
 //#define LabPBR // Enables LabPBR support.
-#define POM // Enables parallax for normals, only supports LabPBR.
+//#define POM // Enables parallax for normals, only supports LabPBR.
 #define POM_SHADOW // Enables shadow casted by normals, requires POM enabled.
-#define LabEMISSIVE // Enables emissiveness from LabPBR RP.
+//#define LabEMISSIVE // Enables emissiveness from LabPBR RP.
 
 #define POM_DEPTH 1 // [0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2]
 #define POM_STEPS 64 // [8 16 32 64 128 256 512]
@@ -517,7 +517,7 @@ const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50
     #elif SHADOW_QTY_SLIDER == 6
       const int shadowMapResolution = 3072;
       #define SHADOW_FIX_FACTOR 0.05
-      #define SHADOW_DIST 0.95
+      #define SHADOW_DIST 0.94
     #endif
   #else
     const float shadowIntervalSize = 3.0;

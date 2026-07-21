@@ -42,12 +42,12 @@ uniform int moonPhase;
     #define LIGHT_NIGHT_COLOR vec3(0.015, 0.02, 0.035) * NIGHT_BRIGHT_PHASE
     
     #if SIMPLE_SKY == 0 // E-LITE 5
-        #define ZENITH_SUNSET_COLOR vec3(0.11025,  0.14175,  0.2205)
-        #define ZENITH_DAY_COLOR vec3(0.2, 0.333, 0.65)
+        #define ZENITH_SUNSET_COLOR vec3(0.12,  0.1475,  0.21) * 1.333
+        #define ZENITH_DAY_COLOR vec3(0.2, 0.333, 0.65) * 0.9
         #define ZENITH_NIGHT_COLOR vec3(0.0075, 0.015, 0.0225) * NIGHT_BRIGHT_PHASE
         
-        #define HORIZON_SUNSET_COLOR vec3(0.7, 0.35, 0.235)
-        #define HORIZON_DAY_COLOR vec3(0.95, 0.92, 0.9)
+        #define HORIZON_SUNSET_COLOR vec3(0.7, 0.35, 0.2) * 0.5
+        #define HORIZON_DAY_COLOR vec3(0.95, 0.92, 0.9) * 0.8
         #define HORIZON_NIGHT_COLOR vec3(0.0, 0.01, 0.015) * NIGHT_BRIGHT_PHASE
     #else // LITE 4.1 Legacy
         #define ZENITH_SUNSET_COLOR vec3(0.3, 0.35, 0.45)
@@ -64,7 +64,7 @@ uniform int moonPhase;
     #undef  MID_NIGHT_COLOR
 
     #define MID_SUNSET_COLOR vec3(0.175, 0.225, 0.275)
-    #define MID_DAY_COLOR vec3(0.3, 0.533, 0.9)
+    #define MID_DAY_COLOR vec3(0.29, 0.533, 0.9)
     #define MID_NIGHT_COLOR vec3(0.02, 0.025, 0.03) * NIGHT_BRIGHT_PHASE
 
     #define WATER_COLOR vec3(0.05, 0.15, 0.21)

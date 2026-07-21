@@ -28,7 +28,7 @@ vec3 ggxSpecular(vec3 pos, vec2 lmcoord_alt, float gloss_power, vec3 flat_normal
         
         float f0 = mix(0.04, 0.57, isMetal);
         float fresnel = 1.0 - VoH;
-        float fresnel2 = fresnel * fresnel;
+        //float fresnel2 = fresnel * fresnel;
         float F = f0 + (1.0 - f0) * fresnel;
         
         float denom = (NoH * NoH) * (a2 - 1.0) + 1.0;

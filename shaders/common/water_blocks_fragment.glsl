@@ -196,7 +196,7 @@ void main() {
         sky_color_reflect = hi_sky_color * .5 * ((eye_bright_smooth.y * .8 + 48) * 0.004166666666666667);
     }
 
-    sky_color_reflect = xyzToRgb(sky_color_reflect);
+    sky_color_reflect = oklabToRgb(sky_color_reflect);
 
     #if defined CLOUD_REFLECTION && (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NETHER
         sky_color_reflect = get_cloud(normalize((gbufferModelViewInverse * vec4(reflect_water_vec * far, 1.0)).xyz), sky_color_reflect, 0.0, dither, worldposition.xyz, int(CLOUD_STEPS_AVG * 0.5), umbral, cloud_color, dark_cloud_color, 1.0, 1.0);

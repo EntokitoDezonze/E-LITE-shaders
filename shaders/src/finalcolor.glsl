@@ -26,12 +26,15 @@
             float fogInfluence = 1.0;
         #endif
 
+
+        vec3 fogColorMod = dayBlend(saturate(vec3(0.2392, 0.4039, 0.5922), dayBF(dayBF(1.0, 1.0, 5.0), 1.0, dayBF(5.0, 1.0, 1.0))), vec3(0.3, 0.45, 0.615), vec3(0.1647, 0.3725, 0.6157));
+
         #if FOG_TINT == 0
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 0.5), vec3(1.0), fog_adj);
+            fogColorMod = mix(saturate(fogColorMod, 0.5), vec3(1.0), fog_adj);
         #elif FOG_TINT == 1
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 1.0), vec3(1.0), fog_adj);
+            fogColorMod = mix(saturate(fogColorMod, 1.0), vec3(1.0), fog_adj);
         #elif FOG_TINT == 2
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), -0.5), vec3(1.0), fog_adj);
+            fogColorMod = mix(saturate(fogColorMod, -0.5), vec3(1.0), fog_adj);
         #endif
 
         fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));

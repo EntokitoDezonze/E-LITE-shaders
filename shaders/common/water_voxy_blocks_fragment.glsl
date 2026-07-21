@@ -217,7 +217,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
         skyColorReflect = zenithSkyColor * .5 * ((eyeBrightSmoothFloat.y * .8 + 48) * 0.004166666666666667);
     }
 
-    skyColorReflect = xyzToRgb(skyColorReflect);
+    skyColorReflect = oklabToRgb(skyColorReflect);
 
     if(customId == ENTITY_WATER) {  // Water
         #ifdef VANILLA_WATER

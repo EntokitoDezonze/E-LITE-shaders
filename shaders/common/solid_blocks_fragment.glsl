@@ -316,6 +316,12 @@ void main() {
         vec3 material_f0 = vec3(1.0);
     #endif
 
+    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1){
+        block_color.rgb *= vec3(1.0, 0.8, 0.95) * 1.1;
+        block_color.rgb = saturate(block_color.rgb, mix(0.75, 1.0, luma(shadow_c)));
+        }
+    if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
+
     #if (MATERIAL_GLOSS > 0 && !defined NETHER)
         vec3 gloss;
         if(block_type != 1.0){
@@ -331,12 +337,6 @@ void main() {
 
     block_color.rgb *= mix(real_light, vec3(1.0), nightVision * 0.125);
     block_color.rgb *= mix(vec3(1.0), vec3(NV_COLOR_R, NV_COLOR_G, NV_COLOR_B), nightVision);
-
-    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1){
-        block_color.rgb *= vec3(1.0, 0.8, 0.95) * 1.1;
-        block_color.rgb = saturate(block_color.rgb, mix(0.75, 1.0, luma(shadow_c)));
-        }
-    if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
 
     // === Entity Damage / Thunderbolt
     #if defined GBUFFER_ENTITIES

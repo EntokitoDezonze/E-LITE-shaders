@@ -1,10 +1,10 @@
 #ifdef UNKNOWN_DIM
     vec3 low_sky_color_rgb = fogColor;
-    low_sky_color = rgbToXyz(low_sky_color_rgb);
+    low_sky_color = rgbToOklab(low_sky_color_rgb);
 #else
     #if COLOR_SCHEME == 2
     vec3 low_sky_color_rgb = dayBlend(
-            HORIZON_SUNSET_COLOR * dayBlend(vec3(1.0), vec3(1.0, 1.5, 1.0), vec3(2.0, 1.5, 0.8)),
+            HORIZON_SUNSET_COLOR * dayBlend(vec3(1.0), vec3(1.0, 1.5, 1.0), dayBlgcy(vec3(1.0, 1.5, 0.0), vec3(1.0), vec3(1.8, 1.25, 0.5))),
             HORIZON_DAY_COLOR,
             HORIZON_NIGHT_COLOR
         );
@@ -15,7 +15,7 @@
             rainStrength
         );
 
-        low_sky_color = rgbToXyz(low_sky_color_rgb);
+        low_sky_color = rgbToOklab(low_sky_color_rgb);
     #else
     vec3 low_sky_color_rgb = dayBlend(
             HORIZON_SUNSET_COLOR,
@@ -37,7 +37,7 @@
             );
         #endif
 
-        low_sky_color = rgbToXyz(low_sky_color_rgb);
+        low_sky_color = rgbToOklab(low_sky_color_rgb);
     #endif
 #endif
 
@@ -53,4 +53,4 @@ vec3 pure_low_sky_color_rgb = dayBlend(
         (rainStrength - 0.05)
     );
 
-    pure_low_sky_color = rgbToXyz(pure_low_sky_color_rgb);
+    pure_low_sky_color = rgbToOklab(pure_low_sky_color_rgb);

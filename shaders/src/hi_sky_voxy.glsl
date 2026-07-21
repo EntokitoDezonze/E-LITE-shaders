@@ -1,6 +1,6 @@
 #ifdef UNKNOWN_DIM
     vec3 ZenithSkyColorRGB = skyColor;
-    vec3 zenithSkyColor = rgbToXyz(ZenithSkyColorRGB);
+    vec3 zenithSkyColor = rgbToOklab(ZenithSkyColorRGB);
 #else
     vec3 ZenithSkyColorRGB = dayBlendVoxyN(
         ZENITH_SUNSET_COLOR,
@@ -17,5 +17,5 @@
         rainStrength
     );
 
-    vec3 zenithSkyColor = rgbToXyz(ZenithSkyColorRGB);
+    vec3 zenithSkyColor = rgbToOklab(ZenithSkyColorRGB);
 #endif

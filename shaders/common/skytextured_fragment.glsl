@@ -18,12 +18,13 @@ uniform float viewHeight;
 uniform int frameCounter;
 uniform float frameTime;
 uniform vec3 sunPosition;
+uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjectionInverse;
 
 #ifdef THE_END
     uniform float frameTimeCounter;
     uniform vec3 cameraPosition;
-    uniform mat4 gbufferModelViewInverse;
-    uniform mat4 gbufferProjectionInverse;
+    
 #endif
 
 // == Varyings

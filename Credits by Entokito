@@ -29,6 +29,9 @@ Changelog:
 - Small optimizations made.
 - Indirect light was reworked and looks smoother.
 - Cherry leaves are now pinker.
+- Leaves are slightly brighter in general.
+- Big changes on ambient occlusion, now it is less exagerated and looks cleaner.
+- Changes on colors to reduce excessive contrast and saturation.
 
 # Bugfixes:
 - Fixed POM shadows having broken transition.
@@ -37,6 +40,7 @@ Changelog:
 - Fixed Depth of Field not working properly.
 - Fixed some visual issues with Block reflection. (SSR and MAX)
 - Fixed Subsurface scattering (Leaves transparency) not working.
+- Fixed POM shadow appearing at shaded areas.
 
 Version code: ELT512
 

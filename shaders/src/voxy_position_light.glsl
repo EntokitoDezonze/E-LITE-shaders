@@ -97,7 +97,7 @@
         vec3 directLightColor = dayBlendVoxy(
             LIGHT_SUNSET_COLOR * dayBlendFloatVoxyN(0.85, 1.0, 0.0, dayMixerV, nightMixerV, dayMomentV),  
             LIGHT_DAY_COLOR * dayBlendFloatVoxyN(1.17, 1.1, 1.0, dayMixerV, nightMixerV, dayMomentV) * mix(1.5 - ydotl, 1.0, rainStrength), 
-            LIGHT_NIGHT_COLOR * dayBlendFloatVoxyN(1.0, 1.0, 1.45, dayMixerV, nightMixerV, dayMomentV),
+            LIGHT_NIGHT_COLOR * dayBlendFloatVoxyN(1.0, 1.0, 1.333, dayMixerV, nightMixerV, dayMomentV),
             dayMixerV,
             nightMixerV,
             dayMomentV

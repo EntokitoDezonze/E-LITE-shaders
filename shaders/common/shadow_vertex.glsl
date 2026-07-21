@@ -49,13 +49,11 @@ void main() {
         #include "/src/shadow_src_vertex.glsl"
     #endif
 
-    float p = 4.0;
-    float dist = pow(pow(abs(gl_Position.x), p) + pow(abs(gl_Position.y), p), 1.0 / p);
-
-    float falloff = 1.0 / (1.0 + dist * 0.1);
+    float dist = length(gl_Position.xy);
+    float falloff = 1.0 / (1.0 + dist);
     float distortFactor = mix(1.0, dist, SHADOW_DIST * falloff);
 
-    gl_Position.xy /= min(distortFactor, 0.75);
+    gl_Position.xy /= distortFactor;
     gl_Position.z = gl_Position.z * 0.2;
 
     is_noshadow = 0.0;

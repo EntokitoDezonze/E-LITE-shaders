@@ -232,7 +232,7 @@ void main() {
         float horizon_fog = mix(fog_density_coeff * biomeMul, fog_density_coeff * biomeMul * 0.2, rainStrength);
         float ao_density = pow(clamp(linear_d, 0.0, 1.0), horizon_fog);
         float cut = smoothstep(0.6, 0.75 - (1.0 / far), linear_d);
-        float sun_dist = smoothstep(0.1, 0.9, linear_d);
+        float sun_dist = smoothstep(0.0, 0.9, linear_d);
         float ao_att = sunInfluence * sun_dist;
         ao_att = max(max(ao_density, cut), ao_att);
 

@@ -72,8 +72,8 @@ void main() {
         #ifdef NEAR_FOG
             vec3 dirToSun  = sunPosition * 0.01; 
             float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, dirToView));
-            sunInfluence = sunAngle * sunAngle * sunAngle * dayBF(1.0, 0.1, 0.0); 
-            sunInfluence = mix(1.0, 1, sunInfluence);
+            sunInfluence = sunAngle * sunAngle * sunAngle * dayBF(1.0, 0.0, 0.0); 
+            sunInfluence = mix(1.0, 0.0, sunInfluence);
         #endif
     #endif
 
