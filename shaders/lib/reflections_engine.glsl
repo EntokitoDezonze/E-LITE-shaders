@@ -97,62 +97,69 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
     }
 }
 
-vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
-    float dither = shifted_dither13(gl_FragCoord.xy);
+vec4 reflection_calc(vec3 reflected, float roughness) {
+    float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
     if (reflected.z >= 0.0) return vec4(0.0);
 
-    float distFactor = 32.0;
-    float infinite;
+    vec3 hit_pos;
+    float infinite = 0.0;
+    vec2 final_uv;
 
-    vec3 rough_jitter = vec3((dither - 0.75) * roughness * 0.01);
-    vec3 refl_dir = reflected + rough_jitter;
-    vec3 rayTarget = sub_position3 + refl_dir * distFactor;
+    vec3 rayTarget;
+    float distFactor = 25.0;
+
     #if MATERIAL_GLOSS == 3
-        vec3 pos = fast_raymarch(reflected, sub_position3, infinite, dither);
+        vec3 march_result = fast_raymarch(reflected, sub_position3, infinite, dither);
+        rayTarget = sub_position3 + reflected * distFactor;
+        vec3 fallback = camera_to_screen(rayTarget);
 
-        if (pos.x > 99.0) { // Fallback
-            pos = camera_to_screen(sub_position3 + reflected * 16.0);
-        }
+        float useFallback = float(infinite > 0.5);
+        vec2 ssr_uv;
+
+        vec3 view_pos = screen_to_camera(march_result);
+        vec3 curr_world_pos = mat3(gbufferModelViewInverse) * view_pos + gbufferModelViewInverse[3].xyz;
+        vec3 prev_world_pos = curr_world_pos + (cameraPosition - previousCameraPosition);
+        vec3 prev_view_pos = mat3(gbufferPreviousModelView) * prev_world_pos + gbufferPreviousModelView[3].xyz;
+
+        vec2 prev_proj = vec2(
+            gbufferPreviousProjection[0].x,
+            gbufferPreviousProjection[1].y
+        ) * prev_view_pos.xy + gbufferPreviousProjection[3].xy;
+
+        ssr_uv = (prev_proj / -prev_view_pos.z) * 0.5 + 0.5;
+
+        vec2 fallback_uv = fallback.xy;
+
+        final_uv = mix(ssr_uv, fallback_uv, useFallback);
     #else
-        vec3 reflected_vector = reflect(normalize(sub_position3), normal) * 76.0;
-        vec3 pos = camera_to_screen(sub_position3 + reflected_vector);
+        rayTarget = sub_position3 + reflected * distFactor;
+        vec3 curr_feet_player_pos = mat3(gbufferModelViewInverse) * rayTarget + gbufferModelViewInverse[3].xyz;
+        vec3 prev_feet_player_pos = curr_feet_player_pos + (cameraPosition - previousCameraPosition);
+        vec3 prev_view_pos = mat3(gbufferPreviousModelView) * prev_feet_player_pos + gbufferPreviousModelView[3].xyz;
+        vec2 final_pos_proj = vec2(gbufferPreviousProjection[0].x, gbufferPreviousProjection[1].y) * prev_view_pos.xy + gbufferPreviousProjection[3].xy;
+        final_uv = (final_pos_proj / -prev_view_pos.z) * 0.5 + 0.5;
     #endif
 
-    vec3 curr_view_pos = rayTarget;
-
-    // Previous texcoord to avoid "out of sync" reflections
-    vec3 curr_feet_player_pos = mat3(gbufferModelViewInverse) * curr_view_pos + gbufferModelViewInverse[3].xyz;
-    vec3 prev_feet_player_pos = pos.z > 0.56 ? curr_feet_player_pos + cameraPosition - previousCameraPosition : curr_feet_player_pos;
-    vec3 prev_view_pos = mat3(gbufferPreviousModelView) * prev_feet_player_pos + gbufferPreviousModelView[3].xyz;
-    vec2 final_pos_proj = vec2(gbufferPreviousProjection[0].x, gbufferPreviousProjection[1].y) * prev_view_pos.xy + gbufferPreviousProjection[3].xy;
-    vec2 texcoord_past = (final_pos_proj / -prev_view_pos.z) * 0.5 + 0.5;
-
-    float border = min(max(-fourthPow(abs(2.0 * pos.x - 1.0)) + 1.0, 0.0),
-                        max(-fourthPow(abs(2.0 * pos.y - 1.0)) + 1.0, 0.0));
+    float border_x = max(-fourthPow(abs(2.0 * final_uv.x - 1.0)) + 1.0, 0.0);
+    float border_y = max(-fourthPow(abs(2.0 * final_uv.y - 1.0)) + 1.0, 0.0);
+    float border = min(border_x, border_y);
+    
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
-        float blur_radius = roughness * 1;
+        float blur_radius = roughness * 0.2;
     #else
-        float blur_radius = roughness * 0.01;
+        float blur_radius = roughness * 0.05;
     #endif
     
-    vec2 blur_radius_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);
-
-    float dither_base = dither;
+    vec2 blur_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);
     vec3 col = vec3(0.0);
-    float totalWeight = 0.0;
-    int samples = 3;
-
-    for(int i = 0; i < samples; i++) {
-        float angle = i * 2.0944 + dither * 6.283185;
-        vec2 dir = vec2(fastCos17(angle), fastSin17(angle));
-        float dist = (float(i) + dither_base) / float(samples);
-        
-        vec2 sampleOffset = dir * blur_radius_vec * dist;
-        col += texture2D(gaux1, texcoord_past + sampleOffset).rgb;
-        totalWeight += 1.0;
+    
+    for(int i = 0; i < 3; i++) {
+        float angle = i * 2.0944 + dither * 6.2831;
+        vec2 offset = vec2(cos(angle), sin(angle)) * blur_vec * dither;
+        col += texture2D(gaux1, final_uv + offset).rgb;
     }
-    col /= totalWeight;
+    col /= 3.0;
 
     return vec4(col, border);
 
@@ -162,13 +169,13 @@ vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, fl
     float upward = clamp(normal.y, 0.0, 1.0);
     float wetness = rainStrength * upward * visible_sky * visible_sky;
 
-    float currentRoughness = mix(roughness, 0.0, wetness); 
+    float currentRoughness = mix(roughness, 0.1, wetness); 
     float smoothness = 1.0 - currentRoughness;
-    float currentReflexIndex = mix(reflex_index, 0.0, wetness);
+    float currentReflexIndex = mix(reflex_index, 1.0, wetness);
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
         float f_strength = mix(mix(currentReflexIndex, 1.0, fresnel), fresnel, isMetal);
-        f_strength *= mix(fastpow(smoothness, 4.0), 1.0, isMetal);
+        f_strength *= mix(cubePow(smoothness), 1.0, isMetal);
         f_strength = clamp(f_strength, 0.0, (currentReflexIndex + smoothness) * 0.666);
         vec3 tinted_sky = mix(sky_reflection, sky_reflection * f0, isMetal);
     #else
@@ -183,7 +190,7 @@ vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, fl
     #endif
 
     #if REFLECTION == 1
-        vec4 ssr = reflection_calc(reflect(normalize(fragpos), normal), normal, currentRoughness);
+        vec4 ssr = reflection_calc(reflect(normalize(fragpos), normal), currentRoughness);
         
         #if defined LabPBR && defined GBUFFER_TERRAIN
             vec3 tinted_ssr = mix(ssr.rgb, ssr.rgb * f0, isMetal);

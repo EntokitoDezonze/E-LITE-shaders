@@ -53,7 +53,8 @@ Utilities, effects and fake effects. - Utilidades, efeitos e efeitos falsos. */
         vec3 high_pass_details = color - blurred_color;
         vec3 sharpened_color = color + high_pass_details * force;
 
-        vec3 clamped_sharpen = clamp(sharpened_color, min_c, max_c);
+        float delta = 1.0666;
+        vec3 clamped_sharpen = clamp(sharpened_color, min_c / delta, max_c * delta);
 
         float brightness = luma(color);
         float low_mask = smoothstep(0.05, 0.15, brightness);

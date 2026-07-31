@@ -152,3 +152,20 @@ vec3 oklabToRgb(vec3 c) {
 
     return linearToSrgb(linearRgb);
 }
+
+// RGB -> YCoCg
+vec3 rgbToYcocg(vec3 c) {
+    float Y  = 0.25 * c.r + 0.5 * c.g + 0.25 * c.b;
+    float Co = 0.5 * c.r - 0.5 * c.b;
+    float Cg = -0.25 * c.r + 0.5 * c.g - 0.25 * c.b;
+    return vec3(Y, Co, Cg);
+}
+
+// YCoCg -> RGB
+vec3 ycocgToRgb(vec3 c) {
+    float tmp = c.x - c.z;
+    float r = tmp + c.y;
+    float g = c.x + c.z;
+    float b = tmp - c.y;
+    return vec3(r, g, b);
+}

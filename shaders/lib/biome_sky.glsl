@@ -49,7 +49,7 @@ float taiga_snow = clamp(taiga + snow + hill, 0.0, 1.0); // Pre-calculated
         vec3 pale_garden_sky2 = mix(vec3(1.0), vec3(1.1), pale_garden);
 
         /* SNOWY AND TAIGA */
-        vec3 taiga_day_blend = dayBlend(vec3(0.9, 0.7, 0.6) * 2.0, vec3(0.95, 0.65, 0.5) * 2.0, vec3(1.0));
+        vec3 taiga_day_blend = dayBlend(vec3(0.9, 0.7, 0.6) * 2.0, vec3(0.825, 0.625, 0.5) * 2.0, vec3(1.0));
         vec3 taiga_sky = mix(vec3(1.0), taiga_day_blend, taiga_snow);
         
         vec3 taiga_day_blend2 = dayBlend(vec3(0.75, 0.75, 1.0) * 1.5, vec3(0.8) * 1.5, vec3(1.0));

@@ -55,7 +55,7 @@ vec3 emissive_color = vec3(1.0);
         float match_cond_1_diamond = step(dot(color - target_color_dark_diamond, color - target_color_dark_diamond), 0.49);
         float match_cond_2_diamond = step(dot(color - target_color_light_diamond, color - target_color_light_diamond), 0.09);
         float diamond_match = clamp(match_cond_1_diamond + match_cond_2_diamond, 0.0, 1.0);
-        emissive_color = mix(emissive_color, emissive_color * 7.5 * luma(color) * correct_light_ore, diamond_match * factor_diamond);
+        emissive_color = mix(emissive_color, emissive_color * 9.5 * luma(color) * luma_color * correct_light_ore, diamond_match * factor_diamond);
 
         // IRON (ore_type == 3)
         vec3 target_color_iron = vec3(0.816, 0.667, 0.557);
@@ -99,11 +99,11 @@ vec3 emissive_color = vec3(1.0);
         vec3 target_color_light_copper = vec3(0.341,0.737,0.616);
         float base_match_copper = step(0.3, saturation) * step(0.1, luminance);
         
-        float match_dark_copper = step(dot(color - target_color_dark_copper, color - target_color_dark_copper), 0.25) * base_match_copper;
-        float match_light_copper = step(dot(color - target_color_light_copper, color - target_color_light_copper), 0.3) * base_match_copper;
+        float match_dark_copper = step(dot(color - target_color_dark_copper, color - target_color_dark_copper), 0.3) * base_match_copper;
+        float match_light_copper = step(dot(color - target_color_light_copper, color - target_color_light_copper), 0.15) * base_match_copper;
         
         vec3 factor_dark_luma = 15.0 * luma(color) * vec3(1.0, 0.7, 0.5) * correct_light_ore;
-        vec3 factor_light_luma = 15.0 * luma(color)* vec3(0.5, 1.0, 0.7) * correct_light_ore;
+        vec3 factor_light_luma = 10.0 * luma(color)* vec3(0.5, 1.0, 0.7) * correct_light_ore;
         
         vec3 final_copper_emissive = mix(vec3(1.0), factor_dark_luma, match_dark_copper);
         final_copper_emissive = mix(final_copper_emissive, factor_light_luma, match_light_copper);
@@ -249,7 +249,7 @@ vec3 emissive_color = vec3(1.0);
         // RAIL (emitter_type == 10)
         vec3 target_color_rail = vec3(1.0, 0.0, 0.0);
         float rail_match = step(dot(color - target_color_rail, color - target_color_rail), 0.25);
-        emissive_color = mix(emissive_color, emissive_color * 1000.0 * vec3(1.0, 0.0, 0.0) * correct_light, rail_match * factor_rail);
+        emissive_color = mix(emissive_color, emissive_color * 10.0 * vec3(1.0, 0.0, 0.0) * correct_light, rail_match * factor_rail);
 
         // END PORTAL FRAME (emitter_type == 11)
         vec3 target_color_end = vec3(1.0, 0.8, 1.0);

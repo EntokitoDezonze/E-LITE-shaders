@@ -82,7 +82,7 @@ void main() {
 
     // Exposure
     #if !defined SIMPLE_AUTOEXP
-        float mipmap_level = log2(min(viewWidth * RENDER_SCALE , viewHeight * RENDER_SCALE)) - 1.0;
+        float mipmap_level = log2(min(viewWidth * RENDER_SCALE , viewHeight * RENDER_SCALE));
 
         vec3 exposure_col = texture2DLod(colortex1, vec2(0.5 * RENDER_SCALE), mipmap_level).rgb;
         exposure_col += texture2DLod(colortex1, vec2(0.25 * RENDER_SCALE), mipmap_level).rgb;
@@ -95,7 +95,7 @@ void main() {
         float prev_exposure = texture2D(gaux3, vec2(0.5)).r;
 
         exposure = (exp(-exposure) * 3.25) + 0.6;
-        exposure = mix(exposure, prev_exposure, exp(-frameTime * 1.5));
+        exposure = mix(exposure, prev_exposure, exp(-frameTime * (1.0 / mix(0.25, 1.0, min(frameTimeCounter * 0.5, 1.0)))));
     #else
         exposure = 1.0;
     #endif

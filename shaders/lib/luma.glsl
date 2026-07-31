@@ -26,19 +26,19 @@ vec4 saturate_v4(vec4 color, float saturation) {
     return mix(vec4(luma, color.a), vec4(color.rgb, color.a), saturation);
 } // Same as saturate, but for vec4, designed to not affect alpha channel (transparency.)
 
-vec3 vibrance(vec3 color, float amount) {
-    float sat = max(color.r, max(color.g, color.b)) - min(color.r, min(color.g, color.b));
-
-    float increase_factor = (1.0 - sat) * amount;
-    float final_sat = 1.0 + max(0.0, increase_factor);
-
-    return saturate(color, final_sat);
-} // Only saturates low-saturation colors.
-
 float get_sat(vec3 color) {
     float maxC = max(max(color.r, color.g), color.b);
     float minC = min(min(color.r, color.g), color.b);
     return maxC - minC;
+}
+
+vec3 vibrance(vec3 color, float amount) {
+    float sat = get_sat(color);
+
+    float increase_factor = max((1.0 - sat * 3.0), 0.0) * ((amount * 1.15 - 1.0) * 2.0);
+    float final_sat = 1.0 + max(0.0, increase_factor);
+
+    return saturate(color, final_sat);
 }
 
 vec3 normalizeLuma(vec3 color, float targetLuma) {

@@ -200,18 +200,15 @@ void main() {
         #endif   
     #endif
 
+    float luma_factor = luma(block_color);
     // Fake Purkinje shift
     if (isEyeInWater == 1) {
-        float luma_factor = luma(block_color);
         float shadow_desaturation = smoothstep(0.01, 0.455, luma_factor);
         block_color = mix(block_color, block_color * vec3(0.8, 1.3, 1.6), shadow_desaturation);
     } else {
-        float luma_factor = luma(block_color);
-
         float shadow_desaturation = smoothstep(0.02, 0.25, luma_factor);
-        vec3 shadow_tint = vec3(0.8, 0.9, 1.0);
-
-        block_color = mix(vibrance(block_color, -0.333) * shadow_tint, block_color, shadow_desaturation);
+        vec3 shadow_tint = vec3(0.85, 0.9, 1.0);
+        block_color = mix(saturate(block_color, 0.666) * shadow_tint, block_color, shadow_desaturation);
     } // Water overlay
 
     #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 4
@@ -221,10 +218,8 @@ void main() {
     #elif COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
         float exposure_final = exposure * dayBF(0.8, 1.0, 1.0);
     #else
-        // Dynamic exposure curve.
-        float start = 1.0;
+        float start = 0.75;
         float end   = 2.0;
-        float minPow = 0.8;
 
         float releaseStart = 2.25;
         float releaseEnd   = 2.75;
@@ -232,10 +227,12 @@ void main() {
         float tCompress = smoothstep(start, end, exposure);
         float tRelease = smoothstep(releaseStart, releaseEnd, exposure);
 
-        float t = tCompress * (1.0 - tRelease);
-        float dynamicPow = mix(1.0, minPow, t);
+        float minMul = 0.75;
 
-        float exposure_final = pow(exposure, dynamicPow);
+        float t = tCompress * (1.0 - tRelease);
+        float dynamicMul = mix(1.0, minMul, t);
+
+        float exposure_final = exposure * dynamicMul;
     #endif
 
     block_color *= vec3(RED, GREEN, BLUE) * vec3(exposure_final * EXPOSURE) * BRIGHTNESS; // Color balance, Exposure, Brightness. 
@@ -299,7 +296,9 @@ void main() {
         block_color = Lottes(block_color, 0.1);
     #elif TONEMAPPING == 4
         block_color = uchimura_tm(block_color);
-    #endif    
+    #endif
+
+    block_color = vibrance(block_color.rgb, VIBRANCE); // Vibrance    
 
     #ifdef VIGNETTE
         block_color *= vignette(texcoord); // Vignette

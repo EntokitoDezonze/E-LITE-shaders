@@ -65,7 +65,7 @@ float sun_light_strength;
 if (dot(normal, normal) > 0.0001) { // Workaround for undefined normals
     normal = normalize(normal);
     float ndotl = dot(normal, sun_vec);
-    sun_light_strength = clamp((ndotl + dayBF(0.2, 0.2, 0.0) * step(0.0, ndotl)), -1.0, 1.0);   
+    sun_light_strength = clamp((ndotl + dayBF(0.2, 0.2, 0.0) * step(0.001, ndotl)), -1.0, 1.0);   
 } else {
     normal = vec3(0.0, 1.0, 0.0);
     sun_light_strength = 1.0;
@@ -117,7 +117,7 @@ float omni_strength = (direct_light_strength * 0.05) + 1.0;
 float vs2 = visible_sky * visible_sky;
 float vs4 = vs2 * vs2;
 
-float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
+float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 0.0), 1.0, 1.0);
 
 #if !defined THE_END && !defined NETHER
     float rain_mul = dayBF(0.4, 0.3, 1.0);
@@ -132,8 +132,8 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
         #ifndef SHADOW_CASTING
             outNormal.y = outNormal.y * 0.5 + 0.5;
         #endif
-        vec3 omni_color = saturate(mix(hi_sky_color_rgb * mix(dayBF(3.0, 4.5, 4.0), dayBF(4.0, 6.0, 5.5), rainStrength) * dayBlendSunset *
-        mix(1.0, outNormal.y * 0.15 + 0.85, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.3, 6.0) * OMNI_MUL, OMNI_TINT), 0.28);
+        vec3 omni_color = saturate(mix(hi_sky_color_rgb * vec3(0.666, 1.0, 1.0) * mix(dayBF(3.0, 4.5, 4.0), dayBF(4.0, 6.0, 5.5), rainStrength) * dayBlendSunset *
+        mix(1.0, outNormal.y * 0.15 + 0.85, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.3, 6.0) * OMNI_MUL, OMNI_TINT), 0.28 + clamp(outNormal.y + 0.1, 0.0, 1.0) * 0.25);
     #elif COLOR_SCHEME == 4
         vec3 omni_color = direct_light_color * (OMNI_MUL + dayBF(0.1, 0.1, 0.5));
     #else

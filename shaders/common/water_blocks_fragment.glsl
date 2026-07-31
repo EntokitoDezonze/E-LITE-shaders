@@ -280,7 +280,7 @@ void main() {
         vec3 cristalNormal = water_normal;
 
         if(block_type < 0.11 && block_type > 0.09) { // Enhanced Portal
-            block_color.rgb *= cubePow(block_luma) * sqrt(block_luma) * 1000;
+            block_color.rgb *= block_luma * 150 * saturate(block_color.rgb, -0.1);
         } else if(block_type > 2.3 && block_type < 2.5) { // Ice
             block_color.a *= 1;
             block_color.r *= 0.8;

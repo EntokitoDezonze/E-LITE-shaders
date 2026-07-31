@@ -14,7 +14,7 @@ vec3 get_shadow_pos(vec3 shadow_pos) {
 
     float falloff = 1.0 / (1.0 + dist);
     float distortion = mix(1.0, dist, SHADOW_DIST * falloff);
-    
+
     shadow_pos.xy /= distortion;
     shadow_pos.z *= 0.2;
     return shadow_pos * 0.5 + 0.5;

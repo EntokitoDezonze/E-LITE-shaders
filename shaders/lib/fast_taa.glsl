@@ -16,12 +16,8 @@ vec3 fast_taa(vec3 current_color, vec2 texcoord_past) {
         vec3 near_color1 = texture2DLod(colortex1, texcoord + vec2(pixelSizeX, 0.0) * RENDER_SCALE, 0.0).rgb;
         vec3 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixelSizeY) * RENDER_SCALE, 0.0).rgb;
         vec3 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixelSizeY) * RENDER_SCALE, 0.0).rgb;
-        
-        vec3 nmin =
-            min(current_color, min(near_color0, min(near_color1, min(near_color2, near_color3))));
-        vec3 nmax =
-            max(current_color, max(near_color0, max(near_color1, max(near_color2, near_color3))));
-        
+
+        // edge detection continua igual, em RGB (não precisa mudar de espaço aqui)
         vec3 edge_color = -near_color0;
         edge_color -= near_color1;
         edge_color += current_color * 4.0;
@@ -32,17 +28,33 @@ vec3 fast_taa(vec3 current_color, vec2 texcoord_past) {
         float edge = clamp(length(edge_color) * 0.5773502691896258, 0.0, 1.0);
         edge = smoothstep(0.25, 0.75, edge);
 
+        // === clamp de vizinhança agora em YCoCg ===
+        vec3 current_ycocg = rgbToYcocg(current_color);
+        vec3 previous_ycocg = rgbToYcocg(previous);
+
+        vec3 near0_ycocg = rgbToYcocg(near_color0);
+        vec3 near1_ycocg = rgbToYcocg(near_color1);
+        vec3 near2_ycocg = rgbToYcocg(near_color2);
+        vec3 near3_ycocg = rgbToYcocg(near_color3);
+
+        vec3 nmin =
+            min(current_ycocg, min(near0_ycocg, min(near1_ycocg, min(near2_ycocg, near3_ycocg))));
+        vec3 nmax =
+            max(current_ycocg, max(near0_ycocg, max(near1_ycocg, max(near2_ycocg, near3_ycocg))));
+
         vec3 center = (nmin + nmax) * 0.5;
         float radio = length(nmax - center);
 
-        vec3 color_vector = previous - center;
+        vec3 color_vector = previous_ycocg - center;
         float color_dist = length(color_vector);
 
         float factor = 1.0;
         if (color_dist > radio) {
             factor = radio / color_dist;
         }
-        previous = center + (color_vector * factor);
+        vec3 clamped_ycocg = center + (color_vector * factor);
+
+        previous = ycocgToRgb(clamped_ycocg);
 
         return mix(current_color, previous, 0.65 + (edge * 0.25));
     }
@@ -59,11 +71,7 @@ vec4 fast_taa_depth(vec4 current_color, vec2 texcoord_past) {
         vec4 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixelSizeY), 0.0);
         vec4 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixelSizeY), 0.0);
 
-        vec4 nmin =
-            min(current_color, min(near_color0, min(near_color1, min(near_color2, near_color3))));
-        vec4 nmax =
-            max(current_color, max(near_color0, max(near_color1, max(near_color2, near_color3))));  
-
+        // edge detection continua igual, em RGB
         vec3 edge_color = -near_color0.rgb;
         edge_color -= near_color1.rgb;
         edge_color += current_color.rgb * 4.0;
@@ -74,17 +82,33 @@ vec4 fast_taa_depth(vec4 current_color, vec2 texcoord_past) {
         float edge = clamp(length(edge_color) * 0.5773502691896258, 0.0, 1.0);
         edge = smoothstep(0.25, 0.75, edge);
 
-        vec3 center = (nmin.rgb + nmax.rgb) * 0.5;
-        float radio = length(nmax.rgb - center);
+        // === clamp de vizinhança agora em YCoCg ===
+        vec3 current_ycocg = rgbToYcocg(current_color.rgb);
+        vec3 previous_ycocg = rgbToYcocg(previous.rgb);
 
-        vec3 color_vector = previous.rgb - center;
+        vec3 near0_ycocg = rgbToYcocg(near_color0.rgb);
+        vec3 near1_ycocg = rgbToYcocg(near_color1.rgb);
+        vec3 near2_ycocg = rgbToYcocg(near_color2.rgb);
+        vec3 near3_ycocg = rgbToYcocg(near_color3.rgb);
+
+        vec3 nmin =
+            min(current_ycocg, min(near0_ycocg, min(near1_ycocg, min(near2_ycocg, near3_ycocg))));
+        vec3 nmax =
+            max(current_ycocg, max(near0_ycocg, max(near1_ycocg, max(near2_ycocg, near3_ycocg))));
+
+        vec3 center = (nmin + nmax) * 0.5;
+        float radio = length(nmax - center);
+
+        vec3 color_vector = previous_ycocg - center;
         float color_dist = length(color_vector);
 
         float factor = 1.0;
         if (color_dist > radio) {
             factor = radio / color_dist;
         }
-        previous = vec4(center + (color_vector * factor), previous.a);
+        vec3 clamped_ycocg = center + (color_vector * factor);
+
+        previous = vec4(ycocgToRgb(clamped_ycocg), previous.a);
 
         return mix(current_color, previous, 0.65 + (edge * 0.25));
     }
