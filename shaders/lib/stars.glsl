@@ -62,7 +62,7 @@ vec3 stars() {
         vec3 final_color = vec3(star_intensity);
 
         #ifndef THE_END
-            final_color *= dayBFlgcy(0.1, 0.0, 0.9) * (star_brightness * 0.5 + 0.5) * (1 -rainStrength);
+            final_color *= dayBFlgcy(dayBF(0.0, 0.0, 1.25), 0.0, dayBF(1.25, 0.0, 1.0)) * (star_brightness * 0.5 + 0.5) * (1 - rainStrength);
         #endif
 
         #ifdef THE_END

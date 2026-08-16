@@ -95,7 +95,7 @@ void main() {
                 vec4 block_color = star_data * STARS_BRIGHTNESS;
             #endif
         #elif STAR_SLIDER == 1
-            vec4 block_color = star_data * STARS_BRIGHTNESS;
+            vec4 block_color = star_data * STARS_BRIGHTNESS * dayBF(dayBF(1.0, 1.0, 1.25), 1.0, dayBF(1.25, 1.0, 1.0));
         #else
             if (star_data.r > 0.0) discard;
             vec4 block_color = vec4(0.0);

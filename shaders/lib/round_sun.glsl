@@ -21,7 +21,7 @@ vec3 draw_sun() {
 
         #if VOL_LIGHT > 0
             float sunSize = 0.0175;
-            vec3 sunColor = dayBlend(vec3(1.0, 0.5, 0.25), vec3(1.0, 0.8, 0.6) * dayBF(0.0, 1.0, 0.0), vec3(1.0, 0.5, 0.5) * 0.1);
+            vec3 sunColor = dayBlend(vec3(1.0, 0.9, 0.7), vec3(1.0, 0.8, 0.6) * dayBF(0.0, 1.0, 0.0), vec3(1.0, 0.5, 0.5) * 0.1);
 
             float sunMask = smoothstep(1.0 - sunSize, 1.01 - sunSize, cosTheta);
 
@@ -31,7 +31,7 @@ vec3 draw_sun() {
             return saturate(mix((sunColor * 50 * sunMask) + (sunColor * glow * dayBF(1.5, 2.0, 1.0)), sunColor * glow * 0.3, rainStrength), 1.0 - rainStrength * 0.75);
         #else
             float sunSize = 0.0175;
-            vec3 sunColor = dayBlend(vec3(1.0, 0.333, 0.1) * 2.0, vec3(1.0, 0.8, 0.5) * dayBF(0.25, 1.4, 0.0), vec3(1.0, 0.5, 0.5) * 0.1);
+            vec3 sunColor = dayBlend(vec3(1.0, 0.5, 0.25) * 2.0, vec3(1.0, 0.8, 0.5) * dayBF(0.25, 1.4, 0.0), vec3(1.0, 0.5, 0.5) * 0.1);
 
             float sunMask = smoothstep(1.0 - sunSize, 1.01 - sunSize, cosTheta);
 

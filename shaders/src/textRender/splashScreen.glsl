@@ -1,4 +1,4 @@
-if (textOpacity > 0.0) {
+if (textOpacity > 0.0 && hideGUI == false) {
         // TITLE SPLASH
         beginText(fragPosMain, textPosMain);
             text.fgCol = vec4(vec3(2.0), textOpacity);

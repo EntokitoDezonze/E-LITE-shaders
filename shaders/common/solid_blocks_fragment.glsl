@@ -352,7 +352,7 @@ void main() {
 
     // === SSR
     #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        if ((f0_val) > 0.0) {
+        if ((f0_val) > mix(0.0, -0.1, rainStrength)) {
             vec3 R = reflect(sub_position3_norm, bumpedNormal);
             vec2 sky_uv = vec2(fastAtan2(R.z, R.x) * 0.1591549 + 0.5, fastApproxACos(-R.y) * 0.3183098 + 0.1);
             sky_uv = clamp(sky_uv, 0.01, 0.99);

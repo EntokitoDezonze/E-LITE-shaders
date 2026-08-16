@@ -100,7 +100,7 @@ vec3 emissive_color = vec3(1.0);
         float base_match_copper = step(0.3, saturation) * step(0.1, luminance);
         
         float match_dark_copper = step(dot(color - target_color_dark_copper, color - target_color_dark_copper), 0.3) * base_match_copper;
-        float match_light_copper = step(dot(color - target_color_light_copper, color - target_color_light_copper), 0.15) * base_match_copper;
+        float match_light_copper = step(dot(color - target_color_light_copper, color - target_color_light_copper), 0.25) * base_match_copper;
         
         vec3 factor_dark_luma = 15.0 * luma(color) * vec3(1.0, 0.7, 0.5) * correct_light_ore;
         vec3 factor_light_luma = 10.0 * luma(color)* vec3(0.5, 1.0, 0.7) * correct_light_ore;

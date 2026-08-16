@@ -169,9 +169,9 @@ vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, fl
     float upward = clamp(normal.y, 0.0, 1.0);
     float wetness = rainStrength * upward * visible_sky * visible_sky;
 
-    float currentRoughness = mix(roughness, 0.1, wetness); 
+    float currentRoughness = mix(roughness, 0.2, wetness); 
     float smoothness = 1.0 - currentRoughness;
-    float currentReflexIndex = mix(reflex_index, 1.0, wetness);
+    float currentReflexIndex = mix(reflex_index, 0.5, wetness);
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
         float f_strength = mix(mix(currentReflexIndex, 1.0, fresnel), fresnel, isMetal);
