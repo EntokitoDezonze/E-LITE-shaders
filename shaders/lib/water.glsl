@@ -22,7 +22,7 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
     bool hiddens = false;
 
     // Ray marching
-    for (int i = 0; i < RAYMARCH_STEPS + 1; i++) {
+    for (int i = 0; i < RAYMARCH_STEPS; i++) {
         if (search_flag) {
             dir_increment *= 0.5;
             current_march += dir_increment * sign(depth_diff);

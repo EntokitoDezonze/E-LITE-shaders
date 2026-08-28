@@ -34,6 +34,7 @@ Changelog:
 - Changes on colors to reduce excessive contrast and saturation.
 - Shaded upside block faces are now more blue.
 - Default "Vibrance" is now 1.0.
+- Reworked aurora borealis.
 
 # Bugfixes:
 - Fixed POM shadows having broken transition.
@@ -45,6 +46,7 @@ Changelog:
 - Fixed POM shadow appearing at shaded areas.
 - Fixed a bug that made daytime to look wrong at multiplayer servers at 26.x above.
 - Fixed some issues with translucency.
+- Fixed too bright entities on fire.
 
 Version code: ELT512
 

@@ -17,7 +17,6 @@ vec3 fast_taa(vec3 current_color, vec2 texcoord_past) {
         vec3 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixelSizeY) * RENDER_SCALE, 0.0).rgb;
         vec3 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixelSizeY) * RENDER_SCALE, 0.0).rgb;
 
-        // edge detection continua igual, em RGB (não precisa mudar de espaço aqui)
         vec3 edge_color = -near_color0;
         edge_color -= near_color1;
         edge_color += current_color * 4.0;
@@ -28,7 +27,6 @@ vec3 fast_taa(vec3 current_color, vec2 texcoord_past) {
         float edge = clamp(length(edge_color) * 0.5773502691896258, 0.0, 1.0);
         edge = smoothstep(0.25, 0.75, edge);
 
-        // === clamp de vizinhança agora em YCoCg ===
         vec3 current_ycocg = rgbToYcocg(current_color);
         vec3 previous_ycocg = rgbToYcocg(previous);
 
@@ -71,7 +69,6 @@ vec4 fast_taa_depth(vec4 current_color, vec2 texcoord_past) {
         vec4 near_color2 = texture2DLod(colortex1, texcoord + vec2(0.0, -pixelSizeY), 0.0);
         vec4 near_color3 = texture2DLod(colortex1, texcoord + vec2(0.0, pixelSizeY), 0.0);
 
-        // edge detection continua igual, em RGB
         vec3 edge_color = -near_color0.rgb;
         edge_color -= near_color1.rgb;
         edge_color += current_color.rgb * 4.0;
@@ -82,7 +79,6 @@ vec4 fast_taa_depth(vec4 current_color, vec2 texcoord_past) {
         float edge = clamp(length(edge_color) * 0.5773502691896258, 0.0, 1.0);
         edge = smoothstep(0.25, 0.75, edge);
 
-        // === clamp de vizinhança agora em YCoCg ===
         vec3 current_ycocg = rgbToYcocg(current_color.rgb);
         vec3 previous_ycocg = rgbToYcocg(previous.rgb);
 

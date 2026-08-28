@@ -17,14 +17,14 @@ vec3 antiRed = dayBlend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red
 
 #if CLOUD_VOL_STYLE == 0
     dark_cloud_color = dayBlend(
-        ZENITH_SUNSET_COLOR * dayBF(1.0, 1.0, 0.0),
+        ZENITH_SUNSET_COLOR * dayBF(0.5, 1.0, 0.0),
         saturate(ZENITH_DAY_COLOR * 0.75, 1.25),
         ZENITH_NIGHT_COLOR
     );
     
     vec3 cloud_color_aux = mix(
         dayBlend(
-            saturate(LIGHT_SUNSET_COLOR, dayBF(0.9, 0.0, -0.1)) * dayBF(0.55, 0.0, 0.25),
+            saturate(LIGHT_SUNSET_COLOR, dayBF(0.9, 0.0, -0.1)) * dayBF(0.7, 0.0, 0.25),
             saturate(LIGHT_DAY_COLOR * dayBF(0.5, 0.75, 0.0), 0.5),
             saturate(LIGHT_NIGHT_COLOR, 0.5)
         ),

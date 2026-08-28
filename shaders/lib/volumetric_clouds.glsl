@@ -331,44 +331,39 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
     }
     #endif
 
+    // Part of rework was made by Tas.
     #if AURORA > 0
         if (view_vector.y > 0.05 && dayBF(0.0, 0.0, 1.0) > 0.02) {
             vec3 aurora_sum = vec3(0.0);
-            int layers = 12; 
+            const int layers = 16;
+            float inv_view_y = 1.0 / (max(view_vector.y, 0.05) + 0.05);
+            float wind = frameTimeCounter * 3.5 * sqrt(CLOUD_HI_FACTOR);
+            float aurora_mask = (1.0 - cloud_value) * clamp(dayBF(-1.0, 0.0, 1.0), 0.0, 1.0);
 
             for (int i = 0; i < layers; i++) {
-                float altitude = 1000.0 + (float(i) + dither) * 35.0;
-                // Bugfix by Tas :)
+                float layer_progress = (float(i) + dither) / float(layers);
+                float height_distribution = mix(layer_progress, layer_progress * layer_progress, 0.5);  
+                float altitude = 1000.0 + height_distribution * 1700.0;
                 float t = altitude / (max(view_vector.y, 0.05) + 0.05);
                 vec2 world_uv = (cameraPosition.xz + view_vector.xz * t) * 0.00015;
-                
-                float wind = frameTimeCounter * 0.1 * 35 * sqrt(CLOUD_HI_FACTOR);
-
-                float noise = texture2D(colortex2, world_uv).r;
-                
+                float noise = texture2D(colortex2, world_uv * 0.1).r;
                 float zenith = clamp(view_vector.y, 0.0, 1.0);
-                float stripe_freq = mix(30.0, 90.0, zenith * zenith);
-
-                float stripe_wave = sin(world_uv.x * stripe_freq + noise * 12.0 +  + wind + float(i) * 0.15);
-                float stripes = smoothstep(0.2, 0.9, stripe_wave * noise);
-                
-                float layer_progress = float(i) / float(layers);
-                float fade = 1.0 - layer_progress * layer_progress;
-                fade *= smoothstep(0.0, 0.5, noise * (1.0 - layer_progress * 0.5));
-                
-                vec3 col = mix(vec3(0.1, 1.0, 0.6), vec3(0.7137, 0.3882, 0.9137), layer_progress / 0.75);
-
-                aurora_sum += col * stripes * fade * (1.0 - cloud_value) * clamp(dayBF(-1.0, 0.0, 1.0), 0.0, 1.0);
+                float stripe_freq = mix(1.0, 6.0, zenith * zenith);
+                float stripe_coord = world_uv.x + world_uv.y * 0.18 * stripe_freq;
+                float twist = (noise - 0.5) * 5.0 + sin(world_uv.y * 5.0 + noise * 5 + wind * 0.05) * 4;
+                float stripe_wave = sin(stripe_coord * 10 + twist + wind * 0.1);
+                float stripes = smoothstep(0.85, 1.0, stripe_wave);
+                float fade_progress = clamp(layer_progress/ (0.5 + noise * 0.5), 0.0, 1.0);
+                float fade_curve = fade_progress * (2.0 - fade_progress);
+                vec3 col = mix(vec3(0.251, 0.8078, 0.4196) * 2.0, vec3(0.4627, 0.1569, 0.7843) * 5, layer_progress * 1.5) * 15.0 / layers;
+                aurora_sum += col * stripes * (1.0 - fade_curve) * aurora_mask;
             }
-
-            float horizon_mask = smoothstep(0.05, 0.25, view_vector.y);
-            
+            float horizon_mask = smoothstep(0.015, 0.2, view_vector.y);
             #if AURORA == 1
-                float final_intensity = 0.04 * horizon_mask * (1.0 - rainStrength) * hasAurora;
+                float final_intensity = 0.03 * horizon_mask * (1.0 - rainStrength) * hasAurora;
             #elif AURORA == 2
-                float final_intensity = 0.04 * horizon_mask * (1.0 - rainStrength);
+                float final_intensity = 0.03 * horizon_mask * (1.0 - rainStrength);
             #endif
-
             block_color += aurora_sum * final_intensity;
         }
     #endif

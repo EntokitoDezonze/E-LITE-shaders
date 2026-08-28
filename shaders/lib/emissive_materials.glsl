@@ -316,7 +316,7 @@ vec3 emissive_color = vec3(1.0);
 
 #ifdef GBUFFER_ENTITIES
     if(entityId == 10201) { // FIRE
-        emissive_color *= 10.0 * vec3(1.0, 0.5, 0.25);
+        emissive_color *= 3.0 * vec3(1.0, 0.5, 0.25);
     }
 #endif
 

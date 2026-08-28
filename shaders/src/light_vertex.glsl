@@ -30,8 +30,8 @@ float ix15 = ix8 * ix4 * ix2 * ix;
 #if COLOR_SCHEME == 5
     candle_color = CANDLE_BASELIGHT * (ix + ix8);
 #else
-    candle_color = CANDLE_BASELIGHT * (ix2 * ix15 + ix * sqrt(ix));
-    if(ix2 * ix15 + ix * sqrt(ix) > 4.0) candle_color = gray(CANDLE_BASELIGHT * 2.0);
+    candle_color = CANDLE_BASELIGHT * (ix4 * ix15 + ix * sqrt(ix));
+    if(ix2 * ix15 + ix * sqrt(ix) > 4.0) candle_color = saturate(CANDLE_BASELIGHT * 2.0, 0.25);
 #endif
 
 #ifdef DYN_HAND_LIGHT

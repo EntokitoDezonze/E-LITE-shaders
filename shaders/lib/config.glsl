@@ -94,7 +94,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 
 #define FOG_ACTIVE // Toggle fog
 #define NEAR_FOG // Toggle near fog
-#define FOG_TINT 1 // [0 1 2]
+#define FOG_TINT 0 // [0 1 2]
 
 // MISC
 #define SELECTION_LINE 2 // [0 1 2 3]
@@ -582,20 +582,22 @@ const float centerDepthHalflife = 0.66;
 
 // Blocklight color.
 #if BLOCKLIGHT_TEMP == -1
-    #define CANDLE_BASELIGHT vec3(0.4, 0.15, 0.08)
+    #define CANDLE_COLOR vec3(0.4, 0.15, 0.08)
 #elif BLOCKLIGHT_TEMP == 0
-    #define CANDLE_BASELIGHT vec3(0.29975, 0.15392353, 0.0799)
+    #define CANDLE_COLOR vec3(0.29975, 0.15392353, 0.0799)
 #elif BLOCKLIGHT_TEMP == 1
-    #define CANDLE_BASELIGHT vec3(0.33, 0.215, 0.175)
+    #define CANDLE_COLOR vec3(0.33, 0.215, 0.15)
 #elif BLOCKLIGHT_TEMP == 2
-    #define CANDLE_BASELIGHT vec3(0.24975, 0.19392353, 0.0999)
+    #define CANDLE_COLOR vec3(0.24975, 0.19392353, 0.0999)
 #elif BLOCKLIGHT_TEMP == 3
-    #define CANDLE_BASELIGHT vec3(0.22, 0.19, 0.14)
+    #define CANDLE_COLOR vec3(0.22, 0.19, 0.14)
 #elif BLOCKLIGHT_TEMP == 4
-    #define CANDLE_BASELIGHT vec3(0.19, 0.19, 0.19)
+    #define CANDLE_COLOR vec3(0.19, 0.19, 0.19)
 #elif BLOCKLIGHT_TEMP == 5
-    #define CANDLE_BASELIGHT vec3(0.19, 0.19, 0.29)
+    #define CANDLE_COLOR vec3(0.19, 0.19, 0.29)
 #endif
+
+#define CANDLE_BASELIGHT normalizeLuma(CANDLE_COLOR, 0.25)
 
 // DH exclusive
 #define TRANSITION_DH_SUP 0.05
