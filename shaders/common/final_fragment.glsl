@@ -252,11 +252,11 @@ void main() {
 
     #ifdef TITLE
         #if defined VOXY || defined DISTANT_HORIZONS
-            float lifeSpan = 4.0;
+            float lifeSpan = 3.75;
         #else
-            float lifeSpan = 3.5;
+            float lifeSpan = 3.0;
         #endif
-        float textOpacity = 1.0 - smoothstep(3.0, lifeSpan, frameTimeCounter);
+        float textOpacity = 1.0 - smoothstep(2.0, lifeSpan, frameTimeCounter);
 
         float mainScale = 4.5 * (viewHeight / 1080);
         int mainTotalWidth = 80; // 16 chars * 6px

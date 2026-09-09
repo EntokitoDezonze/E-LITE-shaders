@@ -23,7 +23,7 @@ Changelog:
 - Small patch to bugfixes and small tweaks.
 
 # General changes:
-- Ice now has "Glass" effect on reflections.
+- Ice now has "Relief" effect on reflections.
 - Small optimizations made on code.
 - DH chunks texture now has bigger pixels.
 - Small optimizations made.
@@ -47,6 +47,7 @@ Changelog:
 - Fixed a bug that made daytime to look wrong at multiplayer servers at 26.x above.
 - Fixed some issues with translucency.
 - Fixed too bright entities on fire.
+- Fixed compilation failure on Vanilla color scheme.
 
 Version code: ELT512
 
