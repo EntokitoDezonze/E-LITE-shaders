@@ -569,9 +569,9 @@ const float sunPathRotation = -40.0; // [-80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50
 // Redefined constants
 #if VANILLA_AO == 1
   #if AO > 0
-    const float ambientOcclusionLevel = 0.05;
+    const float ambientOcclusionLevel = 0.75;
   #else
-    const float ambientOcclusionLevel = 0.666;
+    const float ambientOcclusionLevel = 1.0;
   #endif
 #else
   const float ambientOcclusionLevel = 0.0;
@@ -597,7 +597,7 @@ const float centerDepthHalflife = 0.66;
     #define CANDLE_COLOR vec3(0.19, 0.19, 0.29)
 #endif
 
-#define CANDLE_BASELIGHT normalizeLuma(CANDLE_COLOR, 0.25)
+#define CANDLE_BASELIGHT normalizeLuma(CANDLE_COLOR, 0.2)
 
 // DH exclusive
 #define TRANSITION_DH_SUP 0.05

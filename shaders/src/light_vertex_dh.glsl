@@ -157,4 +157,4 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
 
 direct_light_strength = mix(direct_light_strength, 10.0, float(dhMaterialId == DH_BLOCK_ILLUMINATED));
 direct_light_strength = mix(direct_light_strength, 1.0, float(dhMaterialId == DH_BLOCK_LAVA));
-direct_light_strength = mix(direct_light_strength, sqrt(direct_light_strength + 0.1), float(dhMaterialId == DH_BLOCK_LEAVES));
+direct_light_strength = mix(direct_light_strength, sqrt(direct_light_strength), float(dhMaterialId == DH_BLOCK_LEAVES));

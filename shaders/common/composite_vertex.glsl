@@ -109,7 +109,7 @@ void main() {
         }
 
         #ifdef THE_END
-            vol_light_color = saturate(LIGHT_SUNSET_COLOR * 0.75, 2.0) * vol_attenuation,
+            vol_light_color = saturate(LIGHT_SUNSET_COLOR * 0.75, 2.0) * vol_attenuation;
         #else
             vol_light_color = dayBlend(
                 saturate(LIGHT_SUNSET_COLOR * dayBF(1.0, 1.0, 0.0), mix(dayBFlgcy(0.75, 1.0, 0.0), 0.0, rainStrength)) * vol_attenuation,

@@ -243,7 +243,7 @@ void main() {
 
         #if defined THE_END
             vol_intensity =
-                ((square_pow(clamp((vol_intensity + .666667) * 0.6, 0.0, 1.0)) * 0.5));
+                ((squarePow(clamp((vol_intensity + .666667) * 0.6, 0.0, 1.0)) * 0.5));
             block_colorvl.rgb += (vol_light_color * vol_light * vol_intensity * 2.0);
         #else
             vol_intensity =

@@ -20,13 +20,12 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- Small patch to bugfixes and small tweaks.
+- 
 
 # General changes:
 - Ice now has "Relief" effect on reflections.
 - Small optimizations made on code.
 - DH chunks texture now has bigger pixels.
-- Small optimizations made.
 - Indirect light was changed and looks smoother.
 - Cherry leaves are now pinker.
 - Leaves are slightly brighter in general.
