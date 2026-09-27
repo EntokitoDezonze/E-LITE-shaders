@@ -254,7 +254,7 @@ void main() {
         #if defined VOXY || defined DISTANT_HORIZONS
             float lifeSpan = 3.75;
         #else
-            float lifeSpan = 3.0;
+            float lifeSpan = 3.25;
         #endif
         float textOpacity = 1.0 - smoothstep(2.0, lifeSpan, frameTimeCounter);
 

@@ -146,9 +146,9 @@ vec4 reflection_calc(vec3 reflected, float roughness) {
     
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
-        float blur_radius = roughness * 0.2;
+        float blur_radius = roughness * 0.4;
     #else
-        float blur_radius = roughness * 0.05;
+        float blur_radius = roughness * 0.01;
     #endif
     
     vec2 blur_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);

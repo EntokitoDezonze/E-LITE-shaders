@@ -140,7 +140,7 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
 
 #else
     #ifdef THE_END
-        omni_light = LIGHT_DAY_COLOR * 2.0;
+        omni_light = LIGHT_DAY_COLOR * 2.6;
     #else
         omni_light = vec3(0.05 + 0.2 * step(49.0, AVOID_DARK_LEVEL));
     #endif

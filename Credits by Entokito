@@ -20,30 +20,28 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- 
+- This version includes several bug fixes and a few visual tweaks (such as a new aurora borealis).
 
 # General changes:
-- Ice now has "Relief" effect on reflections.
+- Ice now has a "relief" effect on reflections.
 - Small optimizations made on code.
 - DH chunks texture now has bigger pixels.
-- Indirect light was changed and looks smoother.
 - Cherry leaves are now pinker.
 - Leaves are slightly brighter in general.
-- Big changes on ambient occlusion, now it is less exagerated and looks cleaner.
-- Changes on colors to reduce excessive contrast and saturation.
+- Changes in colors to reduce excessive contrast and saturation.
 - Shaded upside block faces are now more blue.
-- Default "Vibrance" is now 1.0.
 - Reworked aurora borealis.
+- New language: Russian, by ShallIMove.
 
 # Bugfixes:
-- Fixed POM shadows having broken transition.
+- Fixed POM shadows having broken transitions.
 - Fixed failure when using LabPBR on Nether.
-- Fixed Sky being dark when entering caves above sea level.
+- Fixed sky being dark when entering caves above sea level.
 - Fixed Depth of Field not working properly.
 - Fixed some visual issues with Block reflection. (SSR and MAX)
-- Fixed Subsurface scattering (Leaves transparency) not working.
+- Fixed Subsurface scattering (leaves transparency) not working.
 - Fixed POM shadow appearing at shaded areas.
-- Fixed a bug that made daytime to look wrong at multiplayer servers at 26.x above.
+- Fixed a bug that made daytime look wrong at multiplayer servers at 26.x above.
 - Fixed some issues with translucency.
 - Fixed too bright entities on fire.
 - Fixed compilation failure on Vanilla color scheme.
