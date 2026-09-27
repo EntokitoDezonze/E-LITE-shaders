@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,13 +9,12 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D tex;
 uniform float viewWidth;
 uniform float viewHeight;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float near;
 uniform float far;
 uniform sampler2D gaux1;
@@ -82,8 +80,7 @@ uniform float blindness;
 
 uniform mat4 gbufferModelView;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec2 lmcoord;
 varying vec4 tint_color;
@@ -105,7 +102,7 @@ varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
 
-vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
+vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
 vec3 nfragpos = normalize(fragpos.xyz);
 
 #if defined SHADOW_CASTING && !defined NETHER
@@ -155,10 +152,7 @@ vec3 nfragpos = normalize(fragpos.xyz);
     #include "/lib/shadow_vertex.glsl"
 #endif
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;
@@ -202,7 +196,7 @@ void main() {
         sky_color_reflect = hi_sky_color * .5 * ((eye_bright_smooth.y * .8 + 48) * 0.004166666666666667);
     }
 
-    sky_color_reflect = xyzToRgb(sky_color_reflect);
+    sky_color_reflect = oklabToRgb(sky_color_reflect);
 
     #if defined CLOUD_REFLECTION && (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NETHER
         sky_color_reflect = get_cloud(normalize((gbufferModelViewInverse * vec4(reflect_water_vec * far, 1.0)).xyz), sky_color_reflect, 0.0, dither, worldposition.xyz, int(CLOUD_STEPS_AVG * 0.5), umbral, cloud_color, dark_cloud_color, 1.0, 1.0);
@@ -283,13 +277,15 @@ void main() {
         block_color = texture2D(tex, texcoord);
         float block_luma = luma(block_color.rgb);
         block_color *= tint_color;
+        vec3 cristalNormal = water_normal;
 
         if(block_type < 0.11 && block_type > 0.09) { // Enhanced Portal
-            block_color.rgb *= cubePow(block_luma) * sqrt(block_luma) * 1000;
+            block_color.rgb *= block_luma * 150 * saturate(block_color.rgb, -0.1);
         } else if(block_type > 2.3 && block_type < 2.5) { // Ice
+            block_color.a *= 1;
+            block_color.r *= 0.8;
+            cristalNormal *= sqrt(luma(block_color.rgb) * 0.5 + 0.5) / 0.9;
             block_color = saturate_v4(block_color, 0.5);
-            block_color.a *= 0.75;
-            block_color.r *= 0.9;
         }
 
         #if defined SHADOW_CASTING && !defined NETHER
@@ -317,7 +313,7 @@ void main() {
             } else {
                 sat = 3.0;
             }
-            block_color = cristal_shader(fragposition, water_normal, saturate_v4(block_color, sat), sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
+            block_color = cristal_shader(fragposition, cristalNormal, saturate_v4(block_color, sat), sky_color_reflect, fresnel, visible_sky, dither, dirLight.rgb);
         }
     }
 

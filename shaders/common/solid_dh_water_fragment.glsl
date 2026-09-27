@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,11 +9,10 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D tex;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float near;
 uniform float far;
 uniform sampler2D gaux1;
@@ -66,8 +64,7 @@ uniform float blindness;
     uniform float darknessLightFactor;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color;
@@ -93,11 +90,10 @@ varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
 
-vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
+vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
 vec3 nfragpos = normalize(fragpos.xyz);
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/projection_utils.glsl"
 #include "/lib/basic_utils.glsl"
 #include "/lib/dither.glsl"
@@ -105,9 +101,6 @@ vec3 nfragpos = normalize(fragpos.xyz);
 #include "/lib/depth.glsl"
 #include "/lib/luma.glsl"
 #include "/src/current_sky_color.glsl"
-
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
 
 void main() {
     //if(fragment_cull()) discard;
@@ -160,7 +153,7 @@ void main() {
         sky_color_reflect = hi_sky_color * .5 * ((eye_bright_smooth.y * .8 + 48) * 0.004166666666666667);
     }
 
-    sky_color_reflect = xyzToRgb(sky_color_reflect);
+    sky_color_reflect = oklabToRgb(sky_color_reflect);
 
     #if !defined VANILLA_WATER && WATER_TEXTURE == 1
         vec4 block_color = vec4(0.1);

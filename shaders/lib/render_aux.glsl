@@ -32,28 +32,17 @@ Uncomment when needed. */
 
 vec3 reconstructWorldPosition(float depth, vec2 resolution) {
     vec2 ndc_xy = (gl_FragCoord.xy / RENDER_SCALE / resolution) * 2.0 - 1.0;
-    vec4 frag_clip_space = vec4(ndc_xy, depth, 1.0);
-    vec4 frag_view_space = gbufferProjectionInverse * frag_clip_space;
-    frag_view_space /= frag_view_space.w; 
-    vec4 frag_world_space = gbufferModelViewInverse * frag_view_space;
-
-    vec3 worldPos_unstable = frag_world_space.xyz;
-    vec3 viewCenterWorldSpace = gbufferModelViewInverse[3].xyz;
-    vec3 worldPos_stable = worldPos_unstable - viewCenterWorldSpace;
-    
-    return worldPos_stable;
+    vec4 frag_view_space = gbufferProjectionInverse * vec4(ndc_xy, depth, 1.0);
+    frag_view_space.xyz /= frag_view_space.w; 
+    return (gbufferModelViewInverse * frag_view_space).xyz - gbufferModelViewInverse[3].xyz;
 } // Fixed sway with view bobbing.
 
 vec2 cubic_uv(vec3 direction) {
     vec3 abs_dir = abs(direction);
+    float max_c = max(max(abs_dir.x, abs_dir.y), abs_dir.z);
     
-    float max_comp = max(max(abs_dir.x, abs_dir.y), abs_dir.z); 
+    vec3 mask = step(max_c, abs_dir);
 
-    if (max_comp == abs_dir.x) {
-        return (direction.yz / max_comp) * 0.5 + 0.5; // Face X
-    } else if (max_comp == abs_dir.y) {
-        return (direction.xz / max_comp) * 0.5 + 0.5; // Face Y
-    } else {
-        return (direction.xy / max_comp) * 0.5 + 0.5; // Face Z
-    }
+    vec2 uv = (mask.x * direction.yz + mask.y * direction.xz + mask.z * direction.xy) / max_c;
+    return uv * 0.5 + 0.5;
 }

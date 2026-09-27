@@ -1,14 +1,12 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D gaux3;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
 uniform float frameTime;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying float exposure;
@@ -17,7 +15,7 @@ varying float exposure;
     #include "/src/taa_offset.glsl"
 #endif
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     #include "/src/basiccoords_vertex.glsl"

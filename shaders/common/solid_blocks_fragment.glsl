@@ -20,7 +20,7 @@ uniform sampler2D tex, specular, normals, gaux1, gaux3, gaux4, shadowcolor0, dep
 uniform sampler2DShadow shadowtex1, shadowtex0;
 
 uniform float viewWidth, viewHeight, far, near, light_mix, rainStrength, wetness, blindness, frameTime, frameTimeCounter, inv_aspect_ratio, nightVision, dhNearPlane;
-uniform float pixel_size_x, pixel_size_y; // pixel_size
+uniform float pixelSizeX, pixelSizeY; // pixel_size
 uniform int frameCounter, isEyeInWater, entityId;
 uniform vec3 sunPosition, moonPosition, cameraPosition, previousCameraPosition;
 uniform vec4 entityColor;
@@ -40,25 +40,27 @@ varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color, candle_color, omni_light;
-varying float vanilla_ao;
 
 #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-    varying vec4 vDistTg;
-    float vdist = vDistTg.a;
-    vec3 view_tg = vDistTg.rgb;
+    #ifdef POM
+        varying vec4 vDistTg;
+        float vdist = vDistTg.a;
+        vec3 view_tg = vDistTg.rgb;
+    #endif
+    varying mat3 tbn;
     varying vec4 atlas_uv;
     varying vec2 local_uv;
-    varying mat3 tbn;
 #endif
 
-#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR
-    varying vec3 sub_position3, sub_position3_norm;
-    varying vec2 lmcoord_alt;
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING
+    varying vec3 sub_position3, sub_position3_norm, flat_normal;
     varying vec4 glossParms;
     varying float reflexIndex;
 #endif
 
-varying vec3 flat_normal;
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING || defined EMISSIVE_MATERIAL
+    varying vec2 lmcoord_alt;
+#endif
 
 #if defined SHADOW_CASTING && !defined NETHER
     varying vec4 shadowParms;
@@ -74,7 +76,7 @@ float near_fog, visible_sky, sunInfluence, roughness;
 float ore_type_f, emitter_type_f, isGrass;
 float reflex_index2;
 vec3 final_candle_color;
-vec4 pure_block_color; 
+lowp vec4 pure_block_color; 
 vec2 pixel_size;
 
 #include "/lib/luma.glsl"
@@ -108,54 +110,13 @@ vec2 pixel_size;
 vec3 computeRealLight(vec3 omni, vec3 directColor, float directStrength, vec3 shadow, vec3 material, vec3 candle) {
     vec3 spec_energy;
     #if MATERIAL_GLOSS > 0
-        spec_energy = material / (1.0 + material * 0.05); 
+        if(luma(material) > 0.0) spec_energy = material / (1.0 + material * 0.05); 
     #endif
     return (omni + shadow * directColor * (directStrength * (1.0 + spec_energy)) * (1.0 - (rainStrength * 0.75))) + candle;
 }
 
 void main() {
-    /* Unpack */
-    vec3 viewPos = mat3(gbufferProjectionInverse) * (vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z) * 2.0 - 1.0);
-    vec4 tmp = gbufferProjectionInverse * vec4(vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z) * 2.0 - 1.0, 1.0);
-    viewPos = tmp.xyz / tmp.w;
-    vec3 playerPos = (gbufferModelViewInverse * vec4(viewPos, 1.0)).xyz;
-
-    fog_adj = data_pack_a.x;
-    direct_light_strength = data_pack_a.y;
-    block_type_f = data_pack_a.z;
-    exposure = data_pack_a.w;
-    near_fog = data_pack_b.x;
-    visible_sky = data_pack_b.y;
-    sunInfluence = data_pack_b.z;
-    roughness = data_pack_b.w;
-    isGrass = foliageData.z;
-
-    // === Parallax
-    #if defined LabPBR && defined POM && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        #include "/src/pom.glsl"
-    #else
-        vec2 final_uv = texcoord;
-    #endif
-
-    // === Auxiliary
-    pure_block_color = texture2D(tex, final_uv);
-    vec4 block_color = vec4(pure_block_color.rgb * tint_color.rgb, pure_block_color.a);
-    float block_luma = luma(block_color.rgb);
-    #if !defined GBUFFER_TEXTURED && !defined GBUFFER_ENTITIES
-        block_color.rgb *= vanilla_ao;
-    #elif defined GBUFFER_ENTITIES
-        block_color *= vanilla_ao;
-    #else
-        block_color.a *= vanilla_ao;
-    #endif
-
-    pixel_size = vec2(pixel_size_x, pixel_size_y);
-    final_candle_color = candle_color;
-    
-    #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
-        reflex_index2 = reflexIndex;
-    #endif
-    
+    // === Dither & discard
     #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (MATERIAL_GLOSS > 0 && !defined NETHER) || defined LabPBR
         #if AA_TYPE > 0 
             float dither = shifted_dither13(gl_FragCoord.xy);
@@ -170,6 +131,37 @@ void main() {
         if(umbral > dither) { discard; return; }
     #endif
 
+    // === Unpack
+    fog_adj = data_pack_a.x;
+    direct_light_strength = data_pack_a.y;
+    block_type_f = data_pack_a.z;
+    exposure = data_pack_a.w;
+    near_fog = data_pack_b.x;
+    visible_sky = data_pack_b.y;
+    sunInfluence = data_pack_b.z;
+    roughness = data_pack_b.w;
+    isGrass = foliageData.z;
+    
+
+    // === Parallax
+    #if defined LabPBR && defined POM && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
+        #include "/src/pom.glsl"
+    #else
+        vec2 final_uv = texcoord;
+    #endif
+
+    // === Auxiliary
+    pure_block_color = texture2D(tex, final_uv);
+    lowp vec4 block_color = pure_block_color * tint_color;
+    lowp float block_luma = luma(block_color.rgb);
+
+    pixel_size = vec2(pixelSizeX, pixelSizeY);
+    final_candle_color = candle_color;
+    
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
+        reflex_index2 = reflexIndex;
+    #endif
+
     // === Block detection
     int ore_type = int(round(emissiveData.x));
     int emitter_type = int(round(emissiveData.y));
@@ -177,13 +169,14 @@ void main() {
     
     // === End portal render
     #ifdef END_PORTAL
-        float endLuma = 1.0;
-        if (block_type == 1){ block_color.rgb = end_portal();
-        endLuma = 1.0 - luma(block_color.rgb);
-        reflex_index2 = 1.0 * endLuma; roughness = 5.0 * endLuma;}
-    #endif
-
-    if (block_type == 2){reflex_index2 = 0.5; roughness = 5.0;}
+        #if defined GBUFFER_BLOCK
+            float endLuma = 1.0;
+            if (block_type == 1){ block_color.rgb = end_portal();
+            endLuma = 1.0 - luma(block_color.rgb);
+            reflex_index2 = 1.0 * endLuma; roughness = 5.0 * endLuma;}
+            if (block_type == 2){reflex_index2 = 0.5; roughness = 5.0;}
+        #endif
+    #endif  
 
     // === Shadows calc
     #if defined SHADOW_CASTING && !defined NETHER
@@ -211,11 +204,16 @@ void main() {
 
     // === Grass correction
     float directLight2;
-    if(isEyeInWater == 0) {
-        directLight2 = mix(direct_light_strength, (sqrt(sqrt(direct_light_strength) * 0.85) * luma(shadow_c)), float(isGrass > 0.5));
-    } else {
-        directLight2 = mix(direct_light_strength, (direct_light_strength * 0.5 * luma(shadow_c)), float(isGrass > 0.5));  
-    }
+
+    #ifdef SHADOW_CASTING
+        if(isEyeInWater == 0) {
+            directLight2 = mix(direct_light_strength, (sqrt(sqrt(direct_light_strength) * 0.85) * luma(shadow_c)), float(isGrass > 0.5));
+        } else {
+            directLight2 = mix(direct_light_strength, (direct_light_strength * 0.5 * luma(shadow_c)), float(isGrass > 0.5));  
+        }
+    #else
+        directLight2 = direct_light_strength;
+    #endif
 
     // === PBR auxiliary
     #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
@@ -226,13 +224,22 @@ void main() {
             bumpedNormal = flat_normal;
         }
     #else
-        vec3 bumpedNormal = flat_normal;
+        #if MATERIAL_GLOSS < 1
+            vec3 bumpedNormal = vec3(1.0);
+        #else
+            vec3 bumpedNormal = flat_normal;
+        #endif
     #endif
 
     #if !defined NETHER && defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        vec3 shadowLightDir = mix(-sunPosition, sunPosition, light_mix) * 0.01;
-        float diffuseRelief = clamp(dot(bumpedNormal, shadowLightDir), 0.0, 1.0);
-        float shadow_c_relief = (isGrass < 0.5) ? sqrt(directLight2 * diffuseRelief) : directLight2;
+        float shadow_c_relief;
+        if(foliageData.x < 0.3) {  
+            vec3 shadowLightDir = mix(-sunPosition, sunPosition, light_mix) * 0.01;
+            float diffuseRelief = clamp(dot(bumpedNormal, shadowLightDir), 0.0, 1.0);
+            shadow_c_relief = (isGrass < 0.5) ? sqrt(directLight2 * diffuseRelief) : directLight2;
+        } else {
+            shadow_c_relief = directLight2;
+        }
     #else
         float shadow_c_relief = directLight2;
     #endif
@@ -248,12 +255,12 @@ void main() {
     
     // === Block reflection
     float currentRoughness = roughness;
-    #if (MATERIAL_GLOSS > 0 && !defined NETHER)
+    #if (MATERIAL_GLOSS > 0)
         float f0_val;
         #if defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
             vec4 specMap = texture2D(specular, final_uv);
             float smoothness = specMap.r;
-            f0_val = mix(specMap.g * clamp(1.0 - specMap.a, 0.04, 1.0), specMap.g, step(0.99, specMap.a));
+            f0_val = specMap.g + specMap.r;
             reflex_index2 = f0_val;
             float isMetal = step(0.9018, f0_val);
             float porosity_clip = mix(1.0 - specMap.b, 1.0, isMetal);
@@ -261,6 +268,7 @@ void main() {
             float block_luma2 = block_luma * 100;
             float sss_factor = fourthPow(clamp(1.0 - smoothness, 0.0, 1.0));
             block_luma2 *= mix(sss_factor, fourthPow(smoothness), porosity_clip);
+            f0_val *= step(0.01, porosity_clip);
             
             float luma_shading = max(25.0 - fourthPow(block_luma * 3.0), 0.0);
             float trigger = smoothstep(0.1, 0.0, block_luma);
@@ -275,13 +283,14 @@ void main() {
             float final_gloss_power = glossParms.g;
             float block_luma2 = pow(block_luma * glossParms.b, glossParms.a);
             float isMetal = 0.0;
+            f0_val = reflex_index2;
         #endif
     #endif
 
     #if MATERIAL_GLOSS > 0 && defined LabPBR && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
         isMetal = step(0.9018, f0_val);
         float isCustomMetal = step(0.998, f0_val);
-        float metalID = floor(f0_val * 255.0 + 0.5);
+        float metalID = floor(f0_val * 255.0 + 0.5) * isCustomMetal;
 
         // Documented in https://shaderlabs.org/wiki/LabPBR_Material_Standard
         // F = (n-1)² + k² / (n+1)² + k²
@@ -308,6 +317,12 @@ void main() {
         vec3 material_f0 = vec3(1.0);
     #endif
 
+    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1){
+        block_color.rgb *= vec3(1.0, 0.8, 0.95) * 1.1;
+        block_color.rgb = saturate(block_color.rgb, mix(0.75, 1.0, luma(shadow_c)));
+        }
+    if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
+
     #if (MATERIAL_GLOSS > 0 && !defined NETHER)
         vec3 gloss;
         if(block_type != 1.0){
@@ -318,7 +333,7 @@ void main() {
         vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, gloss * max(block_luma2, 0.0), candle_color);
     #else
         vec3 gloss = vec3(0.0);
-        vec3 real_light = computeRealLight(omni_light, direct_light_color, shadow_c_relief, shadow_c, vec3(0.0), candle_color);
+        vec3 real_light = computeRealLight(omni_light, direct_light_color, directLight2, shadow_c, vec3(0.0), candle_color);
     #endif
 
     block_color.rgb *= mix(real_light, vec3(1.0), nightVision * 0.125);
@@ -337,11 +352,12 @@ void main() {
 
     // === SSR
     #if MATERIAL_GLOSS > 1 && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
-        if ((reflex_index2 + currentRoughness) > 0.001) {
+        if ((f0_val) > mix(0.0, -0.1, rainStrength)) {
             vec3 R = reflect(sub_position3_norm, bumpedNormal);
-            vec2 sky_uv = vec2(atan(R.z, R.x) * 0.1591549 + 0.5, acos(-R.y) * 0.3183098 + 0.1);
-            vec3 sky_refl = texture2D(gaux4, clamp(sky_uv, 0.01, 0.99)).rgb;
-            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2, material_f0);
+            vec2 sky_uv = vec2(fastAtan2(R.z, R.x) * 0.1591549 + 0.5, fastApproxACos(-R.y) * 0.3183098 + 0.1);
+            sky_uv = clamp(sky_uv, 0.01, 0.99);
+            vec3 sky_refl = texture2D(gaux4, vec2(sky_uv.x, sky_uv.y * 2)).rgb;
+            block_color = solid_shader(sub_position3, bumpedNormal, block_color, sky_refl, clamp(1.0 + dot(bumpedNormal, sub_position3_norm), 0.0, 1.0), visible_sky, currentRoughness, reflex_index2, material_f0, isMetal);
         }
     #endif
 

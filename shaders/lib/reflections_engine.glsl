@@ -97,8 +97,8 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
     }
 }
 
-vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
-    float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
+vec4 reflection_calc(vec3 reflected, float roughness) {
+    float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
     if (reflected.z >= 0.0) return vec4(0.0);
 
     vec3 hit_pos;
@@ -146,9 +146,9 @@ vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
     
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
-        float blur_radius = roughness * 0.2;
+        float blur_radius = roughness * 0.4;
     #else
-        float blur_radius = roughness * 0.05;
+        float blur_radius = roughness * 0.01;
     #endif
     
     vec2 blur_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);
@@ -162,22 +162,21 @@ vec4 reflection_calc(vec3 reflected, vec3 normal, float roughness) {
     col /= 3.0;
 
     return vec4(col, border);
+
 }
 
-
-vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, float fresnel, float visible_sky, float roughness, float reflex_index, vec3 f0) {
+vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, float fresnel, float visible_sky, float roughness, float reflex_index, vec3 f0, float isMetal) {
     float upward = clamp(normal.y, 0.0, 1.0);
-    float wetness = rainStrength * upward * visible_sky;
+    float wetness = rainStrength * upward * visible_sky * visible_sky;
 
-    float currentRoughness = mix(roughness, 0.0, wetness); 
+    float currentRoughness = mix(roughness, 0.2, wetness); 
     float smoothness = 1.0 - currentRoughness;
-    float currentReflexIndex = mix(reflex_index, 0.0, wetness);
+    float currentReflexIndex = mix(reflex_index, 0.5, wetness);
 
     #if defined LabPBR && defined GBUFFER_TERRAIN
-        float isMetal = step(0.9, reflex_index);
         float f_strength = mix(mix(currentReflexIndex, 1.0, fresnel), fresnel, isMetal);
-        f_strength *= mix(fastpow(smoothness, 4.0), 1.0, isMetal);
-        f_strength = clamp(f_strength, 0.0, (currentReflexIndex + smoothness) * 0.333);
+        f_strength *= mix(cubePow(smoothness), 1.0, isMetal);
+        f_strength = clamp(f_strength, 0.0, (currentReflexIndex + smoothness) * 0.666);
         vec3 tinted_sky = mix(sky_reflection, sky_reflection * f0, isMetal);
     #else
         float f_strength = fresnel * currentReflexIndex;
@@ -191,7 +190,7 @@ vec4 solid_shader(vec3 fragpos, vec3 normal, vec4 color, vec3 sky_reflection, fl
     #endif
 
     #if REFLECTION == 1
-        vec4 ssr = reflection_calc(reflect(normalize(fragpos), normal), normal, currentRoughness);
+        vec4 ssr = reflection_calc(reflect(normalize(fragpos), normal), currentRoughness);
         
         #if defined LabPBR && defined GBUFFER_TERRAIN
             vec3 tinted_ssr = mix(ssr.rgb, ssr.rgb * f0, isMetal);

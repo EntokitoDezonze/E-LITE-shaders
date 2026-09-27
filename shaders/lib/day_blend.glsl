@@ -42,7 +42,7 @@ float dayBFlgcy(float sunset, float day, float night) {
         // g(x) = min(-((x-.75)^2)∙50 + 3.125, 1)
 
         float day_value = mix(sunset, day, day_mixer);
-        float night_value = mix(day_value, night, clamp(night_mixer - dayBFlgcy(1.0, 0.0, 0.1), 0.0, 1.0));
+        float night_value = mix(sunset, night, clamp(night_mixer - dayBFlgcy(1.0, 0.0, 0.1), 0.0, 1.0));
 
         return mix(day_value, night_value, smoothstep(0.45, 0.52 + (absSunRotation / 900), day_moment));
     }

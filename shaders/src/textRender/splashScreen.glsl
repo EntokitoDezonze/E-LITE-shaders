@@ -4,17 +4,16 @@ if (textOpacity > 0.0 && hideGUI == false) {
             text.fgCol = vec4(vec3(2.0), textOpacity);
             text.bgCol = vec4(0.0);
             printString((_E, _dash, _L, _I, _T, _E, _space, _s, _h, _a, _d, _e, _r, _s));
-            printLine();
         endText(block_color.rgb);
 
         // PROFILE SPLASH
         subScale = 3 * (viewHeight / 1080);
-        float subEntry = smoothstep(0.0, 1.0, frameTimeCounter);
+        float subEntry = smoothstep(0.0, 1.25, frameTimeCounter);
         
         fragPosSub = ivec2(gl_FragCoord.xy / subScale);
         centerXSub = int((viewWidth / subScale) * 0.5);
         posYSub = int((viewHeight * 0.8375) / subScale);
-        slideUp = int(cubePow(1.0 - subEntry) * 20.0);
+        slideUp = int(cubePow(1.0 - subEntry) * 40.0);
 
         #if defined VOXY
             int envW = 42;

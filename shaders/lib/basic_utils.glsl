@@ -112,7 +112,7 @@ vec4 sixthPowVec4(vec4 x) {
     return temp2 * temp2 * temp2;
 }
 
-/* arccos Approximation */
+// == arccos Approximation
 // Source: https://www.forwardscattering.org/post/66
 // Code by Nicholas Chapman
 float fastApproxACos(float x){
@@ -122,3 +122,48 @@ float fastApproxACos(float x){
 		return (x * -0.124605335 + 0.1570634) * (0.99418175 - x) + sqrt(2.0 - 2.0 * x);
     }
 }
+
+// arctan approximation
+// Source: https://iquilezles.org/maths/arctan/
+// By Inigo Quilez
+float fastAtan(float x) {
+    float x2 = x * x;
+    return (9.8696044 * x) / (4.0 + sqrt(34.0 + 39.4784176 * x2));
+}
+
+float fastAtan2(float y, float x) {
+    float absX = abs(x);
+    float absY = abs(y); // Quadrant
+    bool swap = absY > absX;
+    float n = swap ? absX / absY : absY / absX;
+    float angle = fastAtan(n);
+
+    if (swap) angle = 1.5707963 - angle; // PI/2 - angle
+    if (x < 0.0) angle = 3.1415926 - angle;
+    return (y < 0.0) ? -angle : angle;
+}
+
+// == Sinus and Cosinus approximation
+// Source: https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
+// Based on Horner's method.
+
+// 11th degree - medium precision
+float fastSin11(float x) {
+    float x2 = x * x;
+    return x * (0.9999999999788490 + x2 * (-0.1666666660882607 + x2 * (0.0083333307205577 + x2 * (-0.0001984083282326 + x2 * (0.0000027523971075 + x2 * (-0.0000000238683465))))));
+}
+
+float fastCos11(float x) {
+    return fastSin11(x + 1.570796);
+}
+
+// 17th degree - high precision
+float fastSin17(float x) {
+    float x2 = x * x;
+    return x * (1.0 + x2 * (-0.1666666666662705 + x2 * (0.0083333333314545 + x2 * (-0.0001984126937666 + x2 * (0.0000027557303035 + x2 * (-0.0000000250507567 + x2 * (0.0000000001592671 + x2 * (-0.0000000000006766 + x2 * 0.0000000000000018))))))));
+}
+
+float fastCos17(float x) {
+    return fastSin17(x + 1.5707963267948966);
+}
+

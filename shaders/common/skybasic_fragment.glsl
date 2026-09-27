@@ -1,8 +1,7 @@
 #include "/lib/config.glsl"
 #include "/lib/luma.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -11,11 +10,10 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D gaux4;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float rainStrength;
 uniform mat4 gbufferProjectionInverse;
 uniform float viewWidth;
@@ -37,8 +35,7 @@ uniform vec3 sunPosition;
     uniform vec4 lightningBoltPosition;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 #if MC_VERSION < 11604
     varying vec3 hi_sky_color;
     varying vec3 mid_sky_color;
@@ -52,8 +49,7 @@ varying vec4 star_data;
 varying vec3 up_vec;
 varying vec4 position;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/basic_utils.glsl"
 
 #if STAR_SLIDER == 2 || AA_TYPE > 0
@@ -66,10 +62,7 @@ varying vec4 position;
 #endif
 
 #include "/lib/biome_sky.glsl"
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     //if(fragment_cull()) discard;
@@ -90,7 +83,7 @@ void main() {
         #if MC_VERSION < 11604
             #include "/src/get_sky.glsl"
         #else
-            vec4 background_color = texture2DLod(gaux4, gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), 0);
+            vec4 background_color = texture2DLod(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), 0);
             vec3 sky_color = vec3(0.0);
         #endif
 
@@ -102,7 +95,7 @@ void main() {
                 vec4 block_color = star_data * STARS_BRIGHTNESS;
             #endif
         #elif STAR_SLIDER == 1
-            vec4 block_color = star_data * STARS_BRIGHTNESS;
+            vec4 block_color = star_data * STARS_BRIGHTNESS * dayBF(dayBF(1.0, 1.0, 1.25), 1.0, dayBF(1.25, 1.0, 1.0));
         #else
             if (star_data.r > 0.0) discard;
             vec4 block_color = vec4(0.0);

@@ -3,8 +3,7 @@
 #include "/lib/luma.glsl"
 #include "/lib/dither.glsl"
 
-/* Color utils */
-
+// == Color utils
 #if defined THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -92,7 +91,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
             omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
         #endif
 
-        vec3 omniLight = mix(omniColorMin, omniColor, visibleSky * visibleSky * visibleSky * visibleSky) * omniStrength;
+        vec3 omniLight = mix(omniColorMin, omniColor, visibleSky * visibleSky) * omniStrength;
     #endif
 
     #if !defined THE_END && !defined NETHER
@@ -218,7 +217,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
         skyColorReflect = zenithSkyColor * .5 * ((eyeBrightSmoothFloat.y * .8 + 48) * 0.004166666666666667);
     }
 
-    skyColorReflect = xyzToRgb(skyColorReflect);
+    skyColorReflect = oklabToRgb(skyColorReflect);
 
     if(customId == ENTITY_WATER) {  // Water
         #ifdef VANILLA_WATER

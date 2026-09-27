@@ -1,9 +1,9 @@
-  ___    _    ___ _____ ___   ___   _   _ 
- | _____| |  |_ _|_   _| __| | __| / | / |
- | _|___| |__ | |  | | | _|  |__ \_| |_| |
- |___|  |____|___| |_| |___| |___(_|_(_|_|
-                                          
-# E-LITE shaders version 5.1.1
+  ___    _    ___ _____ ___   ___   _   ___ 
+ | _____| |  |_ _|_   _| __| | __| / | |_  )
+ | _|___| |__ | |  | | | _|  |__ \_| |_ / / 
+ |___|  |____|___| |_| |___| |___(_|_(_/___|
+                                            
+# E-LITE shaders version 5.1.2
 
 MakeUp - Ultrafast original creator: Javier Garduño
 Links:
@@ -20,30 +20,33 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- Small patch to fix bugs and improve shader's look.
+- This version includes several bug fixes and a few visual tweaks (such as a new aurora borealis).
 
 # General changes:
-- Crimson and warped stems and hyphae now glow.
-- Removed unused files.
-- Nether fog has been reworked.
-- Small changes in how LabPBR materials reflect light.
-- Small improvements on how blocks reflect light w/block reflection (without LabPBR).
-- Small sky color changes.
-- Reduced depth-based godrays intensity.
+- Ice now has a "relief" effect on reflections.
+- Small optimizations made on code.
+- DH chunks texture now has bigger pixels.
+- Cherry leaves are now pinker.
+- Leaves are slightly brighter in general.
+- Changes in colors to reduce excessive contrast and saturation.
+- Shaded upside block faces are now more blue.
+- Reworked aurora borealis.
+- New language: Russian, by ShallIMove.
 
 # Bugfixes:
-- Fixed some missing translations in Portuguese and Spanish versions.
-- Fixed Aurora borealis having a "square-shaped" look when boxy clouds were enabled.
-- Fixed a bug that made translucent particles and entities very dark.
-- Fixed raindrops on the "Particle rain" mod being too dark.
-- Fixed Nether fog having wrong colors.
-- Fixed stretched reflections when water texture is enabled.
-- Fixed a bug that made lighting very dark when using LabPBR with POM disabled.
-- Fixed a bug that made boxy clouds not work on The End.
-- Fixed Voxy fog not working on Nether.
-- Fixed "Fullbright" mode broken on caves and Nether.
+- Fixed POM shadows having broken transitions.
+- Fixed failure when using LabPBR on Nether.
+- Fixed sky being dark when entering caves above sea level.
+- Fixed Depth of Field not working properly.
+- Fixed some visual issues with Block reflection. (SSR and MAX)
+- Fixed Subsurface scattering (leaves transparency) not working.
+- Fixed POM shadow appearing at shaded areas.
+- Fixed a bug that made daytime look wrong at multiplayer servers at 26.x above.
+- Fixed some issues with translucency.
+- Fixed too bright entities on fire.
+- Fixed compilation failure on Vanilla color scheme.
 
-Version code: ELT511
+Version code: ELT512
 
 Based on MakeUp Ultrafast 9.5b
 

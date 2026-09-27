@@ -26,7 +26,7 @@ float invFogAdjust = 1.0 / FOG_ADJUST;
     sunInfluence = sunAngle * sunAngle * sunAngle; 
 
     #ifdef NEAR_FOG
-        float sunDayFactor = dayBF(1.0, 0.1, 0.0);
+        float sunDayFactor = max(dayBF(dayBF(1.0, 0.1, 0.0), 0.1, dayBF(-10.0, 0.1, 0.0)), 0.0);
 
         #if defined DISTANT_HORIZONS || defined VOXY
             float dynamic_density = 0.002 + (0.001 * sunInfluence * sunDayFactor);
@@ -41,7 +41,7 @@ float invFogAdjust = 1.0 / FOG_ADJUST;
             float dist_adj = (gl_FogFragCoord - (dhRenderDistance / mix(30.0, 240.0, rainStrength)));
             near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
         #else
-            float dist_adj = (gl_FogFragCoord - (far / mix(7.0, 25.0, rainStrength)));
+            float dist_adj = (gl_FogFragCoord - (far / mix(5.0, 20.0, rainStrength)));
             near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
         #endif
         float horizon_exp = mix(fog_density_coeff * biome_fog, fog_density_coeff * biome_fog * 0.2, rainStrength);

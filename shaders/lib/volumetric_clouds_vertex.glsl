@@ -17,16 +17,16 @@ vec3 antiRed = dayBlend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red
 
 #if CLOUD_VOL_STYLE == 0
     dark_cloud_color = dayBlend(
-        ZENITH_SUNSET_COLOR,
-        saturate(ZENITH_DAY_COLOR, 1.25),
+        ZENITH_SUNSET_COLOR * dayBF(0.5, 1.0, 0.0),
+        saturate(ZENITH_DAY_COLOR * 0.75, 1.25),
         ZENITH_NIGHT_COLOR
     );
     
     vec3 cloud_color_aux = mix(
         dayBlend(
-            saturate(LIGHT_SUNSET_COLOR, dayBF(0.9, 0.0, 0.5)) * dayBF(0.55, 0.0, 0.25),
-            saturate(LIGHT_DAY_COLOR * dayBF(0.5, 1.0, 0.0), 0.0),
-            saturate(LIGHT_NIGHT_COLOR, 0.5) * 1.666
+            saturate(LIGHT_SUNSET_COLOR, dayBF(0.9, 0.0, -0.1)) * dayBF(0.7, 0.0, 0.25),
+            saturate(LIGHT_DAY_COLOR * dayBF(0.5, 0.75, 0.0), 0.5),
+            saturate(LIGHT_NIGHT_COLOR, 0.5)
         ),
         ZENITH_SKY_RAIN_COLOR * dayBF(1.0, 0.4, 1.0) * gray(dark_cloud_color),
         rainStrength
@@ -34,24 +34,24 @@ vec3 antiRed = dayBlend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red
 
     dark_cloud_color = mix(
         dark_cloud_color,
-        ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * dayBF(1.15, 0.55, 1.25)),
+        ZENITH_SKY_RAIN_COLOR * colorAverage(dark_cloud_color * dayBF(1.15, 0.55, 1.25)),
         rainStrength
     );
 #else
     dark_cloud_color = dayBlend(
-        ZENITH_SUNSET_COLOR * 0.75,
+        ZENITH_SUNSET_COLOR * dayBF(0.75, 0.75, 0.25),
         #if COLOR_SCHEME == 4
             ZENITH_DAY_COLOR * 0.5,
         #else
-            ZENITH_DAY_COLOR * 1.5,
+            saturate(ZENITH_DAY_COLOR * 1.5, 1.25),
         #endif
         ZENITH_NIGHT_COLOR * 0.5
     );
     
     vec3 cloud_color_aux = mix(
         dayBlend(
-            saturate(LIGHT_SUNSET_COLOR, 0.75) * dayBF(0.6, 0.5, 0.15),
-            LIGHT_DAY_COLOR * 0.9,
+            saturate(LIGHT_SUNSET_COLOR, dayBF(0.75, 0.75, 0.0)) * dayBF(0.6, 0.5, 0.15),
+            LIGHT_DAY_COLOR * 0.8,
             saturate(LIGHT_NIGHT_COLOR, 0.5) * 1.5
         ),
         ZENITH_SKY_RAIN_COLOR * saturate(dark_cloud_color, 0.2) * dayBF(1.0, 0.3, dayBF(-1.0, 1.0, 3.0)),
@@ -60,7 +60,7 @@ vec3 antiRed = dayBlend(vec3(1.0), vec3(1.0, 1.0, 1.5), vec3(1.0)); // Avoid red
 
     dark_cloud_color = mix(
         dark_cloud_color,
-        ZENITH_SKY_RAIN_COLOR * color_average(dark_cloud_color * dayBFlgcy(1.5, 0.4, 1.25)),
+        ZENITH_SKY_RAIN_COLOR * colorAverage(dark_cloud_color * dayBFlgcy(1.5, 0.4, 1.25)),
         rainStrength
     );
 #endif

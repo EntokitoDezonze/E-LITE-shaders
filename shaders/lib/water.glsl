@@ -22,7 +22,7 @@ vec3 fast_raymarch(vec3 direction, vec3 hit_coord, inout float infinite, float d
     bool hiddens = false;
 
     // Ray marching
-    for (int i = 0; i < RAYMARCH_STEPS + 1; i++) {
+    for (int i = 0; i < RAYMARCH_STEPS; i++) {
         if (search_flag) {
             dir_increment *= 0.5;
             current_march += dir_increment * sign(depth_diff);
@@ -165,7 +165,7 @@ vec3 normal_waves(vec3 pos) {
 }
 
 vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
-    vec2 pos = gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y);
+    vec2 pos = gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY);
 
     #if REFRACTION == 1
         pos = pos + refraction.xy * (0.075 / (1.0 + length(fragpos) * 0.4));
@@ -201,7 +201,7 @@ vec3 refraction(vec3 fragpos, vec3 color, vec3 refraction) {
         water_absortion = 0.0;
     }
 
-    return mix(texture2D(gaux1, pos.xy).rgb * mix(vec3(0.9, 1.0, 1.0), vec3(0.8, 1.3, 1.6) * 0.9, water_absortion), color, water_absortion);
+    return mix(texture2D(gaux1, pos.xy).rgb * mix(vec3(0.95, 1.0, 1.0), vec3(0.8, 1.1, 1.4) * 0.9, water_absortion), color, water_absortion);
 }
 
 vec3 get_normals(vec3 bump, vec3 fragpos) {
@@ -300,7 +300,7 @@ vec4 cristal_reflection_calc(vec3 fragpos, vec3 normal, inout float infinite, fl
         #else
             vec3 reflected_vector = reflect(normalize(fragpos), normal) * 76.0;
         #endif
-            vec3 pos = camera_to_screen(fragpos + reflected_vector);
+        vec3 pos = camera_to_screen(fragpos + reflected_vector);
     #else
         vec3 reflected_vector = reflect(normalize(fragpos), normal);
         vec3 pos = fast_raymarch(reflected_vector, fragpos, infinite, dither);

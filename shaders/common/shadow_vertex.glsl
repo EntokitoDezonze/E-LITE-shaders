@@ -1,8 +1,7 @@
 #include "/lib/config.glsl"
 
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 shadowProjection;
 uniform mat4 shadowProjectionInverse;
 uniform mat4 shadowModelView;
@@ -14,8 +13,7 @@ uniform mat4 shadowModelViewInverse;
     uniform mat4 gbufferModelView;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying float is_noshadow;
 varying vec3 worldPos;
@@ -33,7 +31,7 @@ varying float is_water;
 
 attribute vec4 mc_Entity;
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
@@ -52,9 +50,10 @@ void main() {
     #endif
 
     float dist = length(gl_Position.xy);
-    float distortFactor = dist * SHADOW_DIST + (1.0 - SHADOW_DIST);
+    float falloff = 1.0 / (1.0 + dist);
+    float distortFactor = mix(1.0, dist, SHADOW_DIST * falloff);
 
-    gl_Position.xy *= 1.0 / distortFactor;
+    gl_Position.xy /= distortFactor;
     gl_Position.z = gl_Position.z * 0.2;
 
     is_noshadow = 0.0;

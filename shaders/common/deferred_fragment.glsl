@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D colortex1;
 uniform ivec2 eyeBrightnessSmooth;
 uniform int isEyeInWater;
@@ -56,8 +54,8 @@ uniform float viewHeight;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
-uniform float pixel_size_x;
-uniform float pixel_size_y;
+uniform float pixelSizeX;
+uniform float pixelSizeY;
 uniform float frameTime;
 
 #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
@@ -65,12 +63,13 @@ uniform float frameTime;
     uniform float frameTimeCounter;
     uniform int frameCounter;
 #endif
-/* Ins / Outs */
 
+// == Varyings
 varying vec2 texcoord;
 varying vec3 up_vec;  // Flat
 varying vec3 direct_light_color;
 varying vec3 direct_light_strength;
+varying vec3 dirToView;
 
 #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY || AURORA > 0
     varying float umbral;
@@ -81,13 +80,13 @@ varying vec3 direct_light_strength;
 
 #if AO == 1
     varying float fog_density_coeff;
-    #ifdef DISTANT_HORIZONS
+    varying float biomeMul;
+    #ifdef NEAR_FOG
         varying float sunInfluence;
     #endif
 #endif
 
-/* Utility functions */ 
-
+// == Utility
 #include "/lib/depth.glsl"
 #include "/lib/luma.glsl"
 #include "/lib/basic_utils.glsl"
@@ -121,13 +120,9 @@ varying vec3 direct_light_strength;
     #endif
 #endif
 
-#define FRAGMENT
-//#include "/lib/downscale.glsl"
-
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
-    //if(fragment_cull()) discard;
     vec4 block_color = texture2DLod(colortex1, texcoord * RENDER_SCALE, 0);
     
     float d = texture2DLod(depthtex0, texcoord * RENDER_SCALE, 0).r;
@@ -181,7 +176,7 @@ void main() {
             vec4 world_pos = gbufferModelViewInverse * gbufferProjectionInverse * (vec4(texcoord, 1.0, 1.0) * 2.0 - 1.0);
             view_vector = normalize(world_pos.xyz);
 
-            vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
+            vec4 fragpos = gbufferProjectionInverse * (vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0) * 2.0 - 1.0);
             vec3 nfragpos = normalize(fragpos.xyz);
             float sun_influence = dot(nfragpos, sunPosition * 0.01);
             float normalized_sun_influence = smoothstep(-1.0, 1.0, sun_influence);
@@ -214,7 +209,7 @@ void main() {
             #endif
         #elif !defined NETHER && !defined THE_END
             if(linear_d > 0.9999 && isEyeInWater == 1) {  // Only sky and water
-                vec4 screen_pos = vec4(gl_FragCoord.xy * vec2(pixel_size_x, pixel_size_y), gl_FragCoord.z, 1.0);
+                vec4 screen_pos = vec4(gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), gl_FragCoord.z, 1.0);
                 vec4 fragposition = gbufferProjectionInverse * (screen_pos * 2.0 - 1.0);
 
                 vec4 world_pos = gbufferModelViewInverse * vec4(fragposition.xyz, 0.0);
@@ -234,7 +229,12 @@ void main() {
             }
         #endif
 
-        float ao_att = pow(clamp(linear_d * 1.6, 0.0, 1.0), mix(fog_density_coeff, 0.2, rainStrength));
+        float horizon_fog = mix(fog_density_coeff * biomeMul, fog_density_coeff * biomeMul * 0.2, rainStrength);
+        float ao_density = pow(clamp(linear_d, 0.0, 1.0), horizon_fog);
+        float cut = smoothstep(0.0, 0.75 - (1.0 / far), linear_d);
+        float sun_dist = smoothstep(0.0, 0.9, linear_d);
+        float ao_att = sunInfluence * sun_dist;
+        ao_att = max(max(ao_density, cut), ao_att);
 
         #ifdef DISTANT_HORIZONS
             if (d >= 1.0 && dh_d < 1) {
@@ -274,15 +274,7 @@ void main() {
 
     block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
     
-    /* DRAWBUFFERS:124 */
-
+    /* DRAWBUFFERS:14 */
     gl_FragData[0] = vec4(block_color.rgb, d);
-
-    #ifdef BLOOM
-        gl_FragData[1] = block_color;
-    #endif
-
-    #if SSR_TYPE > -1 || MATERIAL_GLOSS > 1
-       gl_FragData[2] = block_color;
-    #endif
+    gl_FragData[1] = block_color;
 }

@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,13 +9,13 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying float sky_luma_correction;
 varying vec3 cursed_sky;
 varying float current_wetness;
+
 uniform float viewWidth; 
 uniform float viewHeight; 
 uniform int frameCounter;
@@ -26,17 +25,16 @@ uniform float frameTime;
     #include "/src/taa_offset.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform float rainStrength;
 uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjectionInverse;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/luma.glsl"
 //#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     

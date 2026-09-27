@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,12 +9,10 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D gaux3;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying float exposure;
 

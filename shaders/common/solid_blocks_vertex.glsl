@@ -38,7 +38,7 @@ uniform vec3 moonPosition, sunPosition, skyColor;
     uniform float frameTimeCounter;
 #endif
 
-/* Ins / Outs */
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color;
@@ -74,19 +74,20 @@ varying vec4 data_pack_a; // x: fog_adj, y: direct_light_strength, z: block_type
 varying vec4 data_pack_b; // x: near_fog, y: visible_sky, z: sunInfluence, w: roughness
 varying vec2 emissiveData; // x: ore_type_f, y: emitter_type_f
 varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
-varying float vanilla_ao;
 
 #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
-    varying vec2 lmcoord_alt;
     varying vec4 glossParms; 
     varying float reflexIndex;
 #endif
 
-#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR
-    varying vec3 sub_position3, sub_position3_norm;
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING || defined EMISSIVE_MATERIAL
+    varying vec2 lmcoord_alt;
+#endif
+
+#if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING
+    varying vec3 sub_position3, sub_position3_norm, flat_normal;
     
 #endif
-varying vec3 flat_normal;
 
 #if defined SHADOW_CASTING && !defined NETHER
     vec3 shadow_pos;
@@ -143,7 +144,6 @@ void main() {
     float exposure_v = texture2D(gaux3, vec2(0.5)).r;
     vec2 eye_bright_smooth = vec2(eyeBrightnessSmooth);
     int mc_ex = int(mc_Entity.x); 
-    vanilla_ao = gl_Color.a;
 
     #include "/src/basiccoords_vertex.glsl"
     #include "/src/position_vertex.glsl"
@@ -189,6 +189,9 @@ void main() {
         if(blockEntityId == 10400) block_type_v = 2.0;
     #endif
 
+    if(mc_ex == ENTITY_WHITE_LEAVES) block_type_v = 3.0;
+    if(mc_ex == ENTITY_LEAVES) block_type_v = 4.0;
+
     float ore_v = 0.0;
     float emitter_v = 0.0;
     #if defined EMISSIVE_ORE
@@ -230,9 +233,12 @@ void main() {
         } else if (mc_ex >= 10018 && mc_ex <= 10019) { // Foliage
             l_fact = (mc_ex == 10018) ? 20.0 : 2.5; l_pow = 1.5; g_pow = 0.5; g_fact = 1.0;
         }
-        lmcoord_alt = lmcoord;
         glossParms = vec4(g_fact, g_pow, l_fact, l_pow);
         reflexIndex = reflex_v;
+    #endif
+
+    #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR || defined SHADOW_CASTING || defined EMISSIVE_MATERIAL
+        lmcoord_alt = lmcoord;
     #endif
 
     #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1 || defined LabPBR
@@ -253,5 +259,5 @@ void main() {
     data_pack_a = vec4(fog_adj, direct_light_strength, block_type_v, exposure_v);
     data_pack_b = vec4(near_fog, visible_sky, sunInfluence, roughness_v);
     emissiveData = vec2(ore_v, emitter_v);
-    foliageData = vec3(0.0, 0.0, isGrass);
+    foliageData = vec3(isFoliage, 0.0, isGrass);
 }

@@ -1,21 +1,18 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform float viewHeight;
 uniform float viewWidth;
 uniform int frameCounter;
 uniform float frameTime;
-/* Ins / Outs */
-
+// == Varyings
 varying vec4 tint_color;
 
 #ifdef RGB_LINE
     varying vec3 pos;
 #endif
 
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
 #endif
@@ -23,7 +20,7 @@ varying vec4 tint_color;
 #include "/lib/mu_ftransform.glsl"
 //#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     tint_color = gl_Color;

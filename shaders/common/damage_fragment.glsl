@@ -1,14 +1,12 @@
 #include "/lib/config.glsl"
 
-/* Uniforms */
-
+// == Uniforms
 uniform sampler2D tex;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     vec4 block_color = texture2D(tex, texcoord);

@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #if defined THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform ivec2 eyeBrightnessSmooth;
 uniform mat4 dhProjection;
 uniform mat4 gbufferModelView;
@@ -38,8 +36,7 @@ uniform float frameTime;
     uniform float endFlashIntensity;
 #endif
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec2 texcoord;
 varying vec4 tint_color;
 varying vec3 direct_light_color;
@@ -64,8 +61,7 @@ varying vec3 low_sky_color;
 varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
-/* Utility functions */
-
+// == Utility
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
 #endif
@@ -77,7 +73,7 @@ varying vec3 pure_low_sky_color;
 #include "/lib/biome_sky.glsl"
 //#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     vec2 eye_bright_smooth = vec2(eyeBrightnessSmooth);

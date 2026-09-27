@@ -1,7 +1,6 @@
 #include "/lib/config.glsl"
 
-/* Color utils */
-
+// == Color utils
 #ifdef THE_END
     #include "/lib/color_utils_end.glsl"
 #elif defined NETHER
@@ -10,8 +9,7 @@
     #include "/lib/color_utils.glsl"
 #endif
 
-/* Uniforms */
-
+// == Uniforms
 uniform mat4 gbufferModelView;
 uniform float rainStrength;
 uniform float wetness;
@@ -24,8 +22,7 @@ uniform float frameTime;
 varying vec2 texcoord;
 uniform vec3 skyColor;
 
-/* Ins / Outs */
-
+// == Varyings
 varying vec3 up_vec;
 varying vec3 hi_sky_color;
 varying vec3 mid_sky_color;
@@ -35,12 +32,11 @@ varying vec3 pure_hi_sky_color;
 varying vec3 pure_mid_sky_color;
 varying vec3 pure_low_sky_color;
 
-/* Utility functions */
-
+// == Utility
 #include "/lib/luma.glsl"
 //#include "/lib/downscale.glsl"
 
-// MAIN FUNCTION ------------------
+// == Main function
 
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

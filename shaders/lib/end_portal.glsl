@@ -34,38 +34,25 @@ vec3 end_portal() {
     vec3 current_layer_color = mix(C0, C1, sin(t_mix) * 0.5 + 0.5);
     current_layer_color = mix(current_layer_color, C2, cos(t_mix * 0.7) * 0.5 + 0.5);
 
-    vec2 flow_offset = flow_direction * time * flow_speed;
-    vec2 base_uv = world_pos_current.xz + cameraPosition.xz;
-    base_uv += world_pos_current.y;
-
-    base_uv += flow_offset;
-    base_uv += cameraPosition.y * 1.96;
+    vec2 flow_offset = flow_direction * (mod(frameTimeCounter, 1000.0) * flow_speed);
+    vec2 base_uv = world_pos_current.xz + cameraPosition.xz + world_pos_current.y + flow_offset + (cameraPosition.y * 1.96);
 
     for (int i = 0; i < max_layers; i++) {
         float layer_factor = float(i) / float(max_layers);
         float inverse_factor = 1.0 - layer_factor;
         
-        float scale_factor = noise_base_scale * (1.0 + layer_factor * layer_scale_factor);
-        float flow_scale = inverse_factor * 10.0;
-        vec2 uv_layer = base_uv * scale_factor;
-        uv_layer -= cameraPosition.xz * layer_factor * 50;
-        
-        uv_layer += flow_offset * flow_scale;
+        vec2 uv_layer = base_uv * (noise_base_scale * (1.0 + layer_factor * layer_scale_factor));
+        uv_layer -= (cameraPosition.xz * layer_factor * 50.0);
+        uv_layer += (flow_offset * (inverse_factor * 10.0));
 
         float noise_val = noise2D_grid(uv_layer);
         float base_intensity = fastpow(noise_val, 5.0);
         float intensity = smoothstep(clip_min, clip_max, base_intensity);
 
-        float layer_fade = pow(inverse_factor, depth_falloff_speed);
+        float layer_fade = fastpow(inverse_factor, depth_falloff_speed);
         final_color += current_layer_color * intensity * layer_fade * 3.0;
 
         if (layer_fade < 0.01) break;
     }
-
-    float depth_val = gl_FragCoord.z;
-    float overall_depth_fade = 1.0 / (1.0 + depth_val * depth_val * 0.0001);
-    final_color *= overall_depth_fade;
-    final_color = final_color;
-
     return final_color;
 }

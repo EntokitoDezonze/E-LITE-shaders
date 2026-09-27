@@ -6,7 +6,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 
 vec3 motion_blur(vec3 color, float the_depth, vec2 blur_velocity, sampler2D image) {
     if (the_depth > 0.75 && the_depth < 1.0) {  // No hand, no clouds
-        vec2 double_pixels = 2.0 * vec2(pixel_size_x, pixel_size_y);
+        vec2 double_pixels = 2.0 * vec2(pixelSizeX, pixelSizeY);
         vec3 m_blur = vec3(0.0);
 
         blur_velocity =

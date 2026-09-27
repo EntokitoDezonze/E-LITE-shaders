@@ -10,8 +10,10 @@ vec3 get_shadow_pos(vec3 shadow_pos) {
     shadow_pos = mat3(shadowModelView) * shadow_pos + shadowModelView[3].xyz;
     shadow_pos = diagonal3(shadowProjection) * shadow_pos + shadowProjection[3].xyz;
 
-    float distb = length(shadow_pos.xy);
-    float distortion = distb * SHADOW_DIST + (1.0 - SHADOW_DIST);
+    float dist = length(shadow_pos.xy);
+
+    float falloff = 1.0 / (1.0 + dist);
+    float distortion = mix(1.0, dist, SHADOW_DIST * falloff);
 
     shadow_pos.xy /= distortion;
     shadow_pos.z *= 0.2;
