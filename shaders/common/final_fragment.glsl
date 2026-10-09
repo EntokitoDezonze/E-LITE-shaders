@@ -28,11 +28,7 @@ const int colortex0Format = R8;
         /*
         const int colortex1Format = RGBA8;
         */
-        #elif COLOR_BITS == 10
-        /*
-        const int colortex1Format = RGB10_A2;
-        */
-        #elif COLOR_BITS == 16
+        #else
         /*
         const int colortex1Format = RGBA16;
         */

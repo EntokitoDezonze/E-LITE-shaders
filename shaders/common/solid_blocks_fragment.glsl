@@ -176,6 +176,14 @@ void main() {
             reflex_index2 = 1.0 * endLuma; roughness = 5.0 * endLuma;}
             if (block_type == 2){reflex_index2 = 0.5; roughness = 5.0;}
         #endif
+    #endif
+
+    // NEW GLINT METHOD IN IRIS (MC >= 26.3) (Taken from MakeUp)
+    #ifdef IRIS_INLINE_GLINT
+        if (mc_hasGlint()) {
+            vec3 glint = mc_sampleGlint();
+            block_color.rgb += glint;
+        }
     #endif  
 
     // === Shadows calc

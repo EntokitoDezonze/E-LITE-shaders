@@ -253,7 +253,7 @@ void main() {
                 mix(block_color.rgb, vol_light_color * vol_light, vol_intensity * (vol_light * 0.5 + 0.5) * (1.0 - rainStrength));
         #endif
     #elif VOL_LIGHT != 1
-        block_colorvl = block_color.rgb;
+        //block_colorvl = block_color.rgb;
     #endif
 
     // Dentro de la nieve

@@ -4,7 +4,6 @@
 uniform sampler2D gaux3;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
-uniform float frameTime;
 
 // == Varyings
 varying vec2 texcoord;

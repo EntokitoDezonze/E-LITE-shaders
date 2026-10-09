@@ -1,9 +1,12 @@
-  ___    _    ___ _____ ___   ___   _   ___ 
- | _____| |  |_ _|_   _| __| | __| / | |_  )
- | _|___| |__ | |  | | | _|  |__ \_| |_ / / 
- |___|  |____|___| |_| |___| |___(_|_(_/___|
+  ___    _    ___ _____ ___                    
+ | _____| |  |_ _|_   _| __|                   
+ | _|___| |__ | |  | | | _|                    
+ |____  |____|___|_|_| |___|     ___   _   ____
+  __| |_  __ _ __| |___ _ _ ___ | __| / | |__ /
+ (_-| ' \/ _` / _` / -_| '_(_-< |__ \_| |_ |_ \
+ /__|_||_\__,_\__,_\___|_| /__/ |___(_|_(_|___/
                                             
-# E-LITE shaders version 5.1.2
+# E-LITE shaders version 5.1.3
 
 MakeUp - Ultrafast original creator: Javier Garduño
 Links:
@@ -20,34 +23,20 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- This version includes several bug fixes and a few visual tweaks (such as a new aurora borealis).
+- Small patch to fix bugs and some visual tweaks.
 
 # General changes:
-- Ice now has a "relief" effect on reflections.
-- Small optimizations made on code.
-- DH chunks texture now has bigger pixels.
-- Cherry leaves are now pinker.
-- Leaves are slightly brighter in general.
-- Changes in colors to reduce excessive contrast and saturation.
-- Shaded upside block faces are now more blue.
-- Reworked aurora borealis.
-- New language: Russian, by ShallIMove.
+- Glass now reacts less to blocklight color.
+- Added support for 26.3 leaves.
+- Reduced noise while using Depth of Field, small performance cost.
 
 # Bugfixes:
-- Fixed POM shadows having broken transitions.
-- Fixed failure when using LabPBR on Nether.
-- Fixed sky being dark when entering caves above sea level.
-- Fixed Depth of Field not working properly.
-- Fixed some visual issues with Block reflection. (SSR and MAX)
-- Fixed Subsurface scattering (leaves transparency) not working.
-- Fixed POM shadow appearing at shaded areas.
-- Fixed a bug that made daytime look wrong at multiplayer servers at 26.x above.
-- Fixed some issues with translucency.
-- Fixed too bright entities on fire.
-- Fixed compilation failure on Vanilla color scheme.
+- Fixed some vanilla clouds issues reintroduced on 5.1.2.
+- Fixed enchantment glint not appearing at 26.3 (Inherited from MakeUp.)
+- Fixed failure when disabling near fog.
 
-Version code: ELT512
+Version code: ELT513
 
-Based on MakeUp Ultrafast 9.5b
+Based on MakeUp Ultrafast 9.5g
 
 Olá de Entokito :)
