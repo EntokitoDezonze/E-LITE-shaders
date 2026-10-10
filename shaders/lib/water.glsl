@@ -346,7 +346,7 @@ vec4 cristal_shader(
         reflection.a
     );
 
-    color.rgb = mix(color.rgb, sky_reflection, fresnel);
+    //color.rgb = mix(color.rgb, sky_reflection, fresnel);
     color.rgb = mix(color.rgb, reflection.rgb, fresnel);
 
     color.a = mix(color.a, 1.0, fresnel);

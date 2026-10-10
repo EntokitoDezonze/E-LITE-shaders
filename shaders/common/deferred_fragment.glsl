@@ -233,7 +233,11 @@ void main() {
         float ao_density = pow(clamp(linear_d, 0.0, 1.0), horizon_fog);
         float cut = smoothstep(0.0, 0.75 - (1.0 / far), linear_d);
         float sun_dist = smoothstep(0.0, 0.9, linear_d);
-        float ao_att = sunInfluence * sun_dist;
+        #ifdef NEAR_FOG
+            float ao_att = sunInfluence * sun_dist;
+        #else
+            float ao_att = sun_dist;
+        #endif
         ao_att = max(max(ao_density, cut), ao_att);
 
         #ifdef DISTANT_HORIZONS

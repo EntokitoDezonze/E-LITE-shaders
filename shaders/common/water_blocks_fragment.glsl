@@ -300,9 +300,9 @@ void main() {
             float shadow_c = abs((light_mix * 2.0) - 1.0);
         #endif
 
-        real_light = omni_light +
-            (dirLight.a * shadow_c * dirLight.rgb) * (1.0 - rainStrength * 0.75) +
-            candle_color;
+        real_light = gray(omni_light) +
+            (dirLight.a * shadow_c * saturate(dirLight.rgb, 0.5)) * (1.0 - rainStrength * 0.75) +
+            gray(candle_color);
 
         block_color.rgb *= mix(real_light, vec3(1.0), nightVision * .125);
 
