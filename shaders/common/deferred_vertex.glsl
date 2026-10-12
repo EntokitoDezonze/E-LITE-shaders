@@ -81,7 +81,7 @@ void main() {
 
     #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY
         float minVal = 0.95;
-        float maxVal = 1.35;
+        float maxVal = 1.3;
         float oscillatorSpeed = WIND_FORCE;
         dynamicValue = oscillation(TotalWorldTime * 251.32741228718345, minVal, maxVal, oscillatorSpeed); // ~18000 ticks cycle
         #include "/lib/volumetric_clouds_vertex.glsl"

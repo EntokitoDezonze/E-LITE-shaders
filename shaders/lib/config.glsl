@@ -261,7 +261,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
   #define PIXEL_SIZE ((viewHeight + viewWidth) / 750) // <- ALWAYS WILL HAVE PRORPOTIONAL PIXEL SIZE
 #endif
 
-// Information Utils E-LITE shaders ELT513
+// Information Utils E-LITE shaders ELT514
 #define HOVER 0 // [0]
 #define VERSION 0 // [0]
 #define PROFILES 0 // [0]
@@ -390,8 +390,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
     #define CLOUD_PLANE_CENTER 305.0
     #define CLOUD_PLANE 219.0
   #else
-    #define CLOUD_PLANE_SUP 780.0
-    #define CLOUD_PLANE_CENTER 510.0
+    #define CLOUD_PLANE_SUP 880.0
+    #define CLOUD_PLANE_CENTER 610.0
     #define CLOUD_PLANE 420.0
   #endif
 #endif

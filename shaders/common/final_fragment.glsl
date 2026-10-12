@@ -214,7 +214,7 @@ void main() {
     #elif COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
         float exposure_final = exposure * dayBF(0.8, 1.0, 1.0);
     #else
-        float start = 0.75;
+        float start = 0.65;
         float end   = 2.0;
 
         float releaseStart = 2.25;
@@ -223,12 +223,14 @@ void main() {
         float tCompress = smoothstep(start, end, exposure);
         float tRelease = smoothstep(releaseStart, releaseEnd, exposure);
 
-        float minMul = 0.75;
+        float minMul = dayBF(0.9, 0.65, 0.9);
 
         float t = tCompress * (1.0 - tRelease);
         float dynamicMul = mix(1.0, minMul, t);
 
         float exposure_final = exposure * dynamicMul;
+        /* this code avoids brightness "boom" while in interiors.
+        */
     #endif
 
     block_color *= vec3(RED, GREEN, BLUE) * vec3(exposure_final * EXPOSURE) * BRIGHTNESS; // Color balance, Exposure, Brightness. 
@@ -250,9 +252,9 @@ void main() {
         #if defined VOXY || defined DISTANT_HORIZONS
             float lifeSpan = 3.75;
         #else
-            float lifeSpan = 3.25;
+            float lifeSpan = 999999999;
         #endif
-        float textOpacity = 1.0 - smoothstep(2.0, lifeSpan, frameTimeCounter);
+        float textOpacity = 1.0;
 
         float mainScale = 4.5 * (viewHeight / 1080);
         int mainTotalWidth = 80; // 16 chars * 6px

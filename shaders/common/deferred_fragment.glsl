@@ -154,7 +154,7 @@ void main() {
 
     #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
         #if AA_TYPE > 0 && !defined PS1_LIKE
-            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
+            float dither = shifted_eclectic_dither17(gl_FragCoord.xy);
         #else
             float dither = semiblue(gl_FragCoord.xy);
         #endif
