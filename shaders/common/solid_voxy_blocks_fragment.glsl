@@ -151,61 +151,10 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec4 worldPos = vxViewProjInv * clipPos;
     worldPos /= worldPos.w;
 
-    // 3. La distancia desde la cámara (equivalente a gl_FogFragCoord)
-    float fogFragCoord = length(worldPos.xyz);
+    vec4 fragposition = vxProjInv * clipPos;
+    fragposition /= fragposition.w;
 
-    vec2 eyeBrightSmoothFloat = vec2(eyeBrightnessSmooth);
-
-    vec4 viewPosition = vxProjInv * clipPos;
-    viewPosition /= viewPosition.w;
-    vec3 viewPositionNormalized = normalize(viewPosition.xyz);
-
-    float invFogAdjust = 1.0 / FOG_ADJUST;
-    float nearFogVoxy = 0.0;
-
-    #if !defined THE_END && !defined NETHER
-        float rainMod = mix(1.0, dayBlendFloatVoxyN(0.525, 0.525, 0.65, dayMixerV, nightMixerV, dayMomentV), rainStrength);
-        float fog_density_coeff = dayBlendFloatVoxy(
-            FOG_SUNSET * rainMod,
-            FOG_DAY,
-            FOG_NIGHT * rainMod,
-            dayMixerV,
-            nightMixerV,
-            dayMomentV
-        ) * FOG_ADJUST;
-
-        #ifdef FOG_ACTIVE
-            vec3 dirToSun = sunPosition * 0.01;
-            float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, viewPositionNormalized));
-            float sunInfluenceV = sunAngle * sunAngle * sunAngle;
-        #endif
-
-        #if defined NEAR_FOG && defined FOG_ACTIVE
-            float sunDayFactor = dayBlendFloatVoxyN(1.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV);
-            float dynamic_density = 0.002 + (0.001 * sunInfluenceV * sunDayFactor);
-
-            float dist_adj = max(0.0, fogFragCoord - (float(vxRenderDistance * 16) / mix(24.0, 240.0, rainStrength)));
-            nearFogVoxy = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
-        #endif
-
-        float horizonFogVoxy = pow(
-            clamp(fogFragCoord / float(vxRenderDistance * 16) / 32, 0.0, 1.0),
-            mix(fog_density_coeff, fog_density_coeff * 0.2, rainStrength)
-        );
-
-        float frogAdjust = max(nearFogVoxy, horizonFogVoxy);
-    #else
-        // --- END / NETHER ---
-        #if defined NETHER
-            float sight = float(vxRenderDistance * 16);
-        #else
-            float sight = float(vxRenderDistance * 16) * 0.75;
-        #endif
-
-        float horizon_fog = pow(clamp(fogFragCoord / sight, 0.0, 1.0), 0.75);
-        float frogAdjust = pow(horizon_fog, FOG_ADJUST * 0.25);
-    #endif
-
+    #include "/src/fog_voxy.glsl"
 
     #if !defined NETHER
         #ifdef SHADOW_CASTING

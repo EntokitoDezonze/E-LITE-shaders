@@ -158,7 +158,7 @@ void main() {
 
     #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && !defined NETHER)
         #if AA_TYPE > 0
-            float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
+            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
         #else
             float dither = r_dither(gl_FragCoord.xy);
         #endif

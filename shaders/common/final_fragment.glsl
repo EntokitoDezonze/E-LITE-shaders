@@ -252,9 +252,9 @@ void main() {
         #if defined VOXY || defined DISTANT_HORIZONS
             float lifeSpan = 3.75;
         #else
-            float lifeSpan = 999999999;
+            float lifeSpan = 3.25;
         #endif
-        float textOpacity = 1.0;
+        float textOpacity = 1.0 - smoothstep(2.0, lifeSpan, frameTimeCounter);
 
         float mainScale = 4.5 * (viewHeight / 1080);
         int mainTotalWidth = 80; // 16 chars * 6px

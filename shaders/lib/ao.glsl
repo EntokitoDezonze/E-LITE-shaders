@@ -55,8 +55,11 @@ float dbao(float dither) {
 
         float inv_steps = 1 / AOSTEPS;
         
-        vec2 scale = vec2(viewHeight / viewWidth, 1.0) * (1.0 / (d_lin * dhFarPlane * 0.5));
-        vec2 scale_factor = scale * inv_steps * AO_STRENGTH * 2.0;
+        float proj_scale = dhProjection[1][1] / 1.428;
+
+        vec2 scale = vec2(viewHeight / viewWidth, 1.0)
+                * (proj_scale / (d_lin * dhFarPlane * 0.5));
+        vec2 scale_factor = scale * inv_steps * AO_STRENGTH * 0.333;
 
         for (int i = 0; i < AOSTEPS; i++) {
             float dither_x = (float(i) + dither);
@@ -73,7 +76,7 @@ float dbao(float dither) {
         }
         
         ao /= AOSTEPS;
-        ao = clamp(ao, 0.0, 1.0);
+        ao = clamp(ao, 0.5, 1.0);
 
         return sqrt(ao * clamp(AO_STRENGTH, 0.0, 1.3)) + (1.0 - clamp(AO_STRENGTH, 0.0, 1.3));
     }

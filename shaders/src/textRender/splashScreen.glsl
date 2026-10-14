@@ -4,11 +4,6 @@ if (textOpacity > 0.0 && hideGUI == false) {
             text.fgCol = vec4(vec3(2.0), textOpacity);
             text.bgCol = vec4(0.0);
             printString((_E, _dash, _L, _I, _T, _E, _space, _s, _h, _a, _d, _e, _r, _s));
-            printLine();
-            printLine();
-            printFloat(exposure_final);
-            printLine();
-            printFloat(exposure);
         endText(block_color.rgb);
 
         // PROFILE SPLASH

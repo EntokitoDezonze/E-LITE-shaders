@@ -28,9 +28,13 @@ Changelog:
 # General changes:
 - Remade cirrus clouds, now they look twisted and more natural.
 - Even reduced artifacts on DoF and Bloom.
+- Remade near fog, now it looks more smooth.
+- Complete rework on how fog colors are calculated.
+
 
 # Bugfixes:
 - Fixed some black pixels appearing randomly (mainly on plants and seagrass.)
+- Fixed some issues with AO in Distant Horizons chuncks.
 
 Version code: ELT514
 

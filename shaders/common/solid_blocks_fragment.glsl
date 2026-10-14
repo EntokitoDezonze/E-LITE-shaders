@@ -325,9 +325,9 @@ void main() {
         vec3 material_f0 = vec3(1.0);
     #endif
 
-    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1){
-        block_color.rgb *= vec3(1.0, 0.8, 0.95) * 1.1;
-        block_color.rgb = saturate(block_color.rgb, mix(0.75, 1.0, luma(shadow_c)));
+    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1 && block_color.r > 0.4){
+        block_color.rgb = saturate(block_color.rgb, 1.8);
+        block_color.rgb = saturate(block_color.rgb, mix(0.5, 1.0, luma(shadow_c)));
         }
     if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
 
@@ -369,9 +369,6 @@ void main() {
         }
     #endif
 
-    #ifdef DISTANT_HORIZONS
-        block_color.rgb *= mix(1.0, 0.5, pow(fog_adj, 2.0));
-    #endif
     block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
 
     #include "/src/finalcolor.glsl"

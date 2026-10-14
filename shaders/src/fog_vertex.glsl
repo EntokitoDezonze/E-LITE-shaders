@@ -29,20 +29,29 @@ float invFogAdjust = 1.0 / FOG_ADJUST;
         float sunDayFactor = max(dayBF(dayBF(1.0, 0.1, 0.0), 0.1, dayBF(-10.0, 0.1, 0.0)), 0.0);
 
         #if defined DISTANT_HORIZONS || defined VOXY
-            float dynamic_density = 0.002 + (0.001 * sunInfluence * sunDayFactor);
+            float dynamic_density = 0.003 + (0.001 * sunInfluence * sunDayFactor);
         #else
-            float dynamic_density = 0.004 + (0.005 * sunInfluence * sunDayFactor);
+            float dynamic_density = 0.004 + (0.004 * sunInfluence * sunDayFactor);
         #endif
 
         #if defined VOXY
-            float dist_adj = max(0.0, gl_FogFragCoord - (float(vxRenderDistance * 16) / mix(24.0, 240.0, rainStrength)));
-            near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
+            float dist_adj = max(0.0, gl_FogFragCoord);
+            float x = dist_adj * dynamic_density * mix(1.0, 3.5, rainStrength) * invFogAdjust;
+            float fogLinear = 1.0 - exp(-x);
+            float fogSquared = 1.0 - exp(-x * x);
+            near_fog = clamp(mix(fogLinear, fogSquared, -0.5), 0.0, 1.0);
         #elif defined DISTANT_HORIZONS
-            float dist_adj = (gl_FogFragCoord - (dhRenderDistance / mix(30.0, 240.0, rainStrength)));
-            near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
+            float dist_adj = max(0.0, gl_FogFragCoord);
+            float x = dist_adj * dynamic_density * mix(1.0, 3.5, rainStrength) * invFogAdjust;
+            float fogLinear = 1.0 - exp(-x);
+            float fogSquared = 1.0 - exp(-x * x);
+            near_fog = clamp(mix(fogLinear, fogSquared, -0.4), 0.0, 1.0);
         #else
-            float dist_adj = (gl_FogFragCoord - (far / mix(5.0, 20.0, rainStrength)));
-            near_fog = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
+            float dist_adj = max(0.0, gl_FogFragCoord);
+            float x = dist_adj * dynamic_density * mix(1.0, 3.5, rainStrength) * invFogAdjust;
+            float fogLinear = 1.0 - exp(-x);
+            float fogSquared = 1.0 - exp(-x * x);
+            near_fog = clamp(mix(fogLinear, fogSquared, -0.4), 0.0, 1.0);
         #endif
         float horizon_exp = mix(fog_density_coeff * biome_fog, fog_density_coeff * biome_fog * 0.2, rainStrength);
         float horizon_fog = pow(clamp(dist_ratio * fog_intensity_coeff, 0.0, 1.0), horizon_exp);

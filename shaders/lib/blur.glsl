@@ -23,9 +23,9 @@ vec3 noised_blur(vec4 color_depth, sampler2D image, vec2 coords, float force, fl
         float dither_angle = dither * 6.2831853;
         const int samples = 4;
 
-        // LOD único por pixel, baseado no raio do blur em pixels
+        // Fixed lod to fix jittering on blur
         float r_px = blur_radius * viewHeight;
-        float lod = max(log2(max(r_px, 1.0)) - 1.0, 0.0);   // ajuste o -1.0 no olho
+        float lod = max(log2(max(r_px, 1.0)) - 1.0, 0.0);
 
         for (int i = 0; i < samples; i++) {
             float fi = float(i);

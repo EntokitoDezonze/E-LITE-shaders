@@ -1,4 +1,3 @@
-
 #if MC_VERSION < 12106
     block_color.rgb =
         mix(

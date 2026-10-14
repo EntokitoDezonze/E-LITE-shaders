@@ -1,7 +1,24 @@
+#ifdef FOG_ACTIVE
+    float fogmix = max(fog_adj * fog_adj * fog_adj - 0.1, 0.0);
+#endif
+
 #if defined DH_WATER
     #ifdef FOG_ACTIVE
         if(isEyeInWater == 0) {
-            vec3 fog_texture = texture2DLod(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), 0.0).rgb;
+            vec3 fogColorMod = dayBlend(vec3(0.1529, 0.1725, 0.2), vec3(0.2, 0.46, 0.675), vec3(0.0275, 0.0392, 0.0549));
+
+            #if FOG_TINT == 0
+                fogColorMod = saturate(fogColorMod, 0.5);
+            #elif FOG_TINT == 1
+                fogColorMod = saturate(fogColorMod, 1.0);
+            #elif FOG_TINT == 2
+                fogColorMod = saturate(fogColorMod, -0.5);
+            #endif
+
+            fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));
+            fogColorMod = mix(fogColorMod, saturate(fogColorMod * 0.5, 0.66), rainStrength);
+            
+            vec3 fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);
             block_color.rgb = mix(block_color.rgb, fog_texture, fog_adj);
         }
     #endif
@@ -19,17 +36,20 @@
     #endif
 #else
     #ifdef FOG_ACTIVE
+        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.2, 0.46, 0.675), vec3(0.0235, 0.0314, 0.0431));
+
         #if FOG_TINT == 0
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 0.5), vec3(1.0), fog_adj);
+            fogColorMod = saturate(fogColorMod, 0.5);
         #elif FOG_TINT == 1
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 1.0), vec3(1.0), fog_adj);
+            fogColorMod = saturate(fogColorMod, 1.0);
         #elif FOG_TINT == 2
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), -0.5), vec3(1.0), fog_adj);
+            fogColorMod = saturate(fogColorMod, -0.5);
         #endif
 
         fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));
+        fogColorMod = mix(fogColorMod, saturate(fogColorMod * 0.5, 0.66), rainStrength);
         
-        vec3 fog_texture = texture2DLod(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), 0.0).rgb * fogColorMod;
+        vec3 fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);
         block_color.rgb = mix(block_color.rgb, fog_texture, fog_adj);
     #endif
 #endif

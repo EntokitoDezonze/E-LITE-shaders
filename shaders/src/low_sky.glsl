@@ -11,7 +11,7 @@
 
         low_sky_color_rgb = mix(
             low_sky_color_rgb,
-            HORIZON_SKY_RAIN_COLOR * luma(low_sky_color_rgb) * dayBF(0.5, 0.4, 0.75),
+            HORIZON_SKY_RAIN_COLOR * luma(low_sky_color_rgb) * dayBF(0.5, 0.75, 0.75),
             rainStrength
         );
 

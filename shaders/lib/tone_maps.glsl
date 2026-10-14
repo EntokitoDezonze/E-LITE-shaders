@@ -82,6 +82,7 @@ vec3 uchimura(vec3 x, float P, float a, float m, float l, float c, float b) {
     return T * w0 + L * w1 + S * w2;
 }
 
+//edited
 vec3 uchimura_tm(vec3 color) {
     float P = 1.0;
     float a = 1.0;

@@ -56,7 +56,7 @@ dither = (dither - 0.5) * 0.03125;
     sky_color = mix(current_low_sky_color, temp_sky_color, t2);
     
     sky_color += dither * (3.0 * luma(sky_color));
-    vec3 sky_ground_color = current_low_sky_color * saturate(vec3(1.0, 0.4, 0.2), dayBF(1.0, 0.0, 1.0));
+    vec3 sky_ground_color = current_low_sky_color * saturate(vec3(1.0, 0.4, 0.2), mix(dayBF(1.0, 0.0, 1.0), 0.0, rainStrength));
     const float ground_t_start = 0.0;
     const float ground_t_end = -0.2;
 

@@ -19,14 +19,14 @@ layout(location = 0) out vec4 gbufferData0;
 
 /*
 struct VoxyFragmentParameters {
-	vec4 sampledColour;
-	vec2 tile;
-	vec2 uv;
-	uint face;
-	uint modelId;
-	vec2 lightMap;
-	vec4 tinting;
-	uint customId;
+    vec4 sampledColour;
+    vec2 tile;
+    vec2 uv;
+    uint face;
+    uint modelId;
+    vec2 lightMap;
+    vec4 tinting;
+    uint customId;
 };
 */
 
@@ -133,57 +133,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec4 worldPos = vxModelViewInv * viewSpacePos4D;
     vec4 worldposition = worldPos + vec4(cameraPosition, 0.0);
 
-    // 3. La distancia desde la cámara (equivalente a gl_FogFragCoord)
-    float fogFragCoord = length(worldPos.xyz);
-
-    vec2 eyeBrightSmoothFloat = vec2(eyeBrightnessSmooth);
-    vec3 viewPositionNormalized = normalize(fragposition);
-
-    float invFogAdjust = 1.0 / FOG_ADJUST;
-    float nearFogVoxy = 0.0;
-
-    #if !defined THE_END && !defined NETHER
-        float rainMod = mix(1.0, 1.5, rainStrength);
-        float fog_density_coeff = dayBlendFloatVoxy(
-            FOG_SUNSET,
-            FOG_DAY,
-            FOG_NIGHT * rainMod,
-            dayMixerV,
-            nightMixerV,
-            dayMomentV
-        ) * FOG_ADJUST;
-
-        #ifdef FOG_ACTIVE
-            vec3 dirToSun = sunPosition * 0.01;
-            float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, viewPositionNormalized));
-            float sunInfluenceV = sunAngle * sunAngle * sunAngle;
-        #endif
-
-        #if defined NEAR_FOG && defined FOG_ACTIVE
-            float sunDayFactor = dayBlendFloatVoxyN(1.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV);
-            float dynamic_density = 0.002 + (0.001 * sunInfluenceV * sunDayFactor);
-
-            float dist_adj = max(0.0, fogFragCoord - (float(vxRenderDistance * 16) / mix(24.0, 240.0, rainStrength)));
-            nearFogVoxy = clamp(1.0 - exp(-dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust), 0.0, 1.0);
-        #endif
-
-        float horizonFogVoxy = pow(
-            clamp(fogFragCoord / float(vxRenderDistance * 16), 0.0, 1.0),
-            mix(fog_density_coeff, fog_density_coeff * 0.2, rainStrength)
-        );
-
-        float frogAdjust = max(nearFogVoxy, horizonFogVoxy);
-    #else
-        // --- END / NETHER ---
-        #if defined NETHER
-            float sight = float(vxRenderDistance * 16);
-        #else
-            float sight = float(vxRenderDistance * 16) * 0.75;
-        #endif
-
-        float horizon_fog = pow(clamp(fogFragCoord / sight, 0.0, 1.0), 0.75);
-        float frogAdjust = max(nearFogVoxy, pow(horizon_fog, FOG_ADJUST * 0.25));
-    #endif
+    #include "/src/fog_voxy.glsl"
 
     #include "/src/current_sky_color_voxy.glsl"
     // ---- Original Fragment Logic
@@ -210,9 +160,12 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec3 reflectWaterVector = reflect(fragposition, surfaceNormal);
     vec3 normalizedReflectWaterVector = normalize(reflectWaterVector);
 
+    vec3 hi_sky_color = zenithSkyColor;
     vec3 skyColorReflect;
+    float lumaModulator = dayBlendFloatVoxyN(1.0, 1.0, dayBlendFloatVoxyN(0.6, 1.0, 1.0, dayMixerV, nightMixerV, dayMomentV), dayMixerV, nightMixerV, dayMomentV);
+
     if(isEyeInWater == 0 || isEyeInWater == 2) {
-        skyColorReflect = mix(current_low_sky_color, current_hi_sky_color, sqrt(clamp(dot(normalizedReflectWaterVector, upVector), 0.0001, 1.0)));
+        skyColorReflect = mix(current_low_sky_color * lumaModulator, zenithSkyColor * lumaModulator * lumaModulator, sqrt(clamp(dot(normalizedReflectWaterVector, upVector), 0.0001, 1.0)));
     } else {
         skyColorReflect = zenithSkyColor * .5 * ((eyeBrightSmoothFloat.y * .8 + 48) * 0.004166666666666667);
     }
@@ -251,8 +204,6 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
             realLight = omniLight +
                 (directLightStrength * visibleSky * directLightColor) * (1.0 - rainStrength * 0.75) +
                 candleColor;
-
-            //realLight *= mix(mix(0.666, 1.0, fresnel), 1.0, WATER_ABSORPTION * 10 - 0.5);
 
             #if WATER_COLOR_SOURCE == 0
                 blockColor.rgb = waterTexture * realLight * WATER_COLOR;

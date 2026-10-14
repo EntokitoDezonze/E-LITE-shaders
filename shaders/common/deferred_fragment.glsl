@@ -46,6 +46,7 @@ uniform float viewHeight;
     uniform sampler2D dhDepthTex0;
     uniform float dhNearPlane;
     uniform float dhFarPlane;
+    uniform mat4 dhProjection;
 #endif
 
 #ifdef VOXY
@@ -154,7 +155,7 @@ void main() {
 
     #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
         #if AA_TYPE > 0 && !defined PS1_LIKE
-            float dither = shifted_eclectic_dither17(gl_FragCoord.xy);
+            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
         #else
             float dither = semiblue(gl_FragCoord.xy);
         #endif
@@ -245,7 +246,7 @@ void main() {
                 float fog = mix(fog_density_coeff, 0.2, rainStrength);
 
                 float ao_factor = dh_d * fog;
-                float ao_attdh = exp2(-ao_factor * ao_factor);
+                float ao_attdh = 1.0 / pow(1.0 + ao_factor, 1.5);
                 #if defined NETHER
                     ao_attdh = fastpow(ao_attdh, 50.0);
                     ao_attdh = fastpow(ao_attdh, 2.0);
