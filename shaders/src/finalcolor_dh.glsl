@@ -1,5 +1,5 @@
 #ifdef FOG_ACTIVE
-    float fogmix = max(fog_adj * fog_adj * fog_adj - 0.1, 0.0);
+    float fogmix = max(fog_adj * fog_adj * fog_adj, 0.0);
 #endif
 
 #if defined DH_WATER
@@ -36,7 +36,7 @@
     #endif
 #else
     #ifdef FOG_ACTIVE
-        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.2, 0.46, 0.675), vec3(0.0235, 0.0314, 0.0431));
+        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.19, 0.32, 0.46), vec3(0.0235, 0.0314, 0.0431));
 
         #if FOG_TINT == 0
             fogColorMod = saturate(fogColorMod, 0.5);
@@ -46,7 +46,6 @@
             fogColorMod = saturate(fogColorMod, -0.5);
         #endif
 
-        fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));
         fogColorMod = mix(fogColorMod, saturate(fogColorMod * 0.5, 0.66), rainStrength);
         
         vec3 fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);

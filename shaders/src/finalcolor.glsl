@@ -26,7 +26,7 @@
             float fogInfluence = 1.0;
         #endif
 
-        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.2, 0.46, 0.675), vec3(0.0235, 0.0314, 0.0431));
+        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.19, 0.32, 0.46), vec3(0.0235, 0.0314, 0.0431));
 
         #if FOG_TINT == 0
             fogColorMod = saturate(fogColorMod, 0.5);
@@ -39,7 +39,7 @@
         fogColorMod = mix(fogColorMod, saturate(fogColorMod * 0.5, 0.66), rainStrength);
         float fogmix;
         #if defined DISTANT_HORIZONS || defined VOXY
-            fogmix = max(fog_adj * fog_adj * fog_adj - 0.1, 0.0);
+            fogmix = max(fog_adj * fog_adj * fog_adj, 0.0);
         #else
             fogmix = fog_adj * fog_adj;
         #endif

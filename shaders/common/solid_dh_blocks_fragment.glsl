@@ -68,7 +68,7 @@ void main() {
     float synth_noise = (hash13(synth_pos) - 0.5) * 0.1;
     block_color.rgb += vec3(synth_noise);
     block_color.rgb = clamp(block_color.rgb * 0.9, vec3(0.0), vec3(1.0));
-
+    block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.8, rainStrength));
     float block_luma = luma(tint_color.rgb);
 
     vec3 final_candle_color = candle_color;

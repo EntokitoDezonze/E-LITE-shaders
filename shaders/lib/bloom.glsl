@@ -16,12 +16,8 @@ vec3 mipmap_bloom(sampler2D image, vec2 coords, float dither) {
         float n = fract(dither_x * 1.6180339887) * 3.141592653589793;
         vec2 offset = vec2(cos(n), sin(n)) * dither_x * blur_radios_factor;
 
-        // Fixed lod to fix jittering on blur
-        float r_px = dither_x * (0.05 / BLOOM_SAMPLES) * viewHeight;
-        float lod = max(log2(max(r_px, 1.0)) - 1.0, 0.0);
-
-        blur_sample += texture2DLod(image, coords + offset, lod).rgb;
-        blur_sample += texture2DLod(image, coords - offset, lod).rgb;
+        blur_sample += texture2DLod(image, coords + offset, softLod).rgb;
+        blur_sample += texture2DLod(image, coords - offset, softLod).rgb;
     }
 
     #if COLOR_SCHEME == 4

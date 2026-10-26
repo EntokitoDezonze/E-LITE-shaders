@@ -23,10 +23,6 @@ vec3 noised_blur(vec4 color_depth, sampler2D image, vec2 coords, float force, fl
         float dither_angle = dither * 6.2831853;
         const int samples = 4;
 
-        // Fixed lod to fix jittering on blur
-        float r_px = blur_radius * viewHeight;
-        float lod = max(log2(max(r_px, 1.0)) - 1.0, 0.0);
-
         for (int i = 0; i < samples; i++) {
             float fi = float(i);
             float radius = sqrt((fi + dither) / float(samples));
@@ -35,7 +31,7 @@ vec3 noised_blur(vec4 color_depth, sampler2D image, vec2 coords, float force, fl
 
             vec2 offset = vec2(cos(angle), sin(angle)) * blur_vec * radius;
 
-            blur_sum += texture2DLod(image, coords + offset, lod).rgb * weight;
+            blur_sum += texture2DLod(image, coords + offset, softLod).rgb * weight;
             total_weight += weight;
         }
 

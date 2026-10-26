@@ -201,14 +201,13 @@ void main() {
     #if defined EMISSIVE_MATERIAL
         float temp_emitter = 0.0;
         if (mc_ex >= 9008 && mc_ex <= 9013) temp_emitter = float(mc_ex - 9007);
-        else if (mc_ex == 10090) temp_emitter = 7.0;
-        else if (mc_ex == 10089) temp_emitter = 8.0;
-        else if (mc_ex >= 10213 && mc_ex <= 10214) temp_emitter = 9.0;
+        else if (mc_ex >= 7000 && mc_ex <= 7017) temp_emitter = float(mc_ex - 7000 + 15);
         else if (mc_ex == 9014) temp_emitter = 10.0;
-        else if (mc_ex == 9015) temp_emitter = 11.0;  
-        else if(currentRenderedItemId == 9016) temp_emitter = 12.0;
+        else if (mc_ex == 9015) temp_emitter = 11.0;
+        else if (currentRenderedItemId == 9016) temp_emitter = 12.0;
         else if (mc_ex == 9017) temp_emitter = 13.0;
         else if (mc_ex == 9018) temp_emitter = 14.0;
+        else if (mc_ex == 10214) temp_emitter = 5.0;
 
         emitter_v = temp_emitter;
     #endif

@@ -47,7 +47,7 @@ uniform int moonPhase;
         #define ZENITH_NIGHT_COLOR vec3(0.0075, 0.015, 0.0225) * NIGHT_BRIGHT_PHASE
         
         #define HORIZON_SUNSET_COLOR vec3(0.7, 0.35, 0.2) * 0.5
-        #define HORIZON_DAY_COLOR vec3(0.95, 0.92, 0.9) * 0.8
+        #define HORIZON_DAY_COLOR vec3(0.95, 0.92, 0.9) * 0.625
         #define HORIZON_NIGHT_COLOR vec3(0.0, 0.01, 0.015) * NIGHT_BRIGHT_PHASE
     #else // LITE 4.1 Legacy
         #define ZENITH_SUNSET_COLOR vec3(0.3, 0.35, 0.45)

@@ -115,6 +115,14 @@ vec3 computeRealLight(vec3 omni, vec3 directColor, float directStrength, vec3 sh
     return (omni + shadow * directColor * (directStrength * (1.0 + spec_energy)) * (1.0 - (rainStrength * 0.75))) + candle;
 }
 
+float getColor(vec3 ogCol, vec3 target, float r2) {
+    vec3 d = ogCol - target;
+    return step(dot(d, d), r2);
+}
+float checkSat(float sat, float lo, float hi) { return step(lo, sat) * step(sat, hi); }
+float checkLum(float lum, float lo, float hi) { return step(lo, lum) * step(lum, hi); }
+float isType(int a, int b) { return float(a == b); }
+
 void main() {
     // === Dither & discard
     #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (MATERIAL_GLOSS > 0 && !defined NETHER) || defined LabPBR
@@ -326,10 +334,13 @@ void main() {
     #endif
 
     if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1 && block_color.r > 0.4){
-        block_color.rgb = saturate(block_color.rgb, 1.8);
-        block_color.rgb = saturate(block_color.rgb, mix(0.5, 1.0, luma(shadow_c)));
+        block_color.rgb = saturate(block_color.rgb, mix(1.8, 1.25, rainStrength));
+        block_color.rgb = saturate(block_color.rgb, mix(0.5, 1.0, max(luma(shadow_c) + rainStrength, 1.0)));
         }
+
     if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
+
+    block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.8, rainStrength));
 
     #if (MATERIAL_GLOSS > 0 && !defined NETHER)
         vec3 gloss;

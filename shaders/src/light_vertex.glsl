@@ -104,11 +104,11 @@ if (dot(normal, normal) > 0.0001) { // Workaround for undefined normals
 #endif
 
 #ifdef FOLIAGE_V
-    float is_fol = step(0.2, isFoliage);
+    isFoliage = step(0.2, isFoliage);
 
-    float foliage_light = mix(direct_light_strength * 0.75, 1.0, 1.0 * (rainStrength * 0.5 + 0.5));
+    float foliage_light = mix(clamp(direct_light_strength, -0.05, 1.0), 1.0, 1.0 * (rainStrength * 0.5 + 0.5));
 
-    direct_light_strength = mix(mix(clamp(direct_light_strength, 0.0, 1.0), foliage_light, is_fol), clamp(direct_light_strength, 0.0, 1.0), float(isEyeInWater));
+    direct_light_strength = mix(mix(clamp(direct_light_strength, 0.0, 1.0), foliage_light, isFoliage), clamp(direct_light_strength, 0.0, 1.0), float(isEyeInWater));
 #else
     direct_light_strength = clamp(direct_light_strength, 0.0, 1.0);
 #endif
@@ -120,19 +120,19 @@ float vs4 = vs2 * vs2;
 float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 0.0), 1.0, 1.0);
 
 #if !defined THE_END && !defined NETHER
-    float rain_mul = dayBF(0.4, 0.3, 1.0);
+    float rain_mul = dayBF(0.8, 1.0, 1.0);
     #if COLOR_SCHEME == 4
         rain_mul = dayBF(0.5, 0.4, 0.4);
     #endif
     
-    direct_light_color = mix(direct_light_color, ZENITH_SKY_RAIN_COLOR * luma(direct_light_color) * rain_mul, rainStrength);
+    direct_light_color = mix(direct_light_color, LIGHT_RAIN_COLOR * luma(direct_light_color) * rain_mul, rainStrength);
 
     float isUpside = 1.0 - smoothstep(0.51, 0.75, outNormal.y);
     #if COLOR_SCHEME == 2 || COLOR_SCHEME == 6
         #ifndef SHADOW_CASTING
             outNormal.y = outNormal.y * 0.5 + 0.5;
         #endif
-        vec3 omni_color = saturate(mix(hi_sky_color_rgb * vec3(0.666, 1.0, 1.0) * mix(dayBF(3.0, 4.5, 4.0), dayBF(4.0, 6.0, 5.5), rainStrength) * dayBlendSunset *
+        vec3 omni_color = saturate(mix(hi_sky_color_rgb * vec3(0.666, 1.0, 1.0) * mix(dayBF(3.0, 4.5, 4.0), dayBF(10.0, 11.0, 8.0), rainStrength) * dayBlendSunset *
         mix(1.0, outNormal.y * 0.15 + 1.0, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.3, 6.0) * OMNI_MUL, OMNI_TINT), 0.28 + clamp(outNormal.y + 0.1, 0.0, 1.0) * 0.25);
     #elif COLOR_SCHEME == 4
         vec3 omni_color = direct_light_color * (OMNI_MUL + dayBF(0.1, 0.1, 0.5));

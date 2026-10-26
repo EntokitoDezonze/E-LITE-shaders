@@ -7,7 +7,7 @@ vec3 mid_sky_color_rgb = dayBlend(
 
     mid_sky_color_rgb = mix(
         mid_sky_color_rgb,
-        HORIZON_SKY_RAIN_COLOR * saturate(mid_sky_color_rgb * dayBF(1.0, 0.75, 0.75), 0.1),
+        HORIZON_SKY_RAIN_COLOR * saturate(mid_sky_color_rgb * dayBF(1.0, 0.8, 0.75), 0.08),
         rainStrength
     );
 

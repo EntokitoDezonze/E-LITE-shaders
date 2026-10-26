@@ -35,10 +35,10 @@ float nearFogVoxy = 0.0;
         float dynamic_density = 0.003 + (0.001 * sunInfluenceV * sunDayFactor);
 
         float dist_adj = max(0.0, fogFragCoord);
-        float x = dist_adj * dynamic_density * mix(1.0, 3.5, rainStrength) * invFogAdjust;
+        float x = dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust;
         float fogLinear = 1.0 - exp(-x);
         float fogSquared = 1.0 - exp(-x * x);
-        nearFogVoxy = clamp(mix(fogLinear, fogSquared, -0.4), 0.0, 1.0);
+        nearFogVoxy = clamp(mix(fogLinear, fogSquared, mix(-0.4, -1.0, rainStrength)), 0.0, 1.0);
 
         float horizon_exp = mix(fog_density_coeff * biome_fog, fog_density_coeff * biome_fog * 0.2, rainStrength);
         float horizon_fog = fastpow(clamp(dist_ratio * fog_intensity_coeff, 0.0, 1.0), horizon_exp);

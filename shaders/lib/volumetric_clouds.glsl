@@ -145,7 +145,7 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
                 float plateau = current_value;
             #else
                 current_value = (current_value - umbral) / (1.0 - umbral);
-                float plateau = pow(current_value, 0.1); 
+                float plateau = pow(current_value, 0.075); 
             #endif
 
             surface_inf = CLOUD_PLANE_CENTER - (plateau * dif_inf); 

@@ -91,19 +91,19 @@ float vs4 = vs2 * vs2;
 float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
 
 #if !defined THE_END && !defined NETHER
-    float rain_mul = dayBF(0.4, 0.3, 1.0);
+    float rain_mul = dayBF(0.8, 1.0, 1.0);
     #if COLOR_SCHEME == 4
         rain_mul = dayBF(0.5, 0.4, 0.4);
     #endif
     
-    direct_light_color = mix(direct_light_color, ZENITH_SKY_RAIN_COLOR * luma(direct_light_color) * rain_mul, rainStrength);
+    direct_light_color = mix(direct_light_color, LIGHT_RAIN_COLOR * luma(direct_light_color) * rain_mul, rainStrength);
 
     float isUpside = 1.0 - smoothstep(0.51, 0.75, outNormal.y);
     #if COLOR_SCHEME == 2 || COLOR_SCHEME == 6
         #ifndef SHADOW_CASTING
             outNormal.y = outNormal.y * 0.5 + 0.5;
         #endif
-        vec3 omni_color = saturate(mix(hi_sky_color_rgb * mix(dayBF(3.0, 4.5, 4.0), dayBF(4.0, 6.0, 5.5), rainStrength) * dayBlendSunset * mix(1.0, outNormal.y * 0.25 + 1.0, visible_sky * isUpside) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.4, 6.0) * OMNI_MUL, OMNI_TINT), 0.28);
+        vec3 omni_color = saturate(mix(hi_sky_color_rgb * mix(dayBF(3.0, 4.5, 4.0), dayBF(10.0, 11.0, 8.0), rainStrength) * dayBlendSunset * mix(1.0, outNormal.y * 0.25 + 1.0, visible_sky * isUpside) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.4, 6.0) * OMNI_MUL, OMNI_TINT), 0.28);
     #elif COLOR_SCHEME == 4
         vec3 omni_color = direct_light_color * (OMNI_MUL + dayBF(0.1, 0.1, 0.5));
     #else
@@ -155,6 +155,6 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
     #endif
 #endif
 
-direct_light_strength = mix(direct_light_strength, 10.0, float(dhMaterialId == DH_BLOCK_ILLUMINATED));
+direct_light_strength = mix(direct_light_strength, 1.0, float(dhMaterialId == DH_BLOCK_ILLUMINATED));
 direct_light_strength = mix(direct_light_strength, 1.0, float(dhMaterialId == DH_BLOCK_LAVA));
 direct_light_strength = mix(direct_light_strength, sqrt(direct_light_strength + 0.02), float(dhMaterialId == DH_BLOCK_LEAVES));

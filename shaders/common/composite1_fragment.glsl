@@ -22,7 +22,7 @@ uniform int frameCounter;
     uniform float fov_y_inv;
 #endif
 
-#ifdef BLOOM
+#if defined BLOOM || defined DOF
     uniform float softLod;
 #endif
 
@@ -52,7 +52,10 @@ varying vec2 texcoord;
 #endif
 
 #include "/lib/luma.glsl"
-#include "/lib/bloom.glsl"
+
+#ifdef  BLOOM
+    #include "/lib/bloom.glsl"
+#endif
 
 #ifdef DOF
     #include "/lib/blur.glsl"

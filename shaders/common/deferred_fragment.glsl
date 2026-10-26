@@ -230,20 +230,16 @@ void main() {
             }
         #endif
 
-        float horizon_fog = mix(fog_density_coeff * biomeMul, fog_density_coeff * biomeMul * 0.2, rainStrength);
-        float ao_density = pow(clamp(linear_d, 0.0, 1.0), horizon_fog);
-        float cut = smoothstep(0.0, 0.75 - (1.0 / far), linear_d);
-        float sun_dist = smoothstep(0.0, 0.9, linear_d);
+        float horizon_fog = mix(fog_density_coeff * biomeMul, biomeMul * 10, rainStrength);
+        float ao_density = linear_d * horizon_fog;
+        float ao_att = 1.0 / pow(1.0 + ao_density, 1.5);     
         #ifdef NEAR_FOG
-            float ao_att = sunInfluence * sun_dist;
-        #else
-            float ao_att = sun_dist;
+            ao_att *= sunInfluence;
         #endif
-        ao_att = max(max(ao_density, cut), ao_att);
 
         #ifdef DISTANT_HORIZONS
             if (d >= 1.0 && dh_d < 1) {
-                float fog = mix(fog_density_coeff, 0.2, rainStrength);
+                float fog = mix(fog_density_coeff, 10.0, rainStrength);
 
                 float ao_factor = dh_d * fog;
                 float ao_attdh = 1.0 / pow(1.0 + ao_factor, 1.5);
@@ -256,7 +252,7 @@ void main() {
             } 
         #endif
 
-        float final_ao = clamp(mix(dbao(dither), 1.0, ao_att), 0.0, 1.0);
+        float final_ao = clamp(mix(1.0, dbao(dither), ao_att), 0.0, 1.0);
         block_color.rgb *= final_ao;
     #endif
 

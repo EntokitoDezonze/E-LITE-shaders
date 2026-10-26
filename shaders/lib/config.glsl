@@ -16,10 +16,34 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define ENTITY_WHITE_LEAVES 10019.0  // White Leaves
 #define ENTITY_VINES        10106.0  // Vines
 
-// Emmisives
-#define ENTITY_EMMISIVE     10089.0  // Emissors
-#define ENTITY_S_EMMISIVE   10090.0  // Emissors
-#define ENTITY_F_EMMISIVE    10213.0  // Fake emissors
+// Emissives
+#define ENTITY_GLOWSTONE    7000.0
+#define ENTITY_SEA_LANTERN  7001.0
+#define ENTITY_REDSTONE_LAMP 7002.0
+#define ENTITY_FROGLIGHT    7003.0
+#define ENTITY_SHROOMLIGHT  7004.0
+#define ENTITY_JACK_O_LANTERN 7005.0
+
+// Lanterns
+#define ENTITY_LANTERN      7006.0
+#define ENTITY_SOUL_LANTERN 7007.0
+#define ENTITY_COPPER_LANTERN 7008.0
+#define ENTITY_COPPER_BULB  7017.0
+
+// Strong emissives
+#define ENTITY_LAVA         7009.0
+#define ENTITY_MAGMA        7010.0
+#define ENTITY_BEACON       7011.0
+#define ENTITY_END_ROD      7012.0
+
+// Fake emissors (torches)
+#define ENTITY_TORCH        7013.0
+#define ENTITY_SOUL_TORCH   7014.0
+#define ENTITY_COPPER_TORCH 7015.0
+
+// Generic emissive
+#define ENTITY_G_EMISSIVE   7016.0
+
 #define ENTITY_NO_SHADOW_FIRE 10214.0  // Fire (no shadow)
 #define ENTITY_PORTAL       10091.0  // Portal
 
@@ -69,8 +93,9 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define SEASONABLE 8000.0
 
 // Other constants
-#define ZENITH_SKY_RAIN_COLOR vec3(0.52, 0.64, 0.745)
-#define HORIZON_SKY_RAIN_COLOR vec3(0.355, 0.43, 0.493)
+#define ZENITH_SKY_RAIN_COLOR vec3(0.52, 0.61, 0.74)
+#define HORIZON_SKY_RAIN_COLOR vec3(0.498, 0.5804, 0.6863)
+#define LIGHT_RAIN_COLOR vec3(0.425, 0.56, 0.79)
 
 // Style (Default or Vanilla)
 #define STYLE 1 // [1 2]
