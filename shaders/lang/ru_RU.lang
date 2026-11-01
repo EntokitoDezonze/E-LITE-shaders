@@ -165,6 +165,9 @@ value.AA_TYPE.1=Шумоподавление
 value.AA_TYPE.2=TAA §c(!)
 value.AA_TYPE.3=§b§lУмный TAA
 
+option.SELECTIVE_TAA=§9▶§r Выборочный TAA
+option.SELECTIVE_TAA.comment=Выборочное применение временного суперсэмплинга для предотвращения эффекта призраков (остаточных следов), создаваемого сущностями или руками.
+
 value.RENDER_SCALE_INT.100=§5§l§oВстроенный
 value.RENDER_SCALE_INT.85=§4§lСверхкачество
 value.RENDER_SCALE_INT.76=§e§lКачество

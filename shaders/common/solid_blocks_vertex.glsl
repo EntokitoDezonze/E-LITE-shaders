@@ -187,6 +187,7 @@ void main() {
     #if defined GBUFFER_BLOCK
         if(blockEntityId == 10091) block_type_v = 1.0;
         if(blockEntityId == 10400) block_type_v = 2.0;
+        if(blockEntityId == ENTITY_SIGN && (gl_Color.r + gl_Color.g + gl_Color.b < 0.001 || lmcoord.x > 0.99)) block_type_v = 5.0;
     #endif
 
     if(mc_ex == ENTITY_WHITE_LEAVES) block_type_v = 3.0;

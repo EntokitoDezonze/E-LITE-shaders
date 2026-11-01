@@ -15,11 +15,7 @@ varying vec4 tint_color;
 varying float sky_luma_correction;
 varying vec3 cursed_sky;
 varying float current_wetness;
-
-uniform float viewWidth; 
-uniform float viewHeight; 
-uniform int frameCounter;
-uniform float frameTime;
+varying vec3 astro_world_dir;
 
 #if AA_TYPE > 1
     #include "/src/taa_offset.glsl"
@@ -29,6 +25,11 @@ uniform float frameTime;
 uniform float rainStrength;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
+uniform int renderStage;
+uniform float viewWidth; 
+uniform float viewHeight; 
+uniform int frameCounter;
+uniform float frameTime;
 
 // == Utility
 #include "/lib/luma.glsl"
@@ -42,19 +43,7 @@ void main() {
     tint_color = gl_Color;
 
     #ifndef CUSTOM_SKYFIX
-        float C = 70.0; // Moon brightness
-
         sky_luma_correction = luma(dayBlend(LIGHT_SUNSET_COLOR, LIGHT_DAY_COLOR, LIGHT_NIGHT_COLOR));
-
-        float log_base = log(C + 1.0);
-
-        #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
-            float day_blend_val = 3.0;
-            sky_luma_correction = day_blend_val * log(sky_luma_correction * C + 1.0) / log_base;
-        #else
-            float day_blend_val  = dayBF(2.0, 2.25, 1.7);
-            sky_luma_correction = day_blend_val * log(sky_luma_correction * C + 1.0) / log_base;
-        #endif
 
         current_wetness = 1 - rainStrength;
 
@@ -73,6 +62,8 @@ void main() {
 
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     //resize_vertex(gl_Position);
+
+    astro_world_dir = mat3(gbufferModelViewInverse) * (gl_ModelViewMatrix * gl_Vertex).xyz;
 
     #if AA_TYPE > 1
         gl_Position.xy += taa_offset * gl_Position.w;

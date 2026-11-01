@@ -16,7 +16,7 @@ gaux3 - Exposure auxiliar
 gaux4 - Fog auxiliar
 
 const int noisetexFormat = RG8;
-const int colortex0Format = R8;
+const int colortex0Format = RGB8;
 */
 #ifdef DOF
     #ifdef DOF_HDR // COLOR_BITS does not affect HDR.
@@ -109,7 +109,7 @@ const int shadowcolor0Format = RGBA8;
 // == Buffers clear
 const bool colortex0Clear = false;
 const bool colortex1Clear = false;
-const bool colortex2Clear = false;
+const bool colortex2Clear = true;
 const bool colortex3Clear = false;
 const bool gaux1Clear = false;
 const bool gaux2Clear = false;
@@ -126,6 +126,9 @@ uniform sampler2D colortex3;
 uniform sampler2D gaux3;
 uniform sampler2D gaux1;
 uniform sampler2D colortex1;
+#ifdef SELECTIVE_TAA
+uniform sampler2D colortex2;
+#endif
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
@@ -187,9 +190,6 @@ void main() {
         #endif
     #else
        vec3 block_color = texture2DLod(colortex1, pixelUV, 0.0).rgb;
-        #if defined FXAA && !defined PS1_LIKE
-            block_color = fxaa311(block_color, 6, pixelUV);
-        #endif
 
        #if AA_TYPE == 3 && !defined PS1_LIKE
             block_color = sharpen(colortex1, block_color, pixelUV);

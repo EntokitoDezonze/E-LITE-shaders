@@ -164,6 +164,9 @@ value.AA_TYPE.1=Antiruído
 value.AA_TYPE.2=TAA §c§l(!)
 value.AA_TYPE.3=§b§lTAA Inteligente
 
+option.SELECTIVE_TAA=§9▶§r TAA seletivo
+option.SELECTIVE_TAA.comment=Aplica a amostragem do TAA seletivamente para evitar ghosting/artefatos que as entidades/mãos podem produzir.
+
 option.RENDER_SCALE_INT=Modo do §c§lFSR§r
 suffix.RENDER_SCALE_INT=%
 option.RENDER_SCALE_INT.comment=Ajusta a resolução em que o shader é renderizado. §9§lUltra Performance§r é recomendado para 4K. §c§l§oFSR 1§r fará o upscale da imagem.

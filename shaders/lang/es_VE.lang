@@ -153,6 +153,9 @@ value.AA_TYPE.1=Denoise
 value.AA_TYPE.2=TAA §c(!)
 value.AA_TYPE.3=§b§lSmart TAA
 
+option.SELECTIVE_TAA=§9▶§r TAA Selectivo
+option.SELECTIVE_TAA.comment=Aplica de forma selectiva el temporal supersampling para evitar el efecto de ghosting que pueden producir las entidades/manos.
+
 option.RENDER_SCALE_INT=Modo §c§lFSR§r
 option.RENDER_SCALE_INT.comment=Ajusta la resolución de renderizado. 50% recomendado para 4K. §c§l§oFSR 1§r reescala la imagen en resoluciones bajas.
 

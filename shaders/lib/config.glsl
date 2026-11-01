@@ -92,6 +92,9 @@ Javier Garduño - GNU Lesser General Public License v3.0
 // Season
 #define SEASONABLE 8000.0
 
+// Signs
+#define ENTITY_SIGN 8001.0
+
 // Other constants
 #define ZENITH_SKY_RAIN_COLOR vec3(0.52, 0.61, 0.74)
 #define HORIZON_SKY_RAIN_COLOR vec3(0.498, 0.5804, 0.6863)
@@ -144,6 +147,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define AO_STRENGTH 1.0 // [0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.66 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50] Ambient occlusion strength (strength does not affect performance).
 #define AA_TYPE 3 // [0 1 2 3]  No: Disable antialiasing (not recommended). Denoise only: Supersampling is only used to eliminate noise. TAA: Enable antialiasing (Recommended). Sharp TAA: A subtle sharpening effect is used on the TAA. (Low-Medium perfomance cost)
 #define FXAA // Enables FXAA, very helpful especially on low resolutions.
+#define SELECTIVE_TAA // Applies TAA selectively to the environment and entities. Eliminates artifacts and ghosting associated with entities when TAA is enabled.
 //#define MOTION_BLUR // Turn on motion blur (Low perfomance cost)
 #define MOTION_BLUR_STRENGTH 0.75 // [0.5 0.75 1.0 1.5 2.0 2.5 3.0 3.5 4.0] Set Motion blur strength. Lower framerate -> Lower strength and vice versa is recommended.
 #define MOTION_BLUR_SAMPLES 3.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0] Motion blur samples 
@@ -385,6 +389,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #ifdef POM_SHADOW
 #endif
 #ifdef LabEMISSIVE
+#endif
+#ifdef SELECTIVE_TAA
 #endif
 /* ------------ */
 

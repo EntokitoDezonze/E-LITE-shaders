@@ -1,18 +1,25 @@
 #include "/lib/config.glsl"
 
-#if MC_VERSION < 11604
-    const bool colortex0Clear = false;
-    const bool colortex1Clear = false;
+const bool colortex0Clear = false;
+const bool colortex1Clear = false;
+#ifdef SELECTIVE_TAA
+    const bool colortex2Clear = true;
+#else
     const bool colortex2Clear = false;
-    const bool colortex3Clear = false;
-    const bool gaux1Clear = false;
-    const bool gaux2Clear = false;
-    const bool gaux3Clear = false;
-    const bool gaux4Clear = false;
 #endif
+const bool colortex3Clear = false;
+const bool gaux1Clear = false;
+const bool gaux2Clear = false;
+const bool gaux3Clear = false;
+const bool gaux4Clear = false;
 
 // == Uniforms
 uniform sampler2D colortex1;
+#ifdef SELECTIVE_TAA
+    uniform sampler2D colortex2;
+    uniform sampler2D colortex5;
+#endif
+
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
@@ -48,6 +55,10 @@ varying vec2 texcoord;
     #include "/lib/luma.glsl"
     #include "/lib/color_conversion.glsl"
     #include "/lib/fast_taa.glsl"
+
+    #ifdef SELECTIVE_TAA
+        #include "/lib/fxaa.glsl"
+    #endif
 #endif
 
 #ifdef MOTION_BLUR
@@ -70,7 +81,7 @@ void main() {
         vec3 prev_view_pos;
         vec2 final_pos;
 
-        if(z_depth < 0.7) {
+        if(z_depth < 0.56) {
             texcoord_past = texcoord;
         } else {
             curr_view_pos =
@@ -89,23 +100,57 @@ void main() {
     #endif
 
     #ifdef MOTION_BLUR
+        #if AA_TYPE > 0
+           float dither = shifted_dither_makeup(gl_FragCoord.xy);
+        #else
+           float dither = dither_dakeup(gl_FragCoord.xy);
+        #endif
         // "Speed"
         vec2 velocity = (texcoord * RENDER_SCALE) - texcoord_past;
-        block_color.rgb = motion_blur(block_color.rgb, z_depth, velocity, colortex1);
+        block_color.rgb = motion_blur(block_color.rgb, z_depth, velocity, dither, colortex1);
     #endif
 
     #if AA_TYPE > 0
+        #ifdef SELECTIVE_TAA
+            float objectMask = texture2DLod(colortex2, texcoord, 0.0).r;
+            float nextPreviousMask = objectMask;
+            
+            // Too expensive. More agressive FXAA instead
+            // vec2 mp = vec2(pixelSizeX, pixelSizeY);
+            // objectMask = max(objectMask, texture2DLod(colortex2, texcoord + vec2(mp.x, 0.0), 0.0).r);
+            // objectMask = max(objectMask, texture2DLod(colortex2, texcoord - vec2(mp.x, 0.0), 0.0).r);
+            // objectMask = max(objectMask, texture2DLod(colortex2, texcoord + vec2(0.0, mp.y), 0.0).r);
+            // objectMask = max(objectMask, texture2DLod(colortex2, texcoord - vec2(0.0, mp.y), 0.0).r);
+
+            float previousObjectMask = texture2DLod(colortex5, texcoord_past, 0.0).r;
+            if(objectMask > 0.5 || previousObjectMask > 0.5) {
+                block_color.rgb = fxaa311(block_color.rgb, 10, texcoord);
+            } else {
+        #endif
+
         #ifdef DOF
             block_color = fast_taa_depth(block_color, texcoord_past);
         #else
             block_color.rgb = fast_taa(block_color.rgb, texcoord_past);
         #endif
 
+        #ifdef SELECTIVE_TAA
+            }
+        #endif
+
         block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
-        /* DRAWBUFFERS:13 */
-        gl_FragData[0] = block_color;  // colortex1
-        gl_FragData[1] = block_color;  // To TAA averages
-    #else
+
+        #ifdef SELECTIVE_TAA
+            /* DRAWBUFFERS:135 */
+            gl_FragData[0] = block_color;
+            gl_FragData[1] = block_color;
+            gl_FragData[2] = vec4(nextPreviousMask);  // Current mask to next frame's previous mask
+        #else
+            /* DRAWBUFFERS:13 */
+            gl_FragData[0] = block_color;
+            gl_FragData[1] = block_color;
+        #endif
+            #else
         block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
         /* DRAWBUFFERS:1 */
         gl_FragData[0] = block_color;  // colortex1

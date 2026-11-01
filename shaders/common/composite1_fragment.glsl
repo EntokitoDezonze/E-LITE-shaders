@@ -5,12 +5,12 @@
 #endif
 
 #ifdef BLOOM
-    const bool colortex2MipmapEnabled = true;
+    const bool colortex0MipmapEnabled = true;
 #endif
 
 // == Uniforms
 uniform sampler2D colortex1;
-uniform sampler2D colortex2;
+uniform sampler2D colortex0;
 uniform float inv_aspect_ratio;
 uniform float frameTime;
 uniform float viewWidth;
@@ -79,7 +79,7 @@ void main() {
     #endif
 
     #ifdef BLOOM
-        vec3 bloom = mipmap_bloom(colortex2, texcoord, dither);
+        vec3 bloom = mipmap_bloom(colortex0, texcoord, dither);
         block_color.rgb += bloom;
     #endif
 

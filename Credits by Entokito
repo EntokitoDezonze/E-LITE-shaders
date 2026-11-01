@@ -31,13 +31,17 @@ Changelog:
 - Remade near fog, now it looks more smooth.
 - Rework on how fog colors are calculated.
 - Revamped emissives, giving it a better look.
+- Selective TAA is now implemented, reducing ghost in entities. (Inherited from MakeUp)
+- Small changes on sun glow.
+- Vanilla Sun/moon now cuts when it is below horizon.
 
 # Bugfixes:
 - Fixed some black pixels appearing randomly (mainly on plants and seagrass.)
 - Fixed some issues with AO in Distant Horizons chuncks.
+- Fixed a bug that made sign texts to disappear while using labPBR on 26.3.
 
 Version code: ELT514
 
-Based on MakeUp Ultrafast 9.5g
+Based on MakeUp Ultrafast 9.6
 
 Olá de Entokito :)

@@ -41,21 +41,22 @@ vec3 draw_sun() {
             return saturate(mix((sunColor * 100 * sunMask) + (sunColor * glow * dayBF(1.0, 1.5, 1.0)), sunColor * glow * 0.6, rainStrength), 1.0 - rainStrength * 0.75);
         #endif
     #elif ROUND_SUN == 0
+
+        float linear = 1.0 - (fastApproxACos(cosTheta) / 1.5708); // arccos(cosTheta) / PI/2
+        cosTheta = clamp(linear, 0.0, 1.0);
         #if COLOR_SCHEME != 5
             #if VOL_LIGHT > 0
-                float glare = clamp(pow(clamp(cosTheta, 0.0, 1.0), mix(10.0, 4.0, rainStrength)), 0.0, 1.0);
-                float spot  = clamp(pow(clamp(cosTheta, 0.0, 1.0), mix(63.0, 6.0, rainStrength)), 0.0, 1.0);
-                spot *= pow(spot, 5.0);
+                float glare = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(4.0, 2.0, rainStrength)), 0.0, 1.0);
+                float spot  = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(25.0, 1.0, rainStrength)), 0.0, 1.0);
 
-                vec3 sunColor = dayBlgcy(vec3(1.0, 0.8, 0.6) * 0.75, vec3(1.0, 0.8, 0.5), vec3(0.0)) * mix(glare * 0.3 + spot * 2.25, glare * dayBF(0.1, 0.1, 0.0) + spot * dayBF(0.075, 0.05, 0.0), rainStrength);
+                vec3 sunColor = dayBlgcy(vec3(1.0, 0.7, 0.3) * 0.5, vec3(1.0, 0.75, 0.4), vec3(0.0)) * mix(glare * 0.3 + spot * 2.25, glare * dayBF(0.075, 0.2, 0.0) + spot * dayBF(0.075, 0.075, 0.0), rainStrength);
                 sunColor = mix(sunColor, saturate(sunColor, dayBF(0.5, 0.0, 0.0)), rainStrength);
                 return sunColor;
             #else
-                float glare = clamp(pow(clamp(cosTheta, 0.0, 1.0), mix(10.0, 6.0, rainStrength)), 0.0, 1.0); 
-                float spot  = clamp(pow(clamp(cosTheta, 0.0, 1.0), mix(63.0, 16.0, rainStrength)), 0.0, 1.0);
-                spot *= pow(spot, 5.0);
+                float glare = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(4.0, 2.0, rainStrength)), 0.0, 1.0); 
+                float spot  = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(25.0, 1.0, rainStrength)), 0.0, 1.0);
 
-                vec3 sunColor = dayBlgcy(vec3(1.0, 0.8, 0.6) * 0.333, vec3(1.0, 0.8, 0.5), vec3(0.0)) * mix(glare * 0.25 + spot * 1.75, glare * dayBF(0.1, 0.1, 0.0) + spot * dayBF(0.25, 0.15, 0.0), rainStrength);
+                vec3 sunColor = saturate(dayBlgcy(vec3(1.0, 0.6, 0.3) * 0.75, vec3(1.0, 0.8, 0.5), vec3(0.0)), mix(1.0, 0.5, rainStrength)) * mix(glare * 0.3 + spot * 2.0, glare * dayBF(0.1, 0.1, 0.0) + spot * dayBF(0.25, 0.15, 0.0), rainStrength);
                 return sunColor;
             #endif
         #else

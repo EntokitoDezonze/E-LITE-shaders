@@ -1,5 +1,6 @@
 #if MC_VERSION >= 11300
     uniform vec2 taa_offset;
+    uniform vec2 fixedTaaCorrection;
 #elif !defined VOXY_BLOCK || !defined VOXY_WATER
     uniform int frame_mod;
     uniform float pixelSizeX;
@@ -19,4 +20,5 @@
     );
 
     vec2 taa_offset = offset_array[frame_mod] * vec2(pixelSizeX, pixelSizeY);
+    vec2 fixedTaaCorrection = vec2(pixelSizeX, pixelSizeY) * 0.51;
 #endif

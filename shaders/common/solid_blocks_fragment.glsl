@@ -149,11 +149,18 @@ void main() {
     sunInfluence = data_pack_b.z;
     roughness = data_pack_b.w;
     isGrass = foliageData.z;
-    
+
+    // === Block detection
+    int ore_type = int(round(emissiveData.x));
+    int emitter_type = int(round(emissiveData.y));
+    int block_type = int(round(block_type_f));
 
     // === Parallax
     #if defined LabPBR && defined POM && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
         #include "/src/pom.glsl"
+        #ifdef GBUFFER_BLOCK
+            if(block_type == 5) final_uv = texcoord;
+        #endif
     #else
         vec2 final_uv = texcoord;
     #endif
@@ -169,11 +176,6 @@ void main() {
     #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
         reflex_index2 = reflexIndex;
     #endif
-
-    // === Block detection
-    int ore_type = int(round(emissiveData.x));
-    int emitter_type = int(round(emissiveData.y));
-    int block_type = int(round(block_type_f));
     
     // === End portal render
     #ifdef END_PORTAL
@@ -340,7 +342,7 @@ void main() {
 
     if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
 
-    block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.8, rainStrength));
+    block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.7, rainStrength));
 
     #if (MATERIAL_GLOSS > 0 && !defined NETHER)
         vec3 gloss;
