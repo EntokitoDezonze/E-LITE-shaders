@@ -31,6 +31,7 @@ uniform float viewHeight;
 #if AO == 1
     uniform float inv_aspect_ratio;
     uniform float fov_y_inv;
+    varying vec3 viewRay;
 #endif
 
 #if V_CLOUDS > 0 && !defined UNKNOWN_DIM || AURORA > 0
@@ -47,6 +48,7 @@ uniform float viewHeight;
     uniform float dhNearPlane;
     uniform float dhFarPlane;
     uniform mat4 dhProjection;
+    uniform mat4 dhProjectionInverse;
 #endif
 
 #ifdef VOXY
@@ -58,6 +60,7 @@ uniform mat4 gbufferProjectionInverse;
 uniform float pixelSizeX;
 uniform float pixelSizeY;
 uniform float frameTime;
+uniform int dhRenderDistance;
 
 #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
     uniform mat4 gbufferProjection;
@@ -82,9 +85,7 @@ varying vec3 dirToView;
 #if AO == 1
     varying float fog_density_coeff;
     varying float biomeMul;
-    #ifdef NEAR_FOG
-        varying float sunInfluence;
-    #endif
+    varying float sunInfluence;
 #endif
 
 // == Utility
@@ -101,7 +102,7 @@ varying vec3 dirToView;
     #include "/lib/round_sun.glsl"
 #endif
 
-#if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
+#if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0 || ROUND_SUN < 2
     #include "/lib/dither.glsl"
 #endif
 
@@ -138,8 +139,18 @@ void main() {
         float d3 = texture2DLod(vxDepthTexTrans, texcoord * RENDER_SCALE, 0).r;
     #endif
 
+    #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0 || ROUND_SUN < 2
+        #if AA_TYPE > 0 && !defined PS1_LIKE
+            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
+        #else
+            float dither = semiblue(gl_FragCoord.xy);
+        #endif
+    #endif
+
     #if !defined THE_END && !defined NETHER && ROUND_SUN < 2
         vec3 sun = draw_sun();
+        float dither_s = dither - 0.5;
+        if(luma(sun) > 0.0) sun += dither_s * luma(sun) * 0.25;
         #if defined DISTANT_HORIZONS
             block_color.rgb += sun * step(0.9999, dh_d * d);
         #elif defined VOXY
@@ -152,14 +163,6 @@ void main() {
     vec2 eye_bright_smooth = vec2(eyeBrightnessSmooth);
 
     vec3 view_vector = vec3(1.0);
-
-    #if AO == 1 || (V_CLOUDS > 0 && !defined UNKNOWN_DIM) || AURORA > 0
-        #if AA_TYPE > 0 && !defined PS1_LIKE
-            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
-        #else
-            float dither = semiblue(gl_FragCoord.xy);
-        #endif
-    #endif
 
     float eye_brightness_scaled_val = (eye_bright_smooth.y * .8 + 48.0) * 0.004166666666666667;
 
@@ -230,23 +233,49 @@ void main() {
             }
         #endif
 
-        float horizon_fog = mix(fog_density_coeff * biomeMul, biomeMul * 10, rainStrength);
-        float ao_density = linear_d * horizon_fog;
-        float ao_att = 1.0 / pow(1.0 + ao_density, 1.5);     
-        #ifdef NEAR_FOG
-            ao_att *= sunInfluence;
+        float sunDayFactor = max(dayBF(dayBF(1.0, 0.1, 0.0), 0.1, dayBF(-10.0, 0.1, 0.0)), 0.0);
+
+        #if defined DISTANT_HORIZONS || defined VOXY
+            float dynamic_density = 0.06 + (0.01 * sunInfluence * sunDayFactor);
+        #else
+            float dynamic_density = 0.04 + (0.04 * sunInfluence * sunDayFactor);
         #endif
+
+        float invFogAdjust = 1.0 / FOG_ADJUST;
+        #ifdef DISTANT_HORIZONS
+            float invDist = 1.0 / dhRenderDistance;
+        #elif defined VOXY
+            float invDist = 1.0 / vxRenderDistance / 16;
+        #else
+            float invDist = 1.0 / far;
+        #endif
+
+        float fogDist;
+
+        vec3  ndc = vec3(texcoord, d) * 2.0 - 1.0;
+        vec4  vp  = gbufferProjectionInverse * vec4(ndc, 1.0);
+        fogDist   = length(vp.xyz / vp.w);
+
+        #ifdef DISTANT_HORIZONS
+            if (d >= 1.0) {
+                vec3 ndcDH = vec3(texcoord, d2) * 2.0 - 1.0;
+                vec4 vpDH  = dhProjectionInverse * vec4(ndcDH, 1.0);
+                fogDist    = length(vpDH.xyz / vpDH.w);
+            }
+        #endif
+
+        float dist_ratio = fogDist * invDist;
+        float hx = fogDist * dynamic_density * fog_density_coeff * mix(1.0, 8.0, rainStrength) * invFogAdjust;
+        float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
+
+        horizon_fog = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        float ao_att = 1.0 - horizon_fog;
+        float ao_attdh = ao_att; 
+
+        //block_color *= horizon_fog;
 
         #ifdef DISTANT_HORIZONS
             if (d >= 1.0 && dh_d < 1) {
-                float fog = mix(fog_density_coeff, 10.0, rainStrength);
-
-                float ao_factor = dh_d * fog;
-                float ao_attdh = 1.0 / pow(1.0 + ao_factor, 1.5);
-                #if defined NETHER
-                    ao_attdh = fastpow(ao_attdh, 50.0);
-                    ao_attdh = fastpow(ao_attdh, 2.0);
-                #endif
                 float final_aodh = mix(1.0, dh_dbao(dither), ao_attdh);
                 block_color.rgb *= final_aodh;
             } 

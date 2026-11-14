@@ -47,14 +47,14 @@ vec3 draw_sun() {
         #if COLOR_SCHEME != 5
             #if VOL_LIGHT > 0
                 float glare = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(4.0, 2.0, rainStrength)), 0.0, 1.0);
-                float spot  = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(25.0, 1.0, rainStrength)), 0.0, 1.0);
+                float spot  = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(25.0, 4.0, rainStrength)), 0.0, 1.0);
 
-                vec3 sunColor = dayBlgcy(vec3(1.0, 0.7, 0.3) * 0.5, vec3(1.0, 0.75, 0.4), vec3(0.0)) * mix(glare * 0.3 + spot * 2.25, glare * dayBF(0.075, 0.2, 0.0) + spot * dayBF(0.075, 0.075, 0.0), rainStrength);
+                vec3 sunColor = dayBlgcy(vec3(1.0, 0.7, 0.3) * 0.5, vec3(1.0, 0.75, 0.4), vec3(0.0)) * mix(glare * 0.3 + spot * 2.25, glare * dayBF(0.05, 0.1, 0.0) + spot * dayBF(0.05, 0.05, 0.0), rainStrength);
                 sunColor = mix(sunColor, saturate(sunColor, dayBF(0.5, 0.0, 0.0)), rainStrength);
                 return sunColor;
             #else
                 float glare = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(4.0, 2.0, rainStrength)), 0.0, 1.0); 
-                float spot  = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(25.0, 1.0, rainStrength)), 0.0, 1.0);
+                float spot  = clamp(fastpow(clamp(cosTheta, 0.0, 1.0), mix(25.0, 4.0, rainStrength)), 0.0, 1.0);
 
                 vec3 sunColor = saturate(dayBlgcy(vec3(1.0, 0.6, 0.3) * 0.75, vec3(1.0, 0.8, 0.5), vec3(0.0)), mix(1.0, 0.5, rainStrength)) * mix(glare * 0.3 + spot * 2.0, glare * dayBF(0.1, 0.1, 0.0) + spot * dayBF(0.25, 0.15, 0.0), rainStrength);
                 return sunColor;

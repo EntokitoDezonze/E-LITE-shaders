@@ -82,7 +82,7 @@ varying float visible_sky;
 varying vec2 lmcoord;
 varying float block_type;
 varying float fog_adj;
-varying float near_fog;
+varying float dist_ratio;
 varying vec3 hi_sky_color;
 varying vec3 mid_sky_color;
 varying vec3 low_sky_color;
@@ -199,17 +199,17 @@ void main() {
             float water_texture = 1.0;
         #endif
 
-            real_light = omni_light +
-                (direct_light_strength * visible_sky * direct_light_color) * (1.0 - rainStrength * 0.75) +
-                candle_color;
+        real_light = omni_light +
+            (direct_light_strength * visible_sky * direct_light_color) * (1.0 - rainStrength * 0.75) +
+            candle_color;
 
         #if WATER_COLOR_SOURCE == 0
-                block_color.rgb = water_texture * real_light * WATER_COLOR;
+            block_color.rgb = water_texture * real_light * WATER_COLOR;
         #elif WATER_COLOR_SOURCE == 1
             block_color.rgb = 0.5 * water_texture * real_light * tint_color.rgb;
         #endif
 
-            block_color = vec4(refraction(fragposition, block_color.rgb, water_normal_base), 1.0);
+        block_color = vec4(refraction(fragposition, block_color.rgb, water_normal_base), 1.0);
 
         #if WATER_TEXTURE == 1
                 float water_texture2 = water_texture + 0.3;
@@ -217,7 +217,7 @@ void main() {
                 fresnel = clamp(fresnel * (water_texture2), 0.0, 1.0);
         #endif
 
-        block_color.rgb = water_shader_dh(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5) / 0.9, block_color.rgb, sky_color_reflect * dayBF(1.15, 1.0, 1.0), fresnel, visible_sky, direct_light_color);
+        block_color.rgb = water_shader_dh(fragposition, surface_normal * sqrt(water_texture * 0.5 + 0.5) / 0.9, block_color.rgb * 0.86, sky_color_reflect * dayBF(1.15, 1.0, 1.0), fresnel, visible_sky, direct_light_color);
     #endif
 
     } else {  // Otros translúcidos

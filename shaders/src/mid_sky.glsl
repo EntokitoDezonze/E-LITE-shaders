@@ -1,13 +1,13 @@
 #if COLOR_SCHEME == 2
 vec3 mid_sky_color_rgb = dayBlend(
-        saturate(MID_SUNSET_COLOR, dayBFlgcy(1.0, 1.0, 0.0)) * dayBlend(vec3(1.0), vec3(1.0), vec3(2.0)),
+        saturate(MID_SUNSET_COLOR, dayBFlgcy(1.0, 1.0, 0.0)),
         MID_DAY_COLOR,
         saturate(MID_NIGHT_COLOR, dayBF(0.0, 1.0, 0.0)) * dayBF(1.0, 1.0, 1.25)
     );
 
     mid_sky_color_rgb = mix(
         mid_sky_color_rgb,
-        HORIZON_SKY_RAIN_COLOR * saturate(mid_sky_color_rgb * dayBF(1.0, 0.8, 0.75), 0.08),
+        HORIZON_SKY_RAIN_COLOR * saturate(mid_sky_color_rgb * dayBF(1.0, 0.7, 0.75), -0.01),
         rainStrength
     );
 

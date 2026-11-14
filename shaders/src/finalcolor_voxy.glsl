@@ -22,7 +22,7 @@
             float fogInfluence = 1.0;
         #endif
 
-        vec3 fogColorMod = dayBlendVoxy(vec3(0.1529, 0.1725, 0.2), vec3(0.19, 0.32, 0.46), vec3(0.0235, 0.0314, 0.0431),
+        vec3 fogColorMod = dayBlendVoxy(vec3(0.1529, 0.1725, 0.2), vec3(0.4, 0.6, 1.0), vec3(0.0235, 0.0314, 0.0431),
             dayMixerV,
             nightMixerV,
             dayMomentV
@@ -36,8 +36,8 @@
             fogColorMod = saturate(fogColorMod, -0.5);
         #endif
     
-        fogColorMod = mix(fogColorMod, saturate(fogColorMod * 0.5, 0.66), rainStrength);
-        float fogmix = max(frogAdjust * frogAdjust * frogAdjust, 0.0);
+        fogColorMod = mix(fogColorMod, saturate(fogColorMod * vec3(0.8, 0.975, 1.0) * 0.5, 0.5), rainStrength);
+        float fogmix = smoothstep(0.0, 1.01, dist_ratio);
 
         #if MC_VERSION >= 11900
             vec3 fog_texture;

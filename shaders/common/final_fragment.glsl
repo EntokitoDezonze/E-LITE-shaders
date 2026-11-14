@@ -203,8 +203,10 @@ void main() {
         block_color = mix(block_color, block_color * vec3(0.8, 1.3, 1.6), shadow_desaturation);
     } else {
         float shadow_desaturation = smoothstep(0.02, 0.25, luma_factor);
-        vec3 shadow_tint = vec3(0.85, 0.9, 1.0);
+        vec3 shadow_tint = vec3(0.85, 0.85, 1.0);
         block_color = mix(saturate(block_color, 0.666) * shadow_tint, block_color, shadow_desaturation);
+        float green_mask = smoothstep(0.0, 0.3, (block_color.g - max(block_color.r, block_color.b)) / max(block_color.g, 1e-4));
+        block_color = mix(block_color, vec3(luma(block_color)), 0.1 * green_mask * shadow_desaturation);
     } // Water overlay
 
     #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 4

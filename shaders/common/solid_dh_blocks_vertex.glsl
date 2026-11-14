@@ -27,6 +27,7 @@ uniform float viewHeight;
 uniform int frameCounter;
 uniform float frameTime;
 uniform vec3 skyColor;
+uniform vec3 cameraPosition;
 
 #ifdef UNKNOWN_DIM
     uniform sampler2D lightmap;
@@ -46,7 +47,7 @@ varying vec3 omni_light;
 varying vec4 position;
 varying vec4 sub_position;
 varying float fog_adj;
-varying float near_fog;
+varying float dist_ratio;
 varying vec3 flat_normal;
 
 // == Utility

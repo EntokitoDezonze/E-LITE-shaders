@@ -103,7 +103,7 @@ void main() {
         #if AA_TYPE > 0
            float dither = shifted_dither_makeup(gl_FragCoord.xy);
         #else
-           float dither = dither_dakeup(gl_FragCoord.xy);
+           float dither = dither_makeup(gl_FragCoord.xy);
         #endif
         // "Speed"
         vec2 velocity = (texcoord * RENDER_SCALE) - texcoord_past;

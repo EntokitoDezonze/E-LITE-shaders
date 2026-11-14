@@ -34,6 +34,8 @@ Changelog:
 - Selective TAA is now implemented, reducing ghost in entities. (Inherited from MakeUp)
 - Small changes on sun glow.
 - Vanilla Sun/moon now cuts when it is below horizon.
+- Reduced color banding in sky.
+- Small changes on terrain color.
 
 # Bugfixes:
 - Fixed some black pixels appearing randomly (mainly on plants and seagrass.)

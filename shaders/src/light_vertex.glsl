@@ -130,10 +130,10 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 0.0), 1.0, 1.0);
     float isUpside = 1.0 - smoothstep(0.51, 0.75, outNormal.y);
     #if COLOR_SCHEME == 2 || COLOR_SCHEME == 6
         #ifndef SHADOW_CASTING
-            outNormal.y = outNormal.y * 0.5 + 0.5;
+            outNormal.y = 1.0;
         #endif
-        vec3 omni_color = saturate(mix(hi_sky_color_rgb * vec3(0.666, 1.0, 1.0) * mix(dayBF(3.0, 4.5, 4.0), dayBF(10.0, 11.0, 8.0), rainStrength) * dayBlendSunset *
-        mix(1.0, outNormal.y * 0.15 + 1.0, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.3, 6.0) * OMNI_MUL, OMNI_TINT), 0.28 + clamp(outNormal.y + 0.1, 0.0, 1.0) * 0.25);
+        vec3 omni_color = saturate(mix(hi_sky_color_rgb * vec3(0.666, 1.0, 1.0) * mix(dayBF(3.0, 4.25, 4.0), dayBF(10.0, 11.0, 8.0), rainStrength) * dayBlendSunset *
+        mix(1.0, outNormal.y * 0.15 + 1.0, visible_sky) * OMNI_MUL, direct_light_color * dayBF(1.0, 0.35, 6.0) * OMNI_MUL, OMNI_TINT), 0.28 + clamp(outNormal.y + 0.1, 0.0, 1.0) * 0.25);
     #elif COLOR_SCHEME == 4
         vec3 omni_color = direct_light_color * (OMNI_MUL + dayBF(0.1, 0.1, 0.5));
     #else

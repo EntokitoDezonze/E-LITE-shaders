@@ -99,7 +99,7 @@ varying vec3 pure_low_sky_color;
 
 #ifdef FOG_ACTIVE
     varying float fog_adj;
-    varying float near_fog;
+    varying float dist_ratio;
     varying float sunInfluence;
 #endif
 

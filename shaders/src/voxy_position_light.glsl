@@ -1,17 +1,13 @@
 // -- Position Vertex
 
-    #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
-        float fogDensityCoeff = FOG_DENSITY * FOG_ADJUST;
-    #else
-        float fogDensityCoeff = dayBlendFloatVoxy(
-            FOG_SUNSET,
-            FOG_DAY,
-            FOG_NIGHT,
-            dayMixerV,
-            nightMixerV,
-            dayMomentV
-        ) * FOG_ADJUST;
-    #endif
+    float fogDensityCoeff = dayBlendFloatVoxy(
+        FOG_SUNSET,
+        FOG_DAY,
+        FOG_NIGHT,
+        dayMixerV,
+        nightMixerV,
+        dayMomentV
+    ) * (1/FOG_ADJUST);
 
     // ---- Original Light Vertex Logic
 

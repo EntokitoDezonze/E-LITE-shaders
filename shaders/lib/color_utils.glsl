@@ -39,16 +39,16 @@ uniform int moonPhase;
     #define OMNI_TINT 0.5
     #define LIGHT_SUNSET_COLOR vec3(0.75, 0.375, 0.2025)
     #define LIGHT_DAY_COLOR vec3(1.075, 1.0, 0.95) * 1.1
-    #define LIGHT_NIGHT_COLOR vec3(0.015, 0.02, 0.035) * NIGHT_BRIGHT_PHASE
+    #define LIGHT_NIGHT_COLOR vec3(0.02, 0.025, 0.04) * NIGHT_BRIGHT_PHASE
     
     #if SIMPLE_SKY == 0 // E-LITE 5
         #define ZENITH_SUNSET_COLOR vec3(0.12,  0.1475,  0.21) * 1.333
         #define ZENITH_DAY_COLOR vec3(0.21, 0.325, 0.65) * 0.9
-        #define ZENITH_NIGHT_COLOR vec3(0.0075, 0.015, 0.0225) * NIGHT_BRIGHT_PHASE
+        #define ZENITH_NIGHT_COLOR vec3(0.01, 0.02, 0.027) * NIGHT_BRIGHT_PHASE
         
         #define HORIZON_SUNSET_COLOR vec3(0.7, 0.35, 0.2) * 0.5
-        #define HORIZON_DAY_COLOR vec3(0.95, 0.92, 0.9) * 0.625
-        #define HORIZON_NIGHT_COLOR vec3(0.0, 0.01, 0.015) * NIGHT_BRIGHT_PHASE
+        #define HORIZON_DAY_COLOR vec3(0.9, 0.92, 0.95) * 0.9
+        #define HORIZON_NIGHT_COLOR vec3(0.005, 0.015, 0.02) * NIGHT_BRIGHT_PHASE
     #else // LITE 4.1 Legacy
         #define ZENITH_SUNSET_COLOR vec3(0.3, 0.35, 0.45)
         #define ZENITH_DAY_COLOR vec3(0.45, 0.65, 1.0)
@@ -65,7 +65,7 @@ uniform int moonPhase;
 
     #define MID_SUNSET_COLOR vec3(0.175, 0.225, 0.275)
     #define MID_DAY_COLOR vec3(0.3, 0.52, 0.9)
-    #define MID_NIGHT_COLOR vec3(0.02, 0.025, 0.03) * NIGHT_BRIGHT_PHASE
+    #define MID_NIGHT_COLOR vec3(0.03, 0.036, 0.045) * NIGHT_BRIGHT_PHASE
 
     #define WATER_COLOR vec3(0.05, 0.15, 0.21)
 #elif COLOR_SCHEME == 3  // LITE Realistic Legacy (3.3)
@@ -180,9 +180,9 @@ uniform int moonPhase;
     #define FOG_DENSITY 3.0
 #endif
     
-#define FOG_DAY 2.75
-#define FOG_SUNSET 2.5
-#define FOG_NIGHT 0.75
+#define FOG_DAY 0.5
+#define FOG_SUNSET 0.85
+#define FOG_NIGHT 0.85
 
 
 #include "/lib/color_conversion.glsl"

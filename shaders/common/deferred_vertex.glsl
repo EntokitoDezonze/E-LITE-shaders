@@ -42,9 +42,8 @@ varying vec3 dirToView;
 #if AO == 1
     varying float fog_density_coeff;
     varying float biomeMul;
-    #ifdef NEAR_FOG
-        varying float sunInfluence;
-    #endif
+    varying float sunInfluence;
+    varying vec3 viewRay;
 #endif
 
 // == Utility
@@ -69,14 +68,12 @@ void main() {
     direct_light_strength = gray(direct_light_color * 2);
 
     #if AO == 1
-        fog_density_coeff = dayBFlgcy(FOG_SUNSET, FOG_DAY, FOG_NIGHT) * FOG_ADJUST;
+        fog_density_coeff = dayBFlgcy(FOG_SUNSET, FOG_DAY, FOG_NIGHT) * (1/FOG_ADJUST);
         biomeMul = pow(biome_fog, 1.35);
-        #ifdef NEAR_FOG
-            vec3 dirToSun  = sunPosition * 0.01; 
-            float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, dirToView));
-            sunInfluence = sunAngle * sunAngle * sunAngle * dayBF(1.0, 0.0, 0.0); 
-            sunInfluence = mix(1.0, 0.0, sunInfluence);
-        #endif
+        vec3 dirToSun  = sunPosition * 0.01; 
+        float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, dirToView));
+        sunInfluence = sunAngle * sunAngle * sunAngle * dayBF(1.0, 0.0, 0.0); 
+        sunInfluence = mix(1.0, 0.0, sunInfluence);
     #endif
 
     #if (V_CLOUDS > 0 && !defined UNKNOWN_DIM) && !defined NO_CLOUDY_SKY

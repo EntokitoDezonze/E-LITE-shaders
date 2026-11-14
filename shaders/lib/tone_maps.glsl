@@ -88,7 +88,7 @@ vec3 uchimura_tm(vec3 color) {
     float a = 1.0;
     float m = 0.22;
     float l = 0.4;
-    float c = 1.1;
+    float c = 0.9;
     float b = 0.01;
     color *= 1.25;
 

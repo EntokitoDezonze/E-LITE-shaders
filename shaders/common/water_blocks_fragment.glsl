@@ -124,7 +124,7 @@ vec3 nfragpos = normalize(fragpos.xyz);
 
 #ifdef FOG_ACTIVE
     varying float fog_adj;
-    varying float near_fog;
+    varying float dist_ratio;
     varying float sunInfluence;
 #endif
 

@@ -257,7 +257,7 @@ void main() {
     #endif
 
     data_pack_a = vec4(fog_adj, direct_light_strength, block_type_v, exposure_v);
-    data_pack_b = vec4(near_fog, visible_sky, sunInfluence, roughness_v);
+    data_pack_b = vec4(dist_ratio, visible_sky, sunInfluence, roughness_v);
     emissiveData = vec2(ore_v, emitter_v);
     foliageData = vec3(isFoliage, 0.0, isGrass);
 }

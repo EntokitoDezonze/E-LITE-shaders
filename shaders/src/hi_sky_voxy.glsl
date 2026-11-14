@@ -13,7 +13,7 @@
 
     ZenithSkyColorRGB = mix(
         ZenithSkyColorRGB,
-        ZENITH_SKY_RAIN_COLOR * saturate(ZenithSkyColorRGB, 0.06) * dayBlendFloatVoxy(1.0, 0.9, dayBlendFloatVoxy(1.75, 0.45, 1.25, dayMixerV, nightMixerV, dayMomentV), dayMixerV, nightMixerV, dayMomentV),
+        ZENITH_SKY_RAIN_COLOR * saturate(ZenithSkyColorRGB, -0.01) * dayBlendFloatVoxy(1.0, 0.9, dayBlendFloatVoxy(1.75, 0.45, 1.25, dayMixerV, nightMixerV, dayMomentV), dayMixerV, nightMixerV, dayMomentV),
         rainStrength
     );
 

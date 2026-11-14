@@ -14,7 +14,7 @@
 
         horizonSkyColorRGB = mix(
             horizonSkyColorRGB,
-            HORIZON_SKY_RAIN_COLOR * luma(horizonSkyColorRGB) * dayBlendFloatVoxy(0.5, 0.9, 0.75, dayMixerV, nightMixerV, dayMomentV),
+            HORIZON_SKY_RAIN_COLOR * luma(horizonSkyColorRGB) * dayBlendFloatVoxy(0.5, 0.5, 0.75, dayMixerV, nightMixerV, dayMomentV),
             rainStrength
         );
 

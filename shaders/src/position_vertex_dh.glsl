@@ -12,14 +12,10 @@ gl_Position = dhProjection * gbufferModelView * position;
 #endif
 
 // Fog intensity calculation
-#if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
-    float fog_density_coeff = FOG_DENSITY * FOG_ADJUST;
-#else
-    float fog_density_coeff = dayBF(
-        FOG_SUNSET,
-        FOG_DAY,
-        FOG_NIGHT
-    ) * FOG_ADJUST;
-#endif
+float fog_density_coeff = dayBF(
+    FOG_SUNSET,
+    FOG_DAY,
+    FOG_NIGHT
+) * (1/FOG_ADJUST);
 
 gl_FogFragCoord = length(position.xyz);

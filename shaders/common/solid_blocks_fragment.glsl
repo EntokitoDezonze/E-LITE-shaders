@@ -33,7 +33,7 @@ uniform mat4 gbufferProjection, gbufferProjectionInverse, gbufferModelView, gbuf
 
 /* Packing */
 varying vec4 data_pack_a; // x: fog_adj, y: direct_light_strength, z: block_type_f, w: exposure
-varying vec4 data_pack_b; // x: near_fog, y: visible_sky, z: sunInfluence, w: roughness
+varying vec4 data_pack_b; // x: dist_ratio, y: visible_sky, z: sunInfluence, w: roughness
 varying vec2 emissiveData; // x: ore_type_f, y: emitter_type_f
 varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 
@@ -72,7 +72,7 @@ varying vec3 direct_light_color, candle_color, omni_light;
 #endif
 
 float fog_adj, direct_light_strength, block_type_f, exposure;
-float near_fog, visible_sky, sunInfluence, roughness;
+float dist_ratio, visible_sky, sunInfluence, roughness;
 float ore_type_f, emitter_type_f, isGrass;
 float reflex_index2;
 vec3 final_candle_color;
@@ -144,7 +144,7 @@ void main() {
     direct_light_strength = data_pack_a.y;
     block_type_f = data_pack_a.z;
     exposure = data_pack_a.w;
-    near_fog = data_pack_b.x;
+    dist_ratio = data_pack_b.x;
     visible_sky = data_pack_b.y;
     sunInfluence = data_pack_b.z;
     roughness = data_pack_b.w;
@@ -335,12 +335,15 @@ void main() {
         vec3 material_f0 = vec3(1.0);
     #endif
 
-    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1 && block_color.r > 0.4){
+    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1 && pure_block_color.r > 0.5){
         block_color.rgb = saturate(block_color.rgb, mix(1.8, 1.25, rainStrength));
-        block_color.rgb = saturate(block_color.rgb, mix(0.5, 1.0, max(luma(shadow_c) + rainStrength, 1.0)));
+        block_color.rgb = saturate(block_color.rgb, mix(0.5, 1.0, min(luma(shadow_c) + rainStrength, 1.0)));
         }
 
-    if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
+    if (block_type == 4){
+        block_color.rgb = saturate(block_color.rgb * 1.25, 1.1);
+        block_color.rgb = saturate(block_color.rgb, mix(0.6, 1.0, min(luma(shadow_c) + rainStrength, 1.0)));
+        }
 
     block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.7, rainStrength));
 

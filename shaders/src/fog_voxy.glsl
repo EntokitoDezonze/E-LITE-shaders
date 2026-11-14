@@ -16,7 +16,7 @@ float nearFogVoxy = 0.0;
         dayMixerV,
         nightMixerV,
         dayMomentV
-    ) * FOG_ADJUST;
+    ) * invFogAdjust;
 
     float fog_intensity_coeff = 1.0;
     float biome_fog = 1.0;
@@ -28,25 +28,34 @@ float nearFogVoxy = 0.0;
 
     float sunAngle = smoothstep(-0.8, 1.0, dot(dirToSun, viewPositionNormalized));
     float sunInfluenceV = sunAngle * sunAngle * sunAngle; 
+    float sunDayFactor = max(dayBlendFloatVoxyN(dayBlendFloatVoxyN(1.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV), 0.1, dayBlendFloatVoxyN(-10.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV), dayMixerV, nightMixerV, dayMomentV), 0.0);
+    float dynamic_density = 0.006 + (0.001 * sunInfluenceV * sunDayFactor);
 
     #ifdef NEAR_FOG
-        float sunDayFactor = max(dayBlendFloatVoxyN(dayBlendFloatVoxyN(1.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV), 0.1, dayBlendFloatVoxyN(-10.0, 0.1, 0.0, dayMixerV, nightMixerV, dayMomentV), dayMixerV, nightMixerV, dayMomentV), 0.0);
+        const float FOG_H_REF       = 63.0;
+        const float FOG_H_FALLOFF   = 0.01;
+        const float FOG_LAYER_BOOST = 0.5;
 
-        float dynamic_density = 0.003 + (0.001 * sunInfluenceV * sunDayFactor);
+        float py    = dot(vec3(vxModelViewInv[0].y, vxModelViewInv[1].y, vxModelViewInv[2].y), fragposition.xyz);
+        float fragY = cameraPosition.y + py - FOG_H_REF;
 
-        float dist_adj = max(0.0, fogFragCoord);
-        float x = dist_adj * dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust;
-        float fogLinear = 1.0 - exp(-x);
-        float fogSquared = 1.0 - exp(-x * x);
-        nearFogVoxy = clamp(mix(fogLinear, fogSquared, mix(-0.4, -1.0, rainStrength)), 0.0, 1.0);
+        float heightMul = FOG_LAYER_BOOST * exp(-FOG_H_FALLOFF * max(fragY, 0.0)) * smoothstep(0.0, 0.4, dist_ratio);
 
-        float horizon_exp = mix(fog_density_coeff * biome_fog, fog_density_coeff * biome_fog * 0.2, rainStrength);
-        float horizon_fog = fastpow(clamp(dist_ratio * fog_intensity_coeff, 0.0, 1.0), horizon_exp);
+        float densityMul = dynamic_density * mix(1.0, 2.5, rainStrength) * invFogAdjust;
 
+        float x = max(0.0, fogFragCoord) * densityMul * heightMul;
+        nearFogVoxy = 1.0 - exp(-x);
+
+        float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
+        float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
+
+        horizon_fog = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
         float frogAdjust = max(nearFogVoxy, horizon_fog);
     #else
-        float horizon_exp = mix(fog_density_coeff * biome_fog, fog_density_coeff * biome_fog * 0.2, rainStrength);
-        float frogAdjust = fastpow(clamp(dist_ratio * fog_intensity_coeff, 0.0, 1.0), horizon_exp);
+        float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
+        float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
+
+        float frogAdjust = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
     #endif
 #else
     #if defined NETHER

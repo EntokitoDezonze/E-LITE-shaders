@@ -167,3 +167,7 @@ float fastCos17(float x) {
     return fastSin17(x + 1.5707963267948966);
 }
 
+vec3 hermite(vec3 p0, vec3 p1, vec3 m0, vec3 m1, float u, float h) {
+    return mix(p0, p1, smoothstep(0.0, 1.0, u)) + h * u * (u - 1.0) * (m0 * (u - 1.0) + m1 * u);
+}
+

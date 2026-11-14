@@ -30,7 +30,7 @@ varying vec3 omni_light;
 varying vec4 position;
 varying vec4 sub_position;
 varying float fog_adj;
-varying float near_fog;
+varying float dist_ratio;
 
 // == Utility
 #include "/lib/luma.glsl"

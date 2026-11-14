@@ -4,14 +4,14 @@
 #else
     #if COLOR_SCHEME == 2
     vec3 low_sky_color_rgb = dayBlend(
-            HORIZON_SUNSET_COLOR * dayBlend(vec3(1.0), vec3(1.0, 1.5, 1.0), dayBlgcy(vec3(1.0, 1.5, 0.0), vec3(1.0), vec3(1.8, 1.25, 0.5))),
+            HORIZON_SUNSET_COLOR * dayBlend(vec3(1.0), vec3(1.0, 1.5, 1.0), vec3(1.8, 1.25, 0.25)),
             HORIZON_DAY_COLOR,
             HORIZON_NIGHT_COLOR
         );
 
         low_sky_color_rgb = mix(
             low_sky_color_rgb,
-            HORIZON_SKY_RAIN_COLOR * luma(low_sky_color_rgb) * dayBF(0.5, 0.9, 0.75),
+            HORIZON_SKY_RAIN_COLOR * luma(low_sky_color_rgb) * dayBF(0.5, 0.7, 0.75),
             rainStrength
         );
 
