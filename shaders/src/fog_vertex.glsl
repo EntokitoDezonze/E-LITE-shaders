@@ -1,6 +1,7 @@
 float invFogAdjust = 1.0 / FOG_ADJUST;
 
 float dist_ratio;
+float fog_intensity_coeff = max(eye_bright_smooth.y * 0.004166666666666667, visible_sky);
 #if !defined THE_END && !defined NETHER
     float fog_density_coeff = dayBFlgcy(
         FOG_SUNSET,
@@ -16,7 +17,7 @@ float dist_ratio;
     #else
         float invDist = 1.0 / far;
     #endif
-    dist_ratio = gl_FogFragCoord * invDist;
+    dist_ratio = gl_FogFragCoord * invDist * fog_intensity_coeff;
 
     vec3 dirToSun  = sunPosition * 0.01; 
 

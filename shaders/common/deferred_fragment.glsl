@@ -238,7 +238,7 @@ void main() {
         #if defined DISTANT_HORIZONS || defined VOXY
             float dynamic_density = 0.06 + (0.01 * sunInfluence * sunDayFactor);
         #else
-            float dynamic_density = 0.04 + (0.04 * sunInfluence * sunDayFactor);
+            float dynamic_density = 0.08 + (0.04 * sunInfluence * sunDayFactor);
         #endif
 
         float invFogAdjust = 1.0 / FOG_ADJUST;
@@ -263,9 +263,9 @@ void main() {
                 fogDist    = length(vpDH.xyz / vpDH.w);
             }
         #endif
-
+        
         float dist_ratio = fogDist * invDist;
-        float hx = fogDist * dynamic_density * fog_density_coeff * mix(1.0, 8.0, rainStrength) * invFogAdjust;
+        float hx = fogDist * dynamic_density * fog_density_coeff * mix(2.0, 8.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
         horizon_fog = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));

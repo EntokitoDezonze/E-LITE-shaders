@@ -14,7 +14,7 @@ uniform float viewWidth, viewHeight, light_mix, far, rainStrength, wetness, fram
 uniform int isEyeInWater, frameCounter;
 uniform ivec2 eyeBrightnessSmooth;
 uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
-uniform vec3 moonPosition, sunPosition, skyColor;
+uniform vec3 moonPosition, sunPosition, skyColor, cameraPosition;
 
 #ifdef DISTANT_HORIZONS
     uniform int dhRenderDistance;
@@ -34,7 +34,6 @@ uniform vec3 moonPosition, sunPosition, skyColor;
 #endif
 
 #if WAVING == 1
-    uniform vec3 cameraPosition;
     uniform float frameTimeCounter;
 #endif
 

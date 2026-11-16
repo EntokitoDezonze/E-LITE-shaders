@@ -1,5 +1,5 @@
 #ifdef FOG_ACTIVE
-    float fogmix = smoothstep(0.0, 1.01, dist_ratio);
+    float fogmix = fog_adj * fog_adj * fog_adj;
 #endif
 
 #if defined DH_WATER

@@ -36,7 +36,10 @@
             fogColorMod = saturate(fogColorMod, -0.5);
         #endif
 
-        fogColorMod = mix(fogColorMod, saturate(fogColorMod * vec3(0.8, 0.975, 1.0) * dayBF(0.8, 0.5, 0.6), 0.5), rainStrength);
+        #if COLOR_SCHEME == 5
+            fogColorMod = saturate(fogColorMod * 0.5, 0.0);
+        #endif
+
         float fogmix;
         #if defined DISTANT_HORIZONS || defined VOXY
             fogmix = smoothstep(0.0, 1.01, dist_ratio);
