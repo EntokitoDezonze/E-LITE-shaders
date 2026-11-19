@@ -33,13 +33,13 @@
         float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
-        horizon_fog = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        horizon_fog = mix(horizon_fog * visible_sky, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
         fog_adj = max(near_fog, horizon_fog);
     #else
         float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
-        fog_adj = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        fog_adj = mix(horizon_fog * visible_sky, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
     #endif
 #else
     float horizon_fog = pow(clamp(gl_FogFragCoord / dhRenderDistance, 0.0, 1.0), 0.75);

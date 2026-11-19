@@ -1,7 +1,6 @@
 float invFogAdjust = 1.0 / FOG_ADJUST;
 
 float dist_ratio;
-float fog_intensity_coeff = max(eye_bright_smooth.y * 0.004166666666666667, visible_sky);
 #if !defined THE_END && !defined NETHER
     float fog_density_coeff = dayBFlgcy(
         FOG_SUNSET,
@@ -9,6 +8,7 @@ float fog_intensity_coeff = max(eye_bright_smooth.y * 0.004166666666666667, visi
         FOG_NIGHT
     ) * invFogAdjust;
 
+    float fog_intensity_coeff = max(eye_bright_smooth.y * 0.004166666666666667, visible_sky);
 
     #ifdef DISTANT_HORIZONS
         float invDist = 1.0 / dhRenderDistance;
@@ -48,13 +48,13 @@ float fog_intensity_coeff = max(eye_bright_smooth.y * 0.004166666666666667, visi
         float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
-        horizon_fog = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        horizon_fog = mix(horizon_fog * visible_sky, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
         fog_adj = max(near_fog, horizon_fog);
     #else
         float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 8.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
-        fog_adj  = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        fog_adj = mix(horizon_fog * visible_sky, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
     #endif
 #else
     #if defined NETHER

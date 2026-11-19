@@ -12,7 +12,7 @@
         #ifndef SHADOW_CASTING
             normal.y = normal.y * 0.5 + 0.5;
         #endif
-        vec3 omniColor = saturate(mix(ZenithSkyColorRGB * mix(dayBlendFloatVoxyN(3.0, 4.25, 4.0, dayMixerV, nightMixerV, dayMomentV), dayBlendFloatVoxyN(10.0, 11.0, 8.0, dayMixerV, nightMixerV, dayMomentV), rainStrength) * dayBlendSunset * mix(1.0, normal.y * 0.15 + 1.0, visibleSky * isUpside) * OMNI_MUL, directLightColor * dayBlendFloatVoxyN(1.0, 0.35, 6.0, dayMixerV, nightMixerV, dayMomentV) * OMNI_MUL, OMNI_TINT), 0.28);
+        vec3 omniColor = saturate(mix(ZenithSkyColorRGB * mix(dayBlendFloatVoxyN(3.0, 4.25, 3.0, dayMixerV, nightMixerV, dayMomentV), dayBlendFloatVoxyN(10.0, 11.0, 8.0, dayMixerV, nightMixerV, dayMomentV), rainStrength) * dayBlendSunset * mix(1.0, normal.y * 0.15 + 1.0, visibleSky * isUpside) * OMNI_MUL, directLightColor * dayBlendFloatVoxyN(1.0, 0.35, 640, dayMixerV, nightMixerV, dayMomentV) * OMNI_MUL, OMNI_TINT), 0.28);
     #elif COLOR_SCHEME == 4
         vec3 omniColor = directLightColor * (OMNI_MUL + dayBlendFloatVoxy(0.1, 0.1, 0.5, dayMixerV, nightMixerV, dayMomentV));
     #else

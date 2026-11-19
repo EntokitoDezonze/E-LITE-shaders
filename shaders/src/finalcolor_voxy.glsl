@@ -22,7 +22,7 @@
             float fogInfluence = 1.0;
         #endif
 
-        vec3 fogColorMod = dayBlendVoxy(vec3(0.1529, 0.1725, 0.2), vec3(0.4, 0.6, 1.0), vec3(0.0235, 0.0314, 0.0431),
+        vec3 fogColorMod = dayBlendVoxy(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8), vec3(0.0235, 0.0314, 0.0431),
             dayMixerV,
             nightMixerV,
             dayMomentV

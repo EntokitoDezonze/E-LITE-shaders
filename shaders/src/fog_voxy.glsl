@@ -18,7 +18,7 @@ float nearFogVoxy = 0.0;
         dayMomentV
     ) * invFogAdjust;
 
-    float fog_intensity_coeff = 1.0;
+    float fog_intensity_coeff = max(eyeBrightSmoothFloat.y * 0.004166666666666667, visibleSky);
     float biome_fog = 1.0;
 
     float invDist = 1.0 / (vxRenderDistance * 16);
@@ -49,13 +49,13 @@ float nearFogVoxy = 0.0;
         float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
-        horizon_fog = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        horizon_fog = mix(horizon_fog * visibleSky, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
         float frogAdjust = max(nearFogVoxy, horizon_fog);
     #else
         float hx = gl_FogFragCoord * dynamic_density * fog_density_coeff * mix(1.0, 6.0, rainStrength) * invFogAdjust;
         float horizon_fog = clamp(mix(1.0 - exp(-hx), 1.0 - exp(-hx * hx), mix(0.0, -1.0, rainStrength)), 0.0, 1.0);
 
-        float frogAdjust = mix(horizon_fog, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
+        float frogAdjust = mix(horizon_fog * visibleSky, 1.0, smoothstep(0.7, 1.0, clamp(dist_ratio, 0.0, 1.0)));
     #endif
 #else
     #if defined NETHER

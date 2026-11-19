@@ -175,8 +175,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
   #define WATER_TEXTURE 1 
 #endif
 
-#define AVOID_DARK_LEVEL 4.0 // [0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0 10.5 11.0 11.5 12.0 12.5 50.0]  Minimal light intensity (Percentage).
-#define NIGHT_BRIGHT 0.75// [0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15] Adjusts the brightness of the night light in exteriors.
+#define AVOID_DARK_LEVEL 2.0 // [0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0 10.5 11.0 11.5 12.0 12.5 50.0]  Minimal light intensity (Percentage).
+#define NIGHT_BRIGHT 0.65// [0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15] Adjusts the brightness of the night light in exteriors.
 #define NIGHT_BRIGHT_RANGE 0.60 // [0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20] Difference between min and max values.
 #define V_CLOUDS 1 // [-1 0 1 2] Volumetric static: The clouds move, but they keep their shape. Volumetric dynamic: Clouds change shape over time, a different cloud landscape every time (medium performance hit). Vanilla: Original vanilla clouds.
 // #define CIRRUS // Adds a 2nd layer of cirrus clouds in the sky.

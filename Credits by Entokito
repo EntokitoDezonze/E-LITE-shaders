@@ -1,11 +1,8 @@
-  ___    _    ___ _____ ___                    
- | _____| |  |_ _|_   _| __|                   
- | _|___| |__ | |  | | | _|                    
- |____  |____|___|_|_| |___|     ___   _   ____
-  __| |_  __ _ __| |___ _ _ ___ | __| / | |__ /
- (_-| ' \/ _` / _` / -_| '_(_-< |__ \_| |_ |_ \
- /__|_||_\__,_\__,_\___|_| /__/ |___(_|_(_|___/
-                                            
+  ___    _    ___ _____ ___      _            _            
+ | __|__| |  |_ _|_   _| __|  __| |_  __ _ __| |___ _ _ ___
+ | _|___| |__ | |  | | | _|  (_-< ' \/ _` / _` / -_) '_(_-<
+ |___|  |____|___| |_| |___| /__/_||_\__,_\__,_\___|_| /__/
+                                                                            
 # E-LITE shaders version 5.1.4
 
 MakeUp - Ultrafast original creator: Javier Garduño
@@ -28,17 +25,18 @@ Changelog:
 # General changes:
 - Remade cirrus clouds, now they look twisted and more natural.
 - Even reduced artifacts on DoF and Bloom.
-- Remade near fog, now it looks more smooth.
+- Remade fog, now it looks more smooth.
+- Near fog now works as ground fog, improving scene depth.
 - Rework on how fog colors are calculated.
 - Revamped emissives, giving it a better look.
 - Selective TAA is now implemented, reducing ghost in entities. (Inherited from MakeUp)
 - Small changes on sun glow.
 - Vanilla Sun/moon now cuts when it is below horizon.
 - Reduced color banding in sky.
-- Small changes on terrain color.
+- Small changes on how tonemap treats colors.
 
 # Bugfixes:
-- Fixed some black pixels appearing randomly (mainly on plants and seagrass.)
+- Fixed some black/colorful pixels appearing randomly (mainly on plants and seagrass.)
 - Fixed some issues with AO in Distant Horizons chuncks.
 - Fixed a bug that made sign texts to disappear while using labPBR on 26.3.
 
