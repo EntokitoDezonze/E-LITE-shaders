@@ -387,6 +387,50 @@ vec3 emissive_color = vec3(1.0);
 #if defined EMISSIVE_MATERIAL
     float factor_trim = isType(emitter_type, 12); // Armor trims
     emissive_color = mix(emissive_color, emissive_color * 4 * correct_light, factor_trim);
+
+    #ifdef GBUFFER_HAND // Held Torch/Lantern
+        float factor_soulTorchitem = isType(emitter_type, 33);
+        float factor_copperTorchitem = isType(emitter_type, 34);
+        float factor_torchItem = isType(emitter_type, 35);
+        float factor_soullantItem   = isType(emitter_type, 36);
+        float factor_coppllantItem  = isType(emitter_type, 37);
+        float factor_lanternItem    = isType(emitter_type, 38);
+        float factor_glowstone  = isType(emitter_type, 39);
+        float factor_sealantern = isType(emitter_type, 40);
+
+        float match_torch = 1.0 - getColor(color, vec3(0.4353, 0.33, 0.2745), 0.22); // no stick
+        // Soul torch
+        emissive_color = mix(emissive_color, emissive_color * mix(candle_color * 2, vec3(0.4, 0.5, 0.8) * 0.4, match_torch) / candle_color, factor_soulTorchitem);
+        
+        // Copper torch
+        if(color.g - color.r > 0.22) {match_torch = 1.0;}
+        emissive_color = mix(emissive_color, emissive_color * mix(candle_color * 1.5, vec3(0.6, 0.9, 0.6) * 0.4, match_torch) / candle_color, factor_copperTorchitem);
+        
+        // Torch
+        emissive_color = mix(emissive_color, emissive_color * mix(candle_color * 1.5, vec3(0.9, 0.7, 0.6) * 0.4, match_torch) / candle_color, factor_torchItem);
+
+        // Lantern
+        float match_1_lantern = getColor(color, vec3(1.0, 0.6, 0.35), 0.5);
+        emissive_color = mix(emissive_color, emissive_color * mix(0.2, pow(luma(color), 0.75) * 0.75, match_1_lantern) / candle_color, factor_lanternItem);
+        block_color.rgb = mix(block_color.rgb, block_color.rgb * vec3(1.0, 0.55, 0.45), match_1_lantern * factor_lanternItem);
+
+        // Soul lantern
+        float match_1_soullant = getColor(color, vec3(0.5, 0.9, 1.0), 0.5) * checkLum(luminance, 0.0, 1.0);
+        emissive_color = mix(emissive_color, emissive_color * mix(0.05, luma(color) * sqrt(luma(color)) * 0.5, match_1_soullant) / candle_color, factor_soullantItem);
+        block_color.rgb = mix(block_color.rgb, block_color.rgb * vec3(0.4, 0.8, 1.0), match_1_soullant * factor_soullantItem);
+
+        // Copper lantern
+        float match_1_coppllant = getColor(color, vec3(0.5, 0.9, 0.001), 0.32) * checkLum(luminance, 0.425, 1.0);
+        match_1_coppllant += getColor(color, vec3(0.7, 1.0, 0.6), 0.5) * checkLum(luminance, 0.7, 1.0);
+        emissive_color = mix(emissive_color, emissive_color * mix(0.2, luma(color) * sqrt(luma(color)) * 0.75, min(match_1_coppllant, 1.0)) / candle_color, factor_coppllantItem);
+        block_color.rgb = mix(block_color.rgb, block_color.rgb * vec3(0.7, 1.0, 0.7), match_1_coppllant * factor_coppllantItem);
+
+        // Glowstone
+        emissive_color = mix(emissive_color, emissive_color * mix(0.3, 0.6, checkLum(luminance, 0.5, 1.0)) / candle_color * mix(vec3(1.0, 0.7, 0.65) / sqrt(sqrt(luma(color))), vec3(1.0, 0.8, 0.6), checkLum(luminance, 0.5, 1.0)), factor_glowstone);
+
+        // Sea lantern
+        emissive_color = mix(emissive_color, emissive_color * 0.6 * saturate(color, -0.66) / candle_color / mix(sqrt(luma(color)) * 2.0, 1.0, checkLum(luminance, 0.6, 1.0)) / mix(1.0, sqrt(luma(color)) * 1.25, checkLum(luminance, 0.6, 1.0)), factor_sealantern);
+    #endif
 #endif
 
 #ifdef GBUFFER_ENTITIES

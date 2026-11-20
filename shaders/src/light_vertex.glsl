@@ -20,6 +20,8 @@ float ix = lmcoord.x;
 float l_pow = 1.17;
 #if defined GBUFFER_ENTITIES
     l_pow = 0.9;
+#elif defined GBUFFER_HAND
+    l_pow = 1.17;
 #endif
 
 float ix2 = ix * ix * l_pow;
@@ -163,7 +165,7 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 0.0), 1.0, 1.0);
     #ifdef SIMPLE_AUTOEXP
         omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.15 + 0.05 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
     #else
-        omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
+        omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.025 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
     #endif
 
     omni_light = mix(omni_min, omni_color, vs2) * omni_strength;

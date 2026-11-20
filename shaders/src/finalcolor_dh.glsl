@@ -1,11 +1,11 @@
 #ifdef FOG_ACTIVE
-    float fogmix = fog_adj * fog_adj * fog_adj;
+    float fogmix = pow(fog_adj, 10);
 #endif
 
 #if defined DH_WATER
     #ifdef FOG_ACTIVE
         if(isEyeInWater == 0) {
-            vec3 fogColorMod = dayBlend(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8), vec3(0.0275, 0.0392, 0.0549));
+            vec3 fogColorMod = dayBlend(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8) * (1.5 + fog_adj), vec3(0.0275, 0.0392, 0.0549));
 
             #if FOG_TINT == 0
                 fogColorMod = saturate(fogColorMod, 0.5);
@@ -35,7 +35,7 @@
     #endif
 #else
     #ifdef FOG_ACTIVE
-        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8), vec3(0.0235, 0.0314, 0.0431));
+        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8) * (1 + fog_adj), vec3(0.0235, 0.0314, 0.0431));
 
         #if FOG_TINT == 0
             fogColorMod = saturate(fogColorMod, 0.5);

@@ -550,7 +550,7 @@ option.HOVER.comment=Olá! Aqui você pode encontrar informações sobre os E-LI
 value.HOVER.0=
 
 option.VERSION=Info. da Versão
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.4§r. Build: Release. Código: §5§lELT514§r. Data: 9 de Outubro 2026. Baseado no MakeUp Ultrafast 9.5g.
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.4§r. Build: Release. Código: §5§lELT514§r. Data: 20 de Novembro 2026. Baseado no MakeUp Ultrafast 9.6.
 value.VERSION.0=
 
 option.PROFILES=Perfis Gráficos

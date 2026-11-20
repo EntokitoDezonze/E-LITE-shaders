@@ -94,11 +94,11 @@ varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
     varying vec4 shadowParms;
 #endif
 
-#ifdef DYN_HAND_LIGHT
+#if defined DYN_HAND_LIGHT || defined EMISSIVE_MATERIAL
     uniform int heldItemId;
     uniform int heldItemId2;
+    uniform int currentRenderedItemId;
 #endif
-uniform int currentRenderedItemId;
 
 attribute vec4 mc_Entity;
 attribute int blockEntityId;
@@ -208,6 +208,16 @@ void main() {
         else if (mc_ex == 9017) temp_emitter = 13.0;
         else if (mc_ex == 9018) temp_emitter = 14.0;
         else if (mc_ex == 10214) temp_emitter = 5.0;
+        // Held Torch/Lantern
+        else if (heldItemId == 9017 || heldItemId2 == 9017) temp_emitter = 33.0;
+        else if (heldItemId == 9018 || heldItemId2 == 9018) temp_emitter = 34.0;
+        else if (heldItemId == 9019 || heldItemId2 == 9019) temp_emitter = 35.0;
+        else if (heldItemId == 9020 || heldItemId2 == 9020) temp_emitter = 36.0;
+        else if (heldItemId == 9021 || heldItemId2 == 9021) temp_emitter = 37.0;
+        else if (heldItemId == 9022 || heldItemId2 == 9022) temp_emitter = 38.0;
+        // Blocklight
+        else if (heldItemId == 7000 || heldItemId2 == 7000) temp_emitter = 39.0;
+        else if (heldItemId == 7001 || heldItemId2 == 7001) temp_emitter = 40.0;
 
         emitter_v = temp_emitter;
     #endif

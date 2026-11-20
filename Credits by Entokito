@@ -29,6 +29,7 @@ Changelog:
 - Near fog now works as ground fog, improving scene depth.
 - Rework on how fog colors are calculated.
 - Revamped emissives, giving it a better look.
+- Sea lanten, glowstone, torches and lanterns now glow when handheld. (Require emissive materials turned on.)
 - Selective TAA is now implemented, reducing ghost in entities. (Inherited from MakeUp)
 - Small changes on sun glow.
 - Vanilla Sun/moon now cuts when it is below horizon.

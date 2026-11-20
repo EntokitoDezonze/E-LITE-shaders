@@ -8,8 +8,8 @@ E-LITE shaders (formerly known as LITE) is a modification of [MakeUp - Ultra Fas
 
 # TESTED ON:
 
-- Minecraft 1.12.2 - 26.2
-- NVIDIA, AMD and Intel, NO warranty that it works on all hardware.
+- Minecraft 1.12.2 - 26.x
+- NVIDIA, AMD and Intel GPU's, NO warranty that it works on all hardware.
 - Windows 10 and 11.
 
 # Features:

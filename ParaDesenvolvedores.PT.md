@@ -99,7 +99,7 @@ O valor de exposição automática calculado também é salvo em gaux3.
 
 8. Em Composite2, AA e desfoque de movimento são calculados. O resultado é gravado em colortex0. Se a superamostragem temporal estiver ativada, o histórico é gravado em colortex3.
 
-9. Finalmente, efeitos de pós-processamento, como aberração cromática, exposição automática, mapeamento de tons e auxílios para daltonismo, são aplicados em Final.
+9. Finalmente, efeitos de pós-processamento, como aberração cromática, exposição automática, tonemapping e auxílios para daltonismo, são aplicados em Final.
 A imagem é então enviada para a tela.
 
 -----

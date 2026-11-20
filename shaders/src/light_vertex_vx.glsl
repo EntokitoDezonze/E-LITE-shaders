@@ -42,7 +42,7 @@
     #ifdef SIMPLE_AUTOEXP
         omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.15 + 0.05 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
     #else
-        omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
+        omniColorMin = mix(omniColorMin / max(luma(omniColorMin), 0.001) * 0.025 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omniColorMin, visibleSky);
     #endif
 
     vec3 omniLight = mix(omniColorMin, omniColor, visibleSky * visibleSky) * omniStrength;
@@ -63,4 +63,8 @@
 
 if (customId > 6999.5 && customId < 7017.5) {
     directLightStrength = 1.0;
+}
+
+if (customId > 10018.5 && customId < 10019.5) {
+    directLightStrength = sqrt(directLightStrength * 0.75 + 0.1);
 }

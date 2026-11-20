@@ -133,7 +133,7 @@ float dayBlendSunset = dayBF(dayBF(1.0, 1.0, 4.0), 1.0, 1.0);
     #ifdef SIMPLE_AUTOEXP
         omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.15 + 0.05 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
     #else
-        omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.0333 + 0.2 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
+        omni_min = mix(omni_min / max(luma(omni_min), 0.001) * 0.02 + 0.25 * step(49.0, AVOID_DARK_LEVEL), omni_min, visible_sky);
     #endif
 
     omni_light = mix(omni_min, omni_color, vs4);
