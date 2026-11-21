@@ -14,7 +14,7 @@ uniform float viewWidth, viewHeight, light_mix, far, rainStrength, wetness, fram
 uniform int isEyeInWater, frameCounter;
 uniform ivec2 eyeBrightnessSmooth;
 uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
-uniform vec3 moonPosition, sunPosition, skyColor;
+uniform vec3 moonPosition, sunPosition, skyColor, cameraPosition;
 
 #ifdef DISTANT_HORIZONS
     uniform int dhRenderDistance;
@@ -34,7 +34,6 @@ uniform vec3 moonPosition, sunPosition, skyColor;
 #endif
 
 #if WAVING == 1
-    uniform vec3 cameraPosition;
     uniform float frameTimeCounter;
 #endif
 
@@ -95,11 +94,11 @@ varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
     varying vec4 shadowParms;
 #endif
 
-#ifdef DYN_HAND_LIGHT
+#if defined DYN_HAND_LIGHT || defined EMISSIVE_MATERIAL
     uniform int heldItemId;
     uniform int heldItemId2;
+    uniform int currentRenderedItemId;
 #endif
-uniform int currentRenderedItemId;
 
 attribute vec4 mc_Entity;
 attribute int blockEntityId;
@@ -187,6 +186,7 @@ void main() {
     #if defined GBUFFER_BLOCK
         if(blockEntityId == 10091) block_type_v = 1.0;
         if(blockEntityId == 10400) block_type_v = 2.0;
+        if(blockEntityId == ENTITY_SIGN && (gl_Color.r + gl_Color.g + gl_Color.b < 0.001 || lmcoord.x > 0.99)) block_type_v = 5.0;
     #endif
 
     if(mc_ex == ENTITY_WHITE_LEAVES) block_type_v = 3.0;
@@ -201,14 +201,23 @@ void main() {
     #if defined EMISSIVE_MATERIAL
         float temp_emitter = 0.0;
         if (mc_ex >= 9008 && mc_ex <= 9013) temp_emitter = float(mc_ex - 9007);
-        else if (mc_ex == 10090) temp_emitter = 7.0;
-        else if (mc_ex == 10089) temp_emitter = 8.0;
-        else if (mc_ex >= 10213 && mc_ex <= 10214) temp_emitter = 9.0;
+        else if (mc_ex >= 7000 && mc_ex <= 7017) temp_emitter = float(mc_ex - 7000 + 15);
         else if (mc_ex == 9014) temp_emitter = 10.0;
-        else if (mc_ex == 9015) temp_emitter = 11.0;  
-        else if(currentRenderedItemId == 9016) temp_emitter = 12.0;
+        else if (mc_ex == 9015) temp_emitter = 11.0;
+        else if (currentRenderedItemId == 9016) temp_emitter = 12.0;
         else if (mc_ex == 9017) temp_emitter = 13.0;
         else if (mc_ex == 9018) temp_emitter = 14.0;
+        else if (mc_ex == 10214) temp_emitter = 5.0;
+        // Held Torch/Lantern
+        else if (heldItemId == 9017 || heldItemId2 == 9017) temp_emitter = 33.0;
+        else if (heldItemId == 9018 || heldItemId2 == 9018) temp_emitter = 34.0;
+        else if (heldItemId == 9019 || heldItemId2 == 9019) temp_emitter = 35.0;
+        else if (heldItemId == 9020 || heldItemId2 == 9020) temp_emitter = 36.0;
+        else if (heldItemId == 9021 || heldItemId2 == 9021) temp_emitter = 37.0;
+        else if (heldItemId == 9022 || heldItemId2 == 9022) temp_emitter = 38.0;
+        // Blocklight
+        else if (heldItemId == 7000 || heldItemId2 == 7000) temp_emitter = 39.0;
+        else if (heldItemId == 7001 || heldItemId2 == 7001) temp_emitter = 40.0;
 
         emitter_v = temp_emitter;
     #endif
@@ -257,7 +266,7 @@ void main() {
     #endif
 
     data_pack_a = vec4(fog_adj, direct_light_strength, block_type_v, exposure_v);
-    data_pack_b = vec4(near_fog, visible_sky, sunInfluence, roughness_v);
+    data_pack_b = vec4(dist_ratio, visible_sky, sunInfluence, roughness_v);
     emissiveData = vec2(ore_v, emitter_v);
     foliageData = vec3(isFoliage, 0.0, isGrass);
 }

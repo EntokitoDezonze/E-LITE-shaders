@@ -38,7 +38,7 @@ vec3 vibrance(vec3 color, float amount) {
     float increase_factor = max((1.0 - sat * 3.0), 0.0) * ((amount * 1.15 - 1.0) * 2.0);
     float final_sat = 1.0 + max(0.0, increase_factor);
 
-    return saturate(color, final_sat);
+    return max(saturate(color, final_sat), vec3(0.0));
 }
 
 vec3 normalizeLuma(vec3 color, float targetLuma) {

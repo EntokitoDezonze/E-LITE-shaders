@@ -13,13 +13,14 @@ float NdotL;
     NdotL = mix(dot_product, abs(dot_product), foliage_factor);
 #else
     NdotL = dot_product;
+    float foliage_factor = 0.0;
 #endif
 
 NdotL = clamp(NdotL, 0.0, 1.0);
 
 vec3 shadow_world_normal = normalize(mat3(gbufferModelViewInverse) * normal);
 
-vec3 bias = shadow_world_normal * min(SHADOW_FIX_FACTOR + length(position.xyz) * 0.005, 0.5) * (2.0 - max(NdotL, 0.0));
+vec3 bias = shadow_world_normal * min(SHADOW_FIX_FACTOR + length(position.xyz) * 0.005, 0.5) * (mix(2.0, 1.5, foliage_factor) - max(NdotL, 0.0));
 vec3 shadow_world = position.xyz + bias;
 
 shadow_pos = get_shadow_pos(shadow_world);

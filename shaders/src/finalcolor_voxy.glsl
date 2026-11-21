@@ -22,25 +22,32 @@
             float fogInfluence = 1.0;
         #endif
 
+        vec3 fogColorMod = dayBlendVoxy(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8) * (1.0 + frogAdjust), vec3(0.0235, 0.0314, 0.0431),
+            dayMixerV,
+            nightMixerV,
+            dayMomentV
+        );
+        
         #if FOG_TINT == 0
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 0.5), vec3(1.0), frogAdjust);
+            fogColorMod = saturate(fogColorMod, 0.5);
         #elif FOG_TINT == 1
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), 1.0), vec3(1.0), frogAdjust);
+            fogColorMod = saturate(fogColorMod, 1.0);
         #elif FOG_TINT == 2
-            vec3 fogColorMod = mix(saturate(vec3(0.592, 0.888, 1.233), -0.5), vec3(1.0), frogAdjust);
+            fogColorMod = saturate(fogColorMod, -0.5);
         #endif
-
-        fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));
+    
+        fogColorMod = mix(fogColorMod, saturate(fogColorMod * vec3(0.8, 0.975, 1.0) * 0.5, 0.5), rainStrength);
+        float fogmix = pow(frogAdjust, 10);
 
         #if MC_VERSION >= 11900
             vec3 fog_texture;
             if(darknessFactor > .01) {
                 fog_texture = vec3(0.0);
             } else {
-                fog_texture = textureLod(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), 0.0).rgb * fogInfluence * fogColorMod;
+                fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);
             }
         #else
-            vec3 fog_texture = textureLod(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY), 0.0).rgb * fogInfluence * fogColorMod;
+            vec3 fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);
         #endif
 
         #if defined GBUFFER_ENTITIES

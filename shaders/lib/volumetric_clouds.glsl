@@ -10,6 +10,16 @@ Fast volumetric clouds - MakeUp & E-LITE shaders implementation
     #define CLOUD_X_OFFSET 800.0
 #endif
 
+vec2 cirrus_uv(vec2 pos, float wt) {
+    // based on aurora method to twist
+    vec2 p = pos * 0.0002;
+    float n = texture2D(gaux2, p * 0.08 + vec2(0.23, 0.57)).r;
+    float twist = (n - 0.5) * 0.25
+                + sin(p.x * 4.0 + n * 3.0 + wt * 0.3) * 0.2;
+
+    return vec2(p.x * 0.75, p.y * 1.5 + twist) + vec2(wt, 0.0);
+}
+
 vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, vec3 base_pos, int samples, float umbral, vec3 cloud_color_orig, vec3 dark_cloud_color_orig, float dynamicValue, float cave) {
     float plane_distance;
     float cloud_value;
@@ -83,10 +93,10 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
 
         #if CLOUD_VOL_STYLE == 0
             increment = (intersection_pos_sup - intersection_pos) / 8;
-            float sample_fix = 0.0;
+            int sample_fix = 1;
         #else
             increment = (intersection_pos_sup - intersection_pos) / 8;
-            float sample_fix = 7.0;
+            int sample_fix = 7;
         #endif
         increment_dist = length(increment);
 
@@ -135,7 +145,7 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
                 float plateau = current_value;
             #else
                 current_value = (current_value - umbral) / (1.0 - umbral);
-                float plateau = pow(current_value, 0.1); 
+                float plateau = pow(current_value, 0.075); 
             #endif
 
             surface_inf = CLOUD_PLANE_CENTER - (plateau * dif_inf); 
@@ -251,12 +261,14 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
             cloud_value_2 = 0.0;
             intersection_pos_2 += (increment_2 * dither);
 
+            float wt = frameTimeCounter * (WIND_FORCE * 0.55 + 0.5) * CLOUD_HI_FACTOR;
+            
             for (int i = 0; i < CIRRUS_STEPS_AVG; i++) {
                 #if CLOUD_VOL_STYLE == 0
                     current_value2 =
                         texture2D(
                             gaux2,
-                            ((intersection_pos_2.xz + vec2(CLOUD_X_OFFSET, 0.0)) * 0.0002777777777777778) + (frameTimeCounter * (WIND_FORCE * 0.55 + 0.5) * CLOUD_HI_FACTOR)
+                            cirrus_uv(intersection_pos_2.xz + vec2(CLOUD_X_OFFSET, 0.0), wt)
                         ).r;
                 #else
                     current_value2 = 0.0;
@@ -273,7 +285,7 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
                 #endif
 
                 #if CLOUD_VOL_STYLE == 0
-                    current_value2 = (current_value2 - umbral) / (-4.0 - clamp(umbral, 0.0, 0.2)) + 0.225 - (dynamicValue * 0.25);
+                    current_value2 = (current_value2 - umbral) / (-4.0 - clamp(umbral, 0.0, 0.2)) + (0.2 - (dynamicValue * 0.225));
                 #else
                     current_value2 = (current_value2 - umbral) / (1.0 - umbral);
                 #endif
@@ -336,7 +348,7 @@ vec3 get_cloud(vec3 view_vector, vec3 block_color, float bright, float dither, v
         if (view_vector.y > 0.05 && dayBF(0.0, 0.0, 1.0) > 0.02) {
             vec3 aurora_sum = vec3(0.0);
             const int layers = 16;
-            float inv_view_y = 1.0 / (max(view_vector.y, 0.05) + 0.05);
+            //float inv_view_y = 1.0 / (max(view_vector.y, 0.05) + 0.05);
             float wind = frameTimeCounter * 3.5 * sqrt(CLOUD_HI_FACTOR);
             float aurora_mask = (1.0 - cloud_value) * clamp(dayBF(-1.0, 0.0, 1.0), 0.0, 1.0);
 

@@ -1,17 +1,13 @@
 // -- Position Vertex
 
-    #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && defined SHADOW_CASTING && !defined NETHER)
-        float fogDensityCoeff = FOG_DENSITY * FOG_ADJUST;
-    #else
-        float fogDensityCoeff = dayBlendFloatVoxy(
-            FOG_SUNSET,
-            FOG_DAY,
-            FOG_NIGHT,
-            dayMixerV,
-            nightMixerV,
-            dayMomentV
-        ) * FOG_ADJUST;
-    #endif
+    float fogDensityCoeff = dayBlendFloatVoxy(
+        FOG_SUNSET,
+        FOG_DAY,
+        FOG_NIGHT,
+        dayMixerV,
+        nightMixerV,
+        dayMomentV
+    ) * (1/FOG_ADJUST);
 
     // ---- Original Light Vertex Logic
 
@@ -51,7 +47,7 @@
         vec3 astroVector = normalize(vxModelView * vec4(0.0, 0.89442719, 0.4472136, 0.0)).xyz;
     #else
         vec3 astroVector = normalize(sunPosition);
-        float rain_mul = dayBlendFloatVoxyN(dayBlendFloatVoxyN(0.7, 0.5, 1.0, dayMixerV, nightMixerV, dayMomentV), 0.175, dayBlendFloatVoxyN(1.8, 1.0, 1.0, dayMixerV, nightMixerV, dayMomentV), dayMixerV, nightMixerV, dayMomentV);
+        float rain_mul = dayBlendFloatVoxyN(0.8, 1.0, 1.0, dayMixerV, nightMixerV, dayMomentV);
         #if COLOR_SCHEME == 4
             rain_mul = dayBlendFloatVoxyN(0.5, 0.4, 0.4, dayMixerV, nightMixerV, dayMomentV);
         #endif
@@ -95,9 +91,9 @@
         vec3 directLightColor = texture2D(lightmap, vec2(0.0, lmcoord.y)).rgb;
     #else
         vec3 directLightColor = dayBlendVoxy(
-            LIGHT_SUNSET_COLOR * dayBlendFloatVoxyN(0.85, 1.0, 0.0, dayMixerV, nightMixerV, dayMomentV),  
-            LIGHT_DAY_COLOR * dayBlendFloatVoxyN(1.17, 1.1, 1.0, dayMixerV, nightMixerV, dayMomentV) * mix(1.5 - ydotl, 1.0, rainStrength), 
-            LIGHT_NIGHT_COLOR * dayBlendFloatVoxyN(1.0, 1.0, 1.333, dayMixerV, nightMixerV, dayMomentV),
+            LIGHT_SUNSET_COLOR * dayBlendFloatVoxyN(1.0, 1.4, 0.0, dayMixerV, nightMixerV, dayMomentV),  
+            LIGHT_DAY_COLOR,
+            LIGHT_NIGHT_COLOR * dayBlendFloatVoxyN(1.0, 1.0, 1.25, dayMixerV, nightMixerV, dayMomentV),
             dayMixerV,
             nightMixerV,
             dayMomentV

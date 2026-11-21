@@ -16,7 +16,7 @@ gaux3 - Exposure auxiliar
 gaux4 - Fog auxiliar
 
 const int noisetexFormat = RG8;
-const int colortex0Format = R8;
+const int colortex0Format = RGB8;
 */
 #ifdef DOF
     #ifdef DOF_HDR // COLOR_BITS does not affect HDR.
@@ -109,7 +109,7 @@ const int shadowcolor0Format = RGBA8;
 // == Buffers clear
 const bool colortex0Clear = false;
 const bool colortex1Clear = false;
-const bool colortex2Clear = false;
+const bool colortex2Clear = true;
 const bool colortex3Clear = false;
 const bool gaux1Clear = false;
 const bool gaux2Clear = false;
@@ -126,6 +126,9 @@ uniform sampler2D colortex3;
 uniform sampler2D gaux3;
 uniform sampler2D gaux1;
 uniform sampler2D colortex1;
+#ifdef SELECTIVE_TAA
+uniform sampler2D colortex2;
+#endif
 uniform float viewWidth;
 uniform float viewHeight;
 uniform int frameCounter;
@@ -187,9 +190,6 @@ void main() {
         #endif
     #else
        vec3 block_color = texture2DLod(colortex1, pixelUV, 0.0).rgb;
-        #if defined FXAA && !defined PS1_LIKE
-            block_color = fxaa311(block_color, 6, pixelUV);
-        #endif
 
        #if AA_TYPE == 3 && !defined PS1_LIKE
             block_color = sharpen(colortex1, block_color, pixelUV);
@@ -203,8 +203,10 @@ void main() {
         block_color = mix(block_color, block_color * vec3(0.8, 1.3, 1.6), shadow_desaturation);
     } else {
         float shadow_desaturation = smoothstep(0.02, 0.25, luma_factor);
-        vec3 shadow_tint = vec3(0.85, 0.9, 1.0);
+        vec3 shadow_tint = vec3(0.85, 0.85, 1.0);
         block_color = mix(saturate(block_color, 0.666) * shadow_tint, block_color, shadow_desaturation);
+        float green_mask = smoothstep(0.0, 0.3, (block_color.g - max(block_color.r, block_color.b)) / max(block_color.g, 1e-4));
+        block_color = mix(block_color, vec3(luma(block_color)), 0.1 * green_mask * shadow_desaturation);
     } // Water overlay
 
     #if defined SIMPLE_AUTOEXP && COLOR_SCHEME != 4
@@ -214,7 +216,7 @@ void main() {
     #elif COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
         float exposure_final = exposure * dayBF(0.8, 1.0, 1.0);
     #else
-        float start = 0.75;
+        float start = 0.65;
         float end   = 2.0;
 
         float releaseStart = 2.25;
@@ -223,12 +225,14 @@ void main() {
         float tCompress = smoothstep(start, end, exposure);
         float tRelease = smoothstep(releaseStart, releaseEnd, exposure);
 
-        float minMul = 0.75;
+        float minMul = dayBF(0.9, 0.65, 0.9);
 
         float t = tCompress * (1.0 - tRelease);
         float dynamicMul = mix(1.0, minMul, t);
 
         float exposure_final = exposure * dynamicMul;
+        /* this code avoids brightness "boom" while in interiors.
+        */
     #endif
 
     block_color *= vec3(RED, GREEN, BLUE) * vec3(exposure_final * EXPOSURE) * BRIGHTNESS; // Color balance, Exposure, Brightness. 

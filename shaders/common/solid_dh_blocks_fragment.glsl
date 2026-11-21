@@ -16,6 +16,9 @@ uniform vec3 cameraPosition;
 uniform int dhRenderDistance;
 uniform float viewWidth;
 uniform float viewHeight;
+uniform float day_moment;
+uniform float day_mixer;
+uniform float night_mixer;
 
 // == Varyings
 varying vec2 texcoord;
@@ -27,11 +30,12 @@ varying vec3 omni_light;
 varying vec4 position;
 varying vec4 sub_position;
 varying float fog_adj;
-varying float near_fog;
+varying float dist_ratio;
 
 // == Utility
 #include "/lib/luma.glsl"
 #include "/lib/dither.glsl"
+#include "/lib/day_blend.glsl"
 
 vec3 computeRealLightDH(vec3 omni, vec3 directColor, float directStrength, float shadow, vec3 candle, float rain) {
     return omni + vec3(shadow) * directColor * directStrength * (1.0 - (rain * 0.75)) + candle;
@@ -64,7 +68,7 @@ void main() {
     float synth_noise = (hash13(synth_pos) - 0.5) * 0.1;
     block_color.rgb += vec3(synth_noise);
     block_color.rgb = clamp(block_color.rgb * 0.9, vec3(0.0), vec3(1.0));
-
+    block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.8, rainStrength));
     float block_luma = luma(tint_color.rgb);
 
     vec3 final_candle_color = candle_color;
@@ -76,7 +80,6 @@ void main() {
     block_color.rgb *= mix(real_light, vec3(1.0), nightVision * 0.125);
     block_color.rgb *= mix(vec3(1.0, 1.0, 1.0), vec3(NV_COLOR_R, NV_COLOR_G, NV_COLOR_B), nightVision);
 
-    block_color.rgb *= mix(1.0, 0.5, pow(fog_adj, 2.0));
     block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
 
     #include "/src/finalcolor_dh.glsl"

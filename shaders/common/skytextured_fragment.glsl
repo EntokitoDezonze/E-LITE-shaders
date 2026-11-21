@@ -20,6 +20,7 @@ uniform float frameTime;
 uniform vec3 sunPosition;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
+uniform int renderStage;
 
 #ifdef THE_END
     uniform float frameTimeCounter;
@@ -33,6 +34,7 @@ varying vec4 tint_color;
 varying float sky_luma_correction;
 varying vec3 cursed_sky;
 varying float current_wetness;
+varying vec3 astro_world_dir;
 
 /* Utilitary functions */
 
@@ -54,6 +56,7 @@ void main() {
         #else
             backgroud_mul = 0.5;
         #endif
+
         block_color = texture2D(tex, texcoord) * tint_color * backgroud_mul;
 
     #elif defined NETHER
@@ -61,19 +64,36 @@ void main() {
         vec3 background_color = background_color_full.rgb;
         vec4 block_color = vec4(background_color, 1.0);
     #else
-        vec4 block_color = texture2D(tex, texcoord) * tint_color;        
+        vec4 block_color = texture2D(tex, texcoord) * tint_color;
+
+        float frag_elevation = normalize(astro_world_dir).y;
+        float horizon_fade = smoothstep(-0.1, 0.0, frag_elevation);
+        if (horizon_fade < 0.001) { discard; return; }
+
+
+        float day_blend_val;
+        #ifdef IS_IRIS
+            if(renderStage == MC_RENDER_STAGE_SUN){
+                day_blend_val = dayBFlgcy(3.0, 1.0, dayBF(3.0, 1.0, 1.0));
+            } else if (renderStage == MC_RENDER_STAGE_MOON){
+                day_blend_val = max(dayBF(-5.0, 0.0, dayBF(-5.0, 0.0, 17.0)), 2.0);
+            }
+        #else
+            day_blend_val = max(dayBF(3.0, 1.0, dayBF(0.0, 0.0, 17.0)), 0.0);
+        #endif
+
         
         #ifndef CUSTOM_SKYFIX
             #if ROUND_SUN < 2
                 if(any(lessThan(mix(vec3(1.0), block_color.rgb, sunMask), vec3(0.2)))) { discard; return; }
             #endif
-            block_color.rgb *= sky_luma_correction * current_wetness;
+            block_color.rgb *= sky_luma_correction * current_wetness * day_blend_val;
             #if COLOR_SCHEME == 4 && !defined SIMPLE_AUTOEXP
                 block_color.rgb *= dayBF(1.0, 1.5, sqrt(luma(block_color.rgb) * 0.5));
             #elif COLOR_SCHEME == 4 && defined SIMPLE_AUTOEXP
                 block_color.rgb *= dayBF(1.0, 1.5, sqrt(luma(block_color.rgb) * 3));
             #else
-                block_color.rgb *= dayBlend(block_color.rgb, saturate(block_color.rgb, 0.5), sqrt(block_color.rgb));
+                block_color.rgb *= dayBlend(block_color.rgb, block_color.rgb, sqrt(block_color.rgb));
             #endif
 
             #if COLOR_SCHEME == 4 && defined SIMPLE_AUTOEXP
@@ -88,6 +108,9 @@ void main() {
         #else
             block_color.rgb = saturate(block_color.rgb, dayBF(0.75, 1.0, 0.5)) * dayBF(0.5, 1.0, 0.15);
         #endif
+
+        block_color.rgb *= horizon_fade;
+        block_color.a *= horizon_fade;
     #endif
 
     #include "/src/writebuffers.glsl"

@@ -16,10 +16,34 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define ENTITY_WHITE_LEAVES 10019.0  // White Leaves
 #define ENTITY_VINES        10106.0  // Vines
 
-// Emmisives
-#define ENTITY_EMMISIVE     10089.0  // Emissors
-#define ENTITY_S_EMMISIVE   10090.0  // Emissors
-#define ENTITY_F_EMMISIVE    10213.0  // Fake emissors
+// Emissives
+#define ENTITY_GLOWSTONE    7000.0
+#define ENTITY_SEA_LANTERN  7001.0
+#define ENTITY_REDSTONE_LAMP 7002.0
+#define ENTITY_FROGLIGHT    7003.0
+#define ENTITY_SHROOMLIGHT  7004.0
+#define ENTITY_JACK_O_LANTERN 7005.0
+
+// Lanterns
+#define ENTITY_LANTERN      7006.0
+#define ENTITY_SOUL_LANTERN 7007.0
+#define ENTITY_COPPER_LANTERN 7008.0
+#define ENTITY_COPPER_BULB  7017.0
+
+// Strong emissives
+#define ENTITY_LAVA         7009.0
+#define ENTITY_MAGMA        7010.0
+#define ENTITY_BEACON       7011.0
+#define ENTITY_END_ROD      7012.0
+
+// Fake emissors (torches)
+#define ENTITY_TORCH        7013.0
+#define ENTITY_SOUL_TORCH   7014.0
+#define ENTITY_COPPER_TORCH 7015.0
+
+// Generic emissive
+#define ENTITY_G_EMISSIVE   7016.0
+
 #define ENTITY_NO_SHADOW_FIRE 10214.0  // Fire (no shadow)
 #define ENTITY_PORTAL       10091.0  // Portal
 
@@ -68,9 +92,13 @@ Javier Garduño - GNU Lesser General Public License v3.0
 // Season
 #define SEASONABLE 8000.0
 
+// Signs
+#define ENTITY_SIGN 8001.0
+
 // Other constants
-#define ZENITH_SKY_RAIN_COLOR vec3(0.52, 0.64, 0.745)
-#define HORIZON_SKY_RAIN_COLOR vec3(0.355, 0.43, 0.493)
+#define ZENITH_SKY_RAIN_COLOR vec3(0.52, 0.61, 0.74)
+#define HORIZON_SKY_RAIN_COLOR vec3(0.498, 0.5804, 0.6863)
+#define LIGHT_RAIN_COLOR vec3(0.425, 0.56, 0.79)
 
 // Style (Default or Vanilla)
 #define STYLE 1 // [1 2]
@@ -119,6 +147,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #define AO_STRENGTH 1.0 // [0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.66 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50] Ambient occlusion strength (strength does not affect performance).
 #define AA_TYPE 3 // [0 1 2 3]  No: Disable antialiasing (not recommended). Denoise only: Supersampling is only used to eliminate noise. TAA: Enable antialiasing (Recommended). Sharp TAA: A subtle sharpening effect is used on the TAA. (Low-Medium perfomance cost)
 #define FXAA // Enables FXAA, very helpful especially on low resolutions.
+#define SELECTIVE_TAA // Applies TAA selectively to the environment and entities. Eliminates artifacts and ghosting associated with entities when TAA is enabled.
 //#define MOTION_BLUR // Turn on motion blur (Low perfomance cost)
 #define MOTION_BLUR_STRENGTH 0.75 // [0.5 0.75 1.0 1.5 2.0 2.5 3.0 3.5 4.0] Set Motion blur strength. Lower framerate -> Lower strength and vice versa is recommended.
 #define MOTION_BLUR_SAMPLES 3.0 // [2.0 3.0 4.0 5.0 6.0 7.0 8.0] Motion blur samples 
@@ -147,7 +176,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #endif
 
 #define AVOID_DARK_LEVEL 4.0 // [0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0 10.5 11.0 11.5 12.0 12.5 50.0]  Minimal light intensity (Percentage).
-#define NIGHT_BRIGHT 0.75// [0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15] Adjusts the brightness of the night light in exteriors.
+#define NIGHT_BRIGHT 0.65// [0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0 1.05 1.10 1.15] Adjusts the brightness of the night light in exteriors.
 #define NIGHT_BRIGHT_RANGE 0.60 // [0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20] Difference between min and max values.
 #define V_CLOUDS 1 // [-1 0 1 2] Volumetric static: The clouds move, but they keep their shape. Volumetric dynamic: Clouds change shape over time, a different cloud landscape every time (medium performance hit). Vanilla: Original vanilla clouds.
 // #define CIRRUS // Adds a 2nd layer of cirrus clouds in the sky.
@@ -261,7 +290,7 @@ Javier Garduño - GNU Lesser General Public License v3.0
   #define PIXEL_SIZE ((viewHeight + viewWidth) / 750) // <- ALWAYS WILL HAVE PRORPOTIONAL PIXEL SIZE
 #endif
 
-// Information Utils E-LITE shaders ELT513
+// Information Utils E-LITE shaders ELT514
 #define HOVER 0 // [0]
 #define VERSION 0 // [0]
 #define PROFILES 0 // [0]
@@ -361,6 +390,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
 #endif
 #ifdef LabEMISSIVE
 #endif
+#ifdef SELECTIVE_TAA
+#endif
 /* ------------ */
 
 #if NETHER_FOG_DISTANCE == 1
@@ -390,8 +421,8 @@ Javier Garduño - GNU Lesser General Public License v3.0
     #define CLOUD_PLANE_CENTER 305.0
     #define CLOUD_PLANE 219.0
   #else
-    #define CLOUD_PLANE_SUP 780.0
-    #define CLOUD_PLANE_CENTER 510.0
+    #define CLOUD_PLANE_SUP 880.0
+    #define CLOUD_PLANE_CENTER 610.0
     #define CLOUD_PLANE 420.0
   #endif
 #endif

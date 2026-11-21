@@ -33,7 +33,7 @@ uniform mat4 gbufferProjection, gbufferProjectionInverse, gbufferModelView, gbuf
 
 /* Packing */
 varying vec4 data_pack_a; // x: fog_adj, y: direct_light_strength, z: block_type_f, w: exposure
-varying vec4 data_pack_b; // x: near_fog, y: visible_sky, z: sunInfluence, w: roughness
+varying vec4 data_pack_b; // x: dist_ratio, y: visible_sky, z: sunInfluence, w: roughness
 varying vec2 emissiveData; // x: ore_type_f, y: emitter_type_f
 varying vec3 foliageData; // x: isFoliage, y: isSeasonable, z: isGrass
 
@@ -72,7 +72,7 @@ varying vec3 direct_light_color, candle_color, omni_light;
 #endif
 
 float fog_adj, direct_light_strength, block_type_f, exposure;
-float near_fog, visible_sky, sunInfluence, roughness;
+float dist_ratio, visible_sky, sunInfluence, roughness;
 float ore_type_f, emitter_type_f, isGrass;
 float reflex_index2;
 vec3 final_candle_color;
@@ -115,6 +115,14 @@ vec3 computeRealLight(vec3 omni, vec3 directColor, float directStrength, vec3 sh
     return (omni + shadow * directColor * (directStrength * (1.0 + spec_energy)) * (1.0 - (rainStrength * 0.75))) + candle;
 }
 
+float getColor(vec3 ogCol, vec3 target, float r2) {
+    vec3 d = ogCol - target;
+    return step(dot(d, d), r2);
+}
+float checkSat(float sat, float lo, float hi) { return step(lo, sat) * step(sat, hi); }
+float checkLum(float lum, float lo, float hi) { return step(lo, lum) * step(lum, hi); }
+float isType(int a, int b) { return float(a == b); }
+
 void main() {
     // === Dither & discard
     #if (defined SHADOW_CASTING && !defined NETHER) || defined DISTANT_HORIZONS || (MATERIAL_GLOSS > 0 && !defined NETHER) || defined LabPBR
@@ -136,16 +144,23 @@ void main() {
     direct_light_strength = data_pack_a.y;
     block_type_f = data_pack_a.z;
     exposure = data_pack_a.w;
-    near_fog = data_pack_b.x;
+    dist_ratio = data_pack_b.x;
     visible_sky = data_pack_b.y;
     sunInfluence = data_pack_b.z;
     roughness = data_pack_b.w;
     isGrass = foliageData.z;
-    
+
+    // === Block detection
+    int ore_type = int(round(emissiveData.x));
+    int emitter_type = int(round(emissiveData.y));
+    int block_type = int(round(block_type_f));
 
     // === Parallax
     #if defined LabPBR && defined POM && (defined GBUFFER_TERRAIN || defined GBUFFER_BLOCK)
         #include "/src/pom.glsl"
+        #ifdef GBUFFER_BLOCK
+            if(block_type == 5) final_uv = texcoord;
+        #endif
     #else
         vec2 final_uv = texcoord;
     #endif
@@ -161,11 +176,6 @@ void main() {
     #if (MATERIAL_GLOSS > 0 && !defined NETHER) || MATERIAL_GLOSS > 1
         reflex_index2 = reflexIndex;
     #endif
-
-    // === Block detection
-    int ore_type = int(round(emissiveData.x));
-    int emitter_type = int(round(emissiveData.y));
-    int block_type = int(round(block_type_f));
     
     // === End portal render
     #ifdef END_PORTAL
@@ -325,11 +335,17 @@ void main() {
         vec3 material_f0 = vec3(1.0);
     #endif
 
-    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1){
-        block_color.rgb *= vec3(1.0, 0.8, 0.95) * 1.1;
-        block_color.rgb = saturate(block_color.rgb, mix(0.75, 1.0, luma(shadow_c)));
+    if (block_type == 3 && get_sat(pure_block_color.rgb) > 0.1 && pure_block_color.r > 0.5){
+        block_color.rgb = saturate(block_color.rgb, mix(1.8, 1.25, rainStrength));
+        block_color.rgb = saturate(block_color.rgb, mix(0.5, 1.0, min(luma(shadow_c) + rainStrength, 1.0)));
         }
-    if (block_type == 4){block_color.rgb = saturate(block_color.rgb * 1.25, 0.9);}
+
+    if (block_type == 4){
+        block_color.rgb = saturate(block_color.rgb * 1.25, 1.1);
+        block_color.rgb = saturate(block_color.rgb, mix(0.6, 1.0, min(luma(shadow_c) + rainStrength, 1.0)));
+        }
+
+    block_color.rgb = saturate(block_color.rgb, mix(1.0, 0.7, rainStrength));
 
     #if (MATERIAL_GLOSS > 0 && !defined NETHER)
         vec3 gloss;
@@ -369,9 +385,6 @@ void main() {
         }
     #endif
 
-    #ifdef DISTANT_HORIZONS
-        block_color.rgb *= mix(1.0, 0.5, pow(fog_adj, 2.0));
-    #endif
     block_color = clamp(block_color, vec4(0.0), vec4(vec3(50.0), 1.0));
 
     #include "/src/finalcolor.glsl"

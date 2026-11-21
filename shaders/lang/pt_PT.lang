@@ -14,7 +14,7 @@ profile.comment=Os perfis “Sem sombras” são feitos para máquinas de baixo 
 #############################
 option.ACERCADE=§lE-LITE por Entokito
 option.ACERCADE.comment=Obrigado por utilizar este shader! :). Defina os controles de qualidade nativos do Iris ou OptiFine nos valores normais ou predefinidos para obter uma melhor qualidade. Tradução para Português e modificação por: @Entokito
-value.ACERCADE.0=§5§lELT513
+value.ACERCADE.0=§5§lELT514
 
 #Style
 option.STYLE=§lEstilo
@@ -163,6 +163,9 @@ value.AA_TYPE.0=Desligado
 value.AA_TYPE.1=Antiruído
 value.AA_TYPE.2=TAA §c§l(!)
 value.AA_TYPE.3=§b§lTAA Inteligente
+
+option.SELECTIVE_TAA=§9▶§r TAA seletivo
+option.SELECTIVE_TAA.comment=Aplica a amostragem do TAA seletivamente para evitar ghosting/artefatos que as entidades/mãos podem produzir.
 
 option.RENDER_SCALE_INT=Modo do §c§lFSR§r
 suffix.RENDER_SCALE_INT=%
@@ -547,7 +550,7 @@ option.HOVER.comment=Olá! Aqui você pode encontrar informações sobre os E-LI
 value.HOVER.0=
 
 option.VERSION=Info. da Versão
-option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.3§r. Build: Release. Código: §5§lELT513§r. Data: 9 de Outubro 2026. Baseado no MakeUp Ultrafast 9.5g.
+option.VERSION.comment=Nome: §lE-LITE §rshaders §5§l5.1.4§r. Build: Release. Código: §5§lELT514§r. Data: 20 de Novembro 2026. Baseado no MakeUp Ultrafast 9.6.
 value.VERSION.0=
 
 option.PROFILES=Perfis Gráficos

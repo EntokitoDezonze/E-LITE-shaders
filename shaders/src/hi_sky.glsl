@@ -11,7 +11,7 @@
 
         hi_sky_color_rgb = mix(
             hi_sky_color_rgb,
-            ZENITH_SKY_RAIN_COLOR * luma(hi_sky_color_rgb) * dayBF(1.0, 0.45, dayBF(1.75, 0.45, 1.25)),
+            ZENITH_SKY_RAIN_COLOR * saturate(hi_sky_color_rgb, -0.01) * dayBF(1.0, 0.9, dayBF(1.75, 0.45, 1.25)),
             rainStrength
         );
 

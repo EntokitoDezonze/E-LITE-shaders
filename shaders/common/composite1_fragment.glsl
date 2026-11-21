@@ -5,12 +5,12 @@
 #endif
 
 #ifdef BLOOM
-    const bool colortex2MipmapEnabled = true;
+    const bool colortex0MipmapEnabled = true;
 #endif
 
 // == Uniforms
 uniform sampler2D colortex1;
-uniform sampler2D colortex2;
+uniform sampler2D colortex0;
 uniform float inv_aspect_ratio;
 uniform float frameTime;
 uniform float viewWidth;
@@ -22,7 +22,7 @@ uniform int frameCounter;
     uniform float fov_y_inv;
 #endif
 
-#ifdef BLOOM
+#if defined BLOOM || defined DOF
     uniform float softLod;
 #endif
 
@@ -52,7 +52,10 @@ varying vec2 texcoord;
 #endif
 
 #include "/lib/luma.glsl"
-#include "/lib/bloom.glsl"
+
+#ifdef  BLOOM
+    #include "/lib/bloom.glsl"
+#endif
 
 #ifdef DOF
     #include "/lib/blur.glsl"
@@ -65,7 +68,7 @@ void main() {
 
     #if defined BLOOM || defined DOF
         #if AA_TYPE > 0
-            float dither = shifted_dither_makeup(gl_FragCoord.xy);
+            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
         #else
             float dither = dither_makeup(gl_FragCoord.xy);
         #endif
@@ -76,7 +79,7 @@ void main() {
     #endif
 
     #ifdef BLOOM
-        vec3 bloom = mipmap_bloom(colortex2, texcoord, dither);
+        vec3 bloom = mipmap_bloom(colortex0, texcoord, dither);
         block_color.rgb += bloom;
     #endif
 

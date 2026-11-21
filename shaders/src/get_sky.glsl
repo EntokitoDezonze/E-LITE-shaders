@@ -45,23 +45,32 @@ dither = (dither - 0.5) * 0.03125;
     float sun_factor_offset = final_sun_factor * dayBF(0.0, 0.0, 0.1);
     float sun_factor_sub = dayBF(0.05, 0.1, 0.05) + (final_sun_factor * dayBF(0.05, 0.05, 0.0));
 
-    float t1 = smoothstep(t_mid - 0.1 - dither, t_end, blend_initial + sun_factor_offset - sun_factor_sub);
-    float t2 = smoothstep(0.0, t_mid + dither, blend_initial - sun_factor_sub);
-
     current_mid_sky_color = mix(current_mid_sky_color, saturate(current_mid_sky_color * 0.1, 0.0), cave_influence) * biome_sky;
     current_low_sky_color = mix(current_low_sky_color, saturate(current_low_sky_color * 0.1, 0.0), cave_influence) * biome_sky_low;
     current_hi_sky_color  = mix(current_hi_sky_color,  saturate(current_hi_sky_color * 0.25, 0.5), fastpow(cave_influence, 5.0)) * biome_sky;
 
-    vec3 temp_sky_color = mix(current_mid_sky_color, current_hi_sky_color, t1);
-    sky_color = mix(current_low_sky_color, temp_sky_color, t2);
-    
-    sky_color += dither * (3.0 * luma(sky_color));
-    vec3 sky_ground_color = current_low_sky_color * saturate(vec3(1.0, 0.4, 0.2), dayBF(1.0, 0.0, 1.0));
+    float pL = sun_factor_sub;
+    float pM = pL + t_mid;
+    float pH = pL + (t_mid - 0.1) + (t_end - (t_mid - 0.1)) - sun_factor_offset;
+
+    vec3 mL = (current_mid_sky_color - current_low_sky_color) / (pM - pL);
+    vec3 mH = (current_hi_sky_color  - current_mid_sky_color) / (pH - pM);
+    vec3 tM = 0.5 * (mL + mH);
+
+    float b = blend_initial;
+    float hA = pM - pL, hB = pH - pM;
+    sky_color = max((b < pM)
+        ? hermite(current_low_sky_color, current_mid_sky_color, mL, tM, clamp((b - pL) / hA, 0.0, 1.0), hA)
+        : hermite(current_mid_sky_color, current_hi_sky_color,  tM, mH, clamp((b - pM) / hB, 0.0, 1.0), hB),
+        vec3(0.0));
+        
+    vec3 sky_ground_color = current_low_sky_color * mix(saturate(vec3(1.0, 0.4, 0.2), mix(dayBF(1.0, 0.0, 1.0), 0.0, rainStrength)), vec3(1.0), rainStrength);
     const float ground_t_start = 0.0;
     const float ground_t_end = -0.2;
 
     float ground_blend = smoothstep(ground_t_start, ground_t_end, dotup + dither * 0.2) * dayBF(dayBF(0.5, 0.4, 1.0), 0.4, dayBF(1.0, 0.0, 0.0));
     sky_color = mix(sky_color, sky_ground_color, ground_blend);
+    sky_color += dither * (3.0 * luma(sky_color));
 #elif COLOR_SCHEME == 4 // Vanilla
     vec2 screenCoord = gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY) / RENDER_SCALE * 2.0 - 1.0;
     vec4 fragpos = gbufferProjectionInverse * vec4(screenCoord, gl_FragCoord.z, 1.0);

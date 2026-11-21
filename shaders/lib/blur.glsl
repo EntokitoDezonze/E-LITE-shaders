@@ -18,27 +18,27 @@ vec3 noised_blur(vec4 color_depth, sampler2D image, vec2 coords, float force, fl
 
     if (blur_radius > min(pixelSizeX, pixelSizeY)) {
         vec2 blur_vec = vec2(blur_radius * inv_aspect_ratio, blur_radius);
-        vec3 col = vec3(0.0);
         vec3 blur_sum = vec3(0.0);
         float total_weight = 0.0;
         float dither_angle = dither * 6.2831853;
-        int samples = 4;
+        const int samples = 4;
 
-        for(int i = 0; i < samples; i++) {
+        float r_px = blur_radius * viewHeight;
+        float lod = max(log2(max(r_px, 1.0)) - 1.0, 0.0);
+
+        for (int i = 0; i < samples; i++) {
             float fi = float(i);
-            float radius = sqrt((fi + dither) / samples);
+            float radius = sqrt((fi + dither) / float(samples));
             float angle = fi * 2.3999632 + dither_angle;
             float weight = exp(-2.5 * radius * radius);
-            
+
             vec2 offset = vec2(cos(angle), sin(angle)) * blur_vec * radius;
-            
-            blur_sum += texture2D(image, coords + offset, 0.0).rgb * weight;
+
+            blur_sum += texture2DLod(image, coords + offset, lod).rgb * weight;
             total_weight += weight;
         }
 
-        col = blur_sum / total_weight;
-
-        block_color = col;
+        block_color = blur_sum / total_weight;
     }
 
     return block_color;

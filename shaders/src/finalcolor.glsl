@@ -26,28 +26,36 @@
             float fogInfluence = 1.0;
         #endif
 
-
-        vec3 fogColorMod = dayBlend(saturate(vec3(0.2392, 0.4039, 0.5922), dayBF(dayBF(1.0, 1.0, 5.0), 1.0, dayBF(5.0, 1.0, 1.0))), vec3(0.3, 0.45, 0.615), vec3(0.1647, 0.3725, 0.6157));
+        vec3 fogColorMod = dayBlgcy(vec3(0.1529, 0.1725, 0.2), vec3(0.32, 0.48, 0.8) * (1.0 + fog_adj), vec3(0.0235, 0.0314, 0.0431));
 
         #if FOG_TINT == 0
-            fogColorMod = mix(saturate(fogColorMod, 0.5), vec3(1.0), fog_adj);
+            fogColorMod = saturate(fogColorMod, 0.5);
         #elif FOG_TINT == 1
-            fogColorMod = mix(saturate(fogColorMod, 1.0), vec3(1.0), fog_adj);
+            fogColorMod = saturate(fogColorMod, 1.0);
         #elif FOG_TINT == 2
-            fogColorMod = mix(saturate(fogColorMod, -0.5), vec3(1.0), fog_adj);
+            fogColorMod = saturate(fogColorMod, -0.5);
         #endif
 
-        fogColorMod = saturate(fogColorMod, mix(1.0, 0.0, rainStrength));
+        #if COLOR_SCHEME == 5
+            fogColorMod = saturate(fogColorMod * 0.5, 0.0);
+        #endif
+
+        float fogmix;
+        #if defined DISTANT_HORIZONS || defined VOXY
+            fogmix = smoothstep(0.0, 1.01, dist_ratio);
+        #else
+            fogmix = fog_adj * fog_adj;
+        #endif
 
         #if MC_VERSION >= 11900
             vec3 fog_texture;
             if(darknessFactor > .01) {
                 fog_texture = vec3(0.0);
             } else {
-                fog_texture = texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb * fogInfluence * fogColorMod;
+                fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);
             }
         #else
-            vec3 fog_texture = texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb * fogInfluence * fogColorMod;
+            vec3 fog_texture = mix(fogColorMod, texture2D(gaux4, gl_FragCoord.xy * vec2(pixelSizeX, pixelSizeY)).rgb, fogmix);
         #endif
         #if defined GBUFFER_ENTITIES
             if(isEyeInWater == 0 && entityId != 10101 && FOG_ADJUST < 15.0) {  // In the air

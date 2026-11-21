@@ -158,7 +158,7 @@ void main() {
 
     #if (VOL_LIGHT == 1 && !defined NETHER) || (VOL_LIGHT == 2 && !defined NETHER)
         #if AA_TYPE > 0
-            float dither = shifted_eclectic_r_dither(gl_FragCoord.xy);
+            float dither = shifted_eclectic_dither13(gl_FragCoord.xy);
         #else
             float dither = r_dither(gl_FragCoord.xy);
         #endif
@@ -275,15 +275,15 @@ void main() {
         block_color = clamp(block_color, vec4(0.0), vec4(50.0, 50.0, 50.0, 1.0));
         
         #if REFLECTION_SLIDER > 0 && MATERIAL_GLOSS > 1
-            /* DRAWBUFFERS:1246 */
-            gl_FragData[0] = vec4(block_colorvl, block_color.a);
-            gl_FragData[1] = block_color * bloom_luma;
+            /* DRAWBUFFERS:0146 */
+            gl_FragData[0] = block_color * bloom_luma;
+            gl_FragData[1] = vec4(block_colorvl, block_color.a); 
             gl_FragData[2] = block_color;
             gl_FragData[3] = vec4(exposure, 0.0, 0.0, 0.0);
         #else
-            /* DRAWBUFFERS:126 */
-            gl_FragData[0] = vec4(block_colorvl, block_color.a);
-            gl_FragData[1] = block_color * bloom_luma;
+            /* DRAWBUFFERS:016 */
+            gl_FragData[0] = block_color * bloom_luma;
+            gl_FragData[1] = vec4(block_colorvl, block_color.a);
             gl_FragData[2] = vec4(exposure, 0.0, 0.0, 0.0);
         #endif
     #else
