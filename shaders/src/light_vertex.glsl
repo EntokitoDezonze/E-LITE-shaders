@@ -20,8 +20,6 @@ float ix = lmcoord.x;
 float l_pow = 1.17;
 #if defined GBUFFER_ENTITIES
     l_pow = 0.9;
-#elif defined GBUFFER_HAND
-    l_pow = 1.17;
 #endif
 
 float ix2 = ix * ix * l_pow;

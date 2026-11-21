@@ -1,8 +1,8 @@
-  ___    _    ___ _____ ___      _            _            
- | __|__| |  |_ _|_   _| __|  __| |_  __ _ __| |___ _ _ ___
- | _|___| |__ | |  | | | _|  (_-< ' \/ _` / _` / -_) '_(_-<
- |___|  |____|___| |_| |___| /__/_||_\__,_\__,_\___|_| /__/
-                                                                            
+  ___    _    ___ _____ ___      _            _              ___ 
+ | _____| |  |_ _|_   _| __|  __| |_  __ _ __| |___ _ _ ___ | __|
+ | _|___| |__ | |  | | | _|  (_-| ' \/ _` / _` / -_| '_(_-< |__ \
+ |___|  |____|___| |_| |___| /__|_||_\__,_\__,_\___|_| /__/ |___/
+                                                                 
 # E-LITE shaders version 5.1.4
 
 MakeUp - Ultrafast original creator: Javier Garduño
@@ -20,26 +20,26 @@ Changelog:
 - avc1657
 
 # OVERVIEW
-- Small patch to fix bugs and some visual tweaks.
+- This update introduces minor improvements to the shader's atmosphere, including better fog and new emissives, as well as other features.
 
 # General changes:
 - Remade cirrus clouds, now they look twisted and more natural.
-- Even reduced artifacts on DoF and Bloom.
-- Remade fog, now it looks more smooth.
+- Further reduced artifacts on DoF and Bloom.
+- Remade fog, now it looks smoother.
 - Near fog now works as ground fog, improving scene depth.
-- Rework on how fog colors are calculated.
-- Revamped emissives, giving it a better look.
-- Sea lanten, glowstone, torches and lanterns now glow when handheld. (Require emissive materials turned on.)
-- Selective TAA is now implemented, reducing ghost in entities. (Inherited from MakeUp)
-- Small changes on sun glow.
-- Vanilla Sun/moon now cuts when it is below horizon.
-- Reduced color banding in sky.
-- Small changes on how tonemap treats colors.
+- Reworked how fog colors are calculated.
+- Revamped emissives, giving them a better look.
+- Sea lanterns, glowstone, torches, and lanterns now glow when handheld. (Requires emissive materials turned on.)
+- Selective TAA is now implemented, reducing ghosting in entities. (Inherited from MakeUp)
+- Small changes to sun glow.
+- Vanilla Sun/moon now cuts off when it is below the horizon.
+- Reduced color banding in the sky.
+- Small changes to how tonemap treats colors.
 
 # Bugfixes:
-- Fixed some black/colorful pixels appearing randomly (mainly on plants and seagrass.)
-- Fixed some issues with AO in Distant Horizons chuncks.
-- Fixed a bug that made sign texts to disappear while using labPBR on 26.3.
+- Fixed some black/colorful pixels appearing randomly (mainly on plants and seagrass).
+- Fixed some issues with AO in Distant Horizons chunks.
+- Fixed a bug that made sign text disappear while using labPBR on 26.3.
 
 Version code: ELT514
 
