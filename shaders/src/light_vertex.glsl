@@ -35,20 +35,16 @@ float ix15 = ix8 * ix4 * ix2 * ix;
 #endif
 
 #ifdef DYN_HAND_LIGHT
-    if (heldItemId == 11001 || heldItemId2 == 11001 || heldItemId == 11002 || heldItemId2 == 11002) {
-        float h_off = (heldItemId == 11001 || heldItemId2 == 11001) ? 0.0 : 0.333;
+    if ((heldItemId >= 0 && heldItemId != 9016) || (heldItemId2 >= 0 && heldItemId2 != 9016)) {
+        float h_off = ((heldItemId >= 9019 && heldItemId <= 11001) || (heldItemId2 >= 9019 && heldItemId2 <= 11001)) ? 0.0 : 0.333;
         float h_off2 = (heldItemId == 11002 || heldItemId2 == 11002) ? 0.0 : 0.166;
-        float h_dist = clamp(1.0 - (gl_FogFragCoord * 0.0666 + h_off + h_off2), 0.0, 1.0);
+        float h_dist = clamp(1.0 - (gl_FogFragCoord * 0.0666 + (h_off + h_off2) * 0.25), 0.0, 1.0);
 
         float hd2 = h_dist * h_dist * l_pow;
         float hd4 = hd2 * hd2;
         float hd8 = hd4 * hd4;
         candle_color = max(candle_color, CANDLE_BASELIGHT * (h_dist * hd2 + (hd8 * hd4 * hd2 * h_dist)));
     }
-#endif
-
-#if defined GBUFFER_HAND
-    candle_color *= 0.333 * vec3(0.9, 0.95, 1.0);
 #endif
 
 candle_color = clamp(candle_color, 0.0, 4.0);
