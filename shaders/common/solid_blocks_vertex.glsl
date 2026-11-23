@@ -213,11 +213,11 @@ void main() {
         else if (heldItemId == 9018 || heldItemId2 == 9018) temp_emitter = 34.0;
         else if (heldItemId == 9019 || heldItemId2 == 9019) temp_emitter = 35.0;
         else if (heldItemId == 9020 || heldItemId2 == 9020) temp_emitter = 36.0;
-        else if (heldItemId == 9021 || heldItemId2 == 9021) temp_emitter = 37.0;
+        else if (heldItemId == 9021 || heldItemId2 == 9021) temp_emitter = 37.0;        
         else if (heldItemId == 9022 || heldItemId2 == 9022) temp_emitter = 38.0;
         // Blocklight
-        else if (heldItemId == 7000 || heldItemId2 == 7000) temp_emitter = 39.0;
-        else if (heldItemId == 7001 || heldItemId2 == 7001) temp_emitter = 40.0;
+        else if (heldItemId == 9023 || heldItemId2 == 9023) temp_emitter = 39.0;
+        else if (heldItemId == 9024 || heldItemId2 == 9024) temp_emitter = 40.0;
 
         emitter_v = temp_emitter;
     #endif

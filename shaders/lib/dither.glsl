@@ -123,7 +123,7 @@ float dither_makeup(vec2 point) {
 
     return fract(
         dot(vec2(0.24512233375330728, 0.4301597090019468), rPoint) +
-        dot(vec2(0.735151469707489, 0.737424373626709), tile)
+        dot(vec2(0.735151569707489, 0.737424373626709), tile)
     );
 }
 
